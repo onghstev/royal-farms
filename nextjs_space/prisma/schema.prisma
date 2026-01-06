@@ -1,0 +1,297 @@
+// Royal Farms Poultry Management System - Database Schema
+// This schema supports Phase 1: Production Tracking Module
+
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/royal_farms_poultry_system/nextjs_space/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  phone         String?
+  roleId        String    @map("role_id")
+  role          Role      @relation(fields: [roleId], references: [id])
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLogin     DateTime? @map("last_login")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  managedFlocks          Flock[]                @relation("FlockManager")
+  managedBatches         Batch[]                @relation("BatchManager")
+  eggCollections         DailyEggCollection[]   @relation("EggCollectionRecorder")
+  mortalityRecords       MortalityRecord[]      @relation("MortalityRecorder")
+  feedConsumptions       DailyFeedConsumption[] @relation("FeedRecorder")
+  resolvedAlerts         ProductionAlert[]      @relation("AlertResolver")
+  accounts               Account[]
+  sessions               Session[]
+
+  @@index([roleId])
+  @@index([email])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  users User[]
+
+  @@map("roles")
+}
+
+// NextAuth.js models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// FARM STRUCTURE
+// ============================================
+
+model Site {
+  id          String   @id @default(cuid())
+  name        String
+  location    String?
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  flocks Flock[]
+  batches Batch[]
+
+  @@map("sites")
+}
+
+// ============================================
+// PRODUCTION TRACKING - LAYERS
+// ============================================
+
+model Flock {
+  id           String   @id @default(cuid())
+  flockName    String   @unique @map("flock_name")
+  flockType    String   @default("layers") @map("flock_type") // layers, pullets
+  breed        String?
+  siteId       String   @map("site_id")
+  site         Site     @relation(fields: [siteId], references: [id])
+  arrivalDate  DateTime @map("arrival_date") @db.Date
+  openingStock Int      @map("opening_stock")
+  currentStock Int      @map("current_stock")
+  status       String   @default("active") // active, declining, depleted, sold
+  supplier     String?
+  costPerBird  Decimal? @map("cost_per_bird") @db.Decimal(10, 2)
+  managedBy    String?  @map("managed_by")
+  manager      User?    @relation("FlockManager", fields: [managedBy], references: [id])
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  eggCollections   DailyEggCollection[]
+  mortalityRecords MortalityRecord[]
+  feedConsumptions DailyFeedConsumption[]
+  alerts           ProductionAlert[]
+
+  @@index([siteId])
+  @@index([status])
+  @@index([arrivalDate])
+  @@index([flockName])
+  @@map("flocks")
+}
+
+model DailyEggCollection {
+  id                    String   @id @default(cuid())
+  flockId               String   @map("flock_id")
+  flock                 Flock    @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  collectionDate        DateTime @map("collection_date") @db.Date
+  goodEggsCount         Int      @default(0) @map("good_eggs_count") // in pieces
+  brokenEggsCount       Int      @default(0) @map("broken_eggs_count") // in pieces
+  totalEggsCount        Int      @default(0) @map("total_eggs_count") // auto-calculated
+  collectionTime        String?  @map("collection_time") // HH:mm format
+  productionPercentage  Decimal? @map("production_percentage") @db.Decimal(5, 2)
+  recordedBy            String   @map("recorded_by")
+  recorder              User     @relation("EggCollectionRecorder", fields: [recordedBy], references: [id])
+  notes                 String?  @db.Text
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@unique([flockId, collectionDate])
+  @@index([flockId])
+  @@index([collectionDate])
+  @@map("daily_egg_collection")
+}
+
+// ============================================
+// PRODUCTION TRACKING - BROILERS
+// ============================================
+
+model Batch {
+  id                String    @id @default(cuid())
+  batchName         String    @unique @map("batch_name")
+  batchType         String    @default("broilers") @map("batch_type") // broilers, turkeys
+  breed             String?
+  siteId            String    @map("site_id")
+  site              Site      @relation(fields: [siteId], references: [id])
+  docArrivalDate    DateTime  @map("doc_arrival_date") @db.Date
+  quantityOrdered   Int       @map("quantity_ordered")
+  quantityReceived  Int       @map("quantity_received")
+  currentStock      Int       @map("current_stock")
+  status            String    @default("planning") // planning, active, growing, ready, harvested
+  supplier          String?
+  docCostPerBird    Decimal?  @map("doc_cost_per_bird") @db.Decimal(10, 2)
+  expectedSaleDate  DateTime? @map("expected_sale_date") @db.Date
+  actualHarvestDate DateTime? @map("actual_harvest_date") @db.Date
+  managedBy         String?   @map("managed_by")
+  manager           User?     @relation("BatchManager", fields: [managedBy], references: [id])
+  notes             String?   @db.Text
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  mortalityRecords MortalityRecord[]
+  feedConsumptions DailyFeedConsumption[]
+  alerts           ProductionAlert[]
+
+  @@index([siteId])
+  @@index([status])
+  @@index([docArrivalDate])
+  @@index([batchName])
+  @@map("batches")
+}
+
+// ============================================
+// MORTALITY TRACKING
+// ============================================
+
+model MortalityRecord {
+  id             String   @id @default(cuid())
+  recordType     String   @map("record_type") // flock, batch
+  flockId        String?  @map("flock_id")
+  flock          Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId        String?  @map("batch_id")
+  batch          Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  mortalityDate  DateTime @map("mortality_date") @db.Date
+  mortalityCount Int      @map("mortality_count")
+  cause          String?  @default("Unknown") // Disease, Predator, Heat Stress, Unknown, Other
+  mortalityRate  Decimal? @map("mortality_rate") @db.Decimal(5, 2)
+  recordedBy     String   @map("recorded_by")
+  recorder       User     @relation("MortalityRecorder", fields: [recordedBy], references: [id])
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([mortalityDate])
+  @@index([recordType])
+  @@map("mortality_records")
+}
+
+// ============================================
+// FEED TRACKING
+// ============================================
+
+model DailyFeedConsumption {
+  id               String   @id @default(cuid())
+  consumptionType  String   @map("consumption_type") // flock, batch
+  flockId          String?  @map("flock_id")
+  flock            Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId          String?  @map("batch_id")
+  batch            Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  consumptionDate  DateTime @map("consumption_date") @db.Date
+  feedQuantityBags Decimal  @map("feed_quantity_bags") @db.Decimal(10, 2)
+  feedPricePerBag  Decimal  @map("feed_price_per_bag") @db.Decimal(10, 2)
+  totalFeedCost    Decimal  @map("total_feed_cost") @db.Decimal(12, 2)
+  feedType         String?  @map("feed_type")
+  recordedBy       String   @map("recorded_by")
+  recorder         User     @relation("FeedRecorder", fields: [recordedBy], references: [id])
+  notes            String?  @db.Text
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([consumptionDate])
+  @@index([consumptionType])
+  @@map("daily_feed_consumption")
+}
+
+// ============================================
+// ALERTS & MONITORING
+// ============================================
+
+model ProductionAlert {
+  id          String    @id @default(cuid())
+  alertType   String    @map("alert_type") // high_mortality, low_production, feed_spike, aging_batch
+  severity    String    @map("severity") // low, medium, high, critical
+  flockId     String?   @map("flock_id")
+  flock       Flock?    @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId     String?   @map("batch_id")
+  batch       Batch?    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  alertDate   DateTime  @map("alert_date") @db.Date
+  message     String    @db.Text
+  isResolved  Boolean   @default(false) @map("is_resolved")
+  resolvedBy  String?   @map("resolved_by")
+  resolver    User?     @relation("AlertResolver", fields: [resolvedBy], references: [id])
+  resolvedAt  DateTime? @map("resolved_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([alertType])
+  @@index([isResolved])
+  @@index([alertDate])
+  @@map("production_alerts")
+}
