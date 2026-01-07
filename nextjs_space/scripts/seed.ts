@@ -1070,6 +1070,226 @@ async function main() {
   console.log(`✓ Created ${purchaseOrders.length} purchase orders`);
 
   console.log('✅ Phase 4: Inventory Management data seeded successfully!');
+
+  // ============================================
+  // PHASE 5: FINANCIAL MANAGEMENT DATA
+  // ============================================
+  console.log('\n📊 Seeding Phase 5: Financial Management data...');
+
+  // Create Sample Income Transactions (last 30 days)
+  const incomeTransactions = [];
+  for (let i = 0; i < 30; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+
+    // Egg Sales (3-4 times per week)
+    if (i % 2 === 0) {
+      const quantity = Math.floor(Math.random() * 2000) + 8000; // 8000-10000 eggs
+      const unitPrice = 50 + Math.random() * 10; // ₦50-60 per egg
+      const amount = quantity * unitPrice;
+
+      incomeTransactions.push(
+        prisma.incomeTransaction.create({
+          data: {
+            transactionDate: date,
+            category: 'egg_sales',
+            amount: amount,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            customerName: ['ABC Stores', 'XYZ Mart', 'Fresh Foods Ltd', 'Royal Market'][Math.floor(Math.random() * 4)],
+            customerPhone: '080' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+            paymentMethod: ['cash', 'bank_transfer', 'mobile_money'][Math.floor(Math.random() * 3)],
+            paymentStatus: Math.random() > 0.1 ? 'paid' : 'pending',
+            invoiceNumber: `INV-EGG-${date.toISOString().split('T')[0]}-${Math.floor(Math.random() * 1000)}`,
+            flockId: flocks[0].id,
+            description: `Egg sales - ${quantity} pieces`,
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+
+    // Bird Sales (once per week for broilers)
+    if (i % 7 === 0 && i < 21) {
+      const quantity = Math.floor(Math.random() * 50) + 150; // 150-200 birds
+      const unitPrice = 3500 + Math.random() * 500; // ₦3500-4000 per bird
+      const amount = quantity * unitPrice;
+
+      incomeTransactions.push(
+        prisma.incomeTransaction.create({
+          data: {
+            transactionDate: date,
+            category: 'bird_sales',
+            amount: amount,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            customerName: ['City Butchery', 'Premium Poultry', 'Farm Fresh Foods'][Math.floor(Math.random() * 3)],
+            customerPhone: '080' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+            paymentMethod: ['cash', 'bank_transfer'][Math.floor(Math.random() * 2)],
+            paymentStatus: 'paid',
+            invoiceNumber: `INV-BIRD-${date.toISOString().split('T')[0]}-${Math.floor(Math.random() * 1000)}`,
+            batchId: batches[0].id,
+            description: `Broiler sales - ${quantity} birds`,
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+
+    // Other Income (occasional - manure sales, etc.)
+    if (i === 5 || i === 20) {
+      incomeTransactions.push(
+        prisma.incomeTransaction.create({
+          data: {
+            transactionDate: date,
+            category: i === 5 ? 'manure_sales' : 'other',
+            amount: i === 5 ? 25000 : 15000,
+            quantity: i === 5 ? 500 : null,
+            unitPrice: i === 5 ? 50 : null,
+            customerName: i === 5 ? 'Green Farms Fertilizers' : 'Government Subsidy',
+            paymentMethod: 'bank_transfer',
+            paymentStatus: 'paid',
+            description: i === 5 ? 'Poultry manure sale - 500kg' : 'Agricultural support grant',
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+  }
+  await Promise.all(incomeTransactions);
+  console.log(`✓ Created ${incomeTransactions.length} income transactions`);
+
+  // Create Sample Expense Transactions
+  const expenseTransactions = [];
+  for (let i = 0; i < 30; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+
+    // Feed Expenses (daily)
+    expenseTransactions.push(
+      prisma.expenseTransaction.create({
+        data: {
+          transactionDate: date,
+          category: 'feed',
+          amount: 45000 + Math.random() * 10000, // ₦45,000-55,000 daily
+          quantity: 50 + Math.random() * 20,
+          unitCost: 900,
+          vendorName: feedSuppliers[0].name,
+          vendorPhone: feedSuppliers[0].phone,
+          paymentMethod: 'bank_transfer',
+          paymentStatus: 'paid',
+          receiptNumber: `REC-FEED-${date.toISOString().split('T')[0]}`,
+          description: 'Daily feed purchase',
+          recordedBy: managerUser.id
+        }
+      })
+    );
+
+    // Labor Expenses (every 15 days - salary payments)
+    if (i === 1 || i === 15) {
+      const employees = [
+        { name: 'Farm Worker 1', role: 'Farm Worker', amount: 45000 },
+        { name: 'Farm Worker 2', role: 'Farm Worker', amount: 45000 },
+        { name: 'Farm Worker 3', role: 'Farm Worker', amount: 45000 },
+        { name: 'Supervisor', role: 'Supervisor', amount: 75000 }
+      ];
+
+      employees.forEach(emp => {
+        expenseTransactions.push(
+          prisma.expenseTransaction.create({
+            data: {
+              transactionDate: date,
+              category: 'labor',
+              amount: emp.amount,
+              employeeName: emp.name,
+              employeeRole: emp.role,
+              paymentMethod: 'bank_transfer',
+              paymentStatus: 'paid',
+              description: `Salary payment - ${emp.role}`,
+              recordedBy: managerUser.id
+            }
+          })
+        );
+      });
+    }
+
+    // Utilities (electricity, water - every 5 days)
+    if (i % 5 === 0) {
+      expenseTransactions.push(
+        prisma.expenseTransaction.create({
+          data: {
+            transactionDate: date,
+            category: 'utilities',
+            amount: 15000 + Math.random() * 5000,
+            utilityType: ['electricity', 'water', 'diesel'][Math.floor(Math.random() * 3)],
+            vendorName: 'Utility Company',
+            paymentMethod: 'bank_transfer',
+            paymentStatus: 'paid',
+            description: 'Utility bill payment',
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+
+    // Veterinary Expenses (occasional)
+    if (i === 7 || i === 21) {
+      expenseTransactions.push(
+        prisma.expenseTransaction.create({
+          data: {
+            transactionDate: date,
+            category: 'veterinary',
+            amount: 35000 + Math.random() * 15000,
+            vendorName: 'Vet Clinic',
+            vendorPhone: '08012345678',
+            paymentMethod: 'cash',
+            paymentStatus: 'paid',
+            description: 'Vaccination and medication supplies',
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+
+    // Maintenance (occasional)
+    if (i === 10 || i === 25) {
+      expenseTransactions.push(
+        prisma.expenseTransaction.create({
+          data: {
+            transactionDate: date,
+            category: 'maintenance',
+            amount: 25000 + Math.random() * 20000,
+            vendorName: 'Equipment Repairs Ltd',
+            paymentMethod: 'cash',
+            paymentStatus: 'paid',
+            description: 'Equipment maintenance and repairs',
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+
+    // Transport (occasional)
+    if (i % 4 === 0) {
+      expenseTransactions.push(
+        prisma.expenseTransaction.create({
+          data: {
+            transactionDate: date,
+            category: 'transport',
+            amount: 8000 + Math.random() * 7000,
+            paymentMethod: 'cash',
+            paymentStatus: 'paid',
+            description: 'Transport and logistics',
+            recordedBy: managerUser.id
+          }
+        })
+      );
+    }
+  }
+  await Promise.all(expenseTransactions);
+  console.log(`✓ Created ${expenseTransactions.length} expense transactions`);
+
+  console.log('✅ Phase 5: Financial Management data seeded successfully!');
 }
 
 main()

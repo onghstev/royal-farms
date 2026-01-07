@@ -155,6 +155,8 @@ model Flock {
   healthChecks       HealthCheck[]
   diseaseOutbreaks   DiseaseOutbreak[]
   medicationRecords  MedicationRecord[]
+  incomeTransactions IncomeTransaction[]  @relation("FlockEggSales")
+  costAnalysis       CostAnalysis[]       @relation("FlockCostAnalysis")
 
   @@index([siteId])
   @@index([status])
@@ -220,6 +222,8 @@ model Batch {
   healthChecks       HealthCheck[]
   diseaseOutbreaks   DiseaseOutbreak[]
   medicationRecords  MedicationRecord[]
+  incomeTransactions IncomeTransaction[]  @relation("BatchBirdSales")
+  costAnalysis       CostAnalysis[]       @relation("BatchCostAnalysis")
 
   @@index([siteId])
   @@index([status])
@@ -324,6 +328,9 @@ model FeedPurchase {
   notes             String?       @db.Text
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  expenseTransaction ExpenseTransaction? @relation("FeedExpenseLink")
 
   @@index([supplierId])
   @@index([inventoryId])
@@ -697,4 +704,117 @@ model StockMovement {
   @@index([movementDate])
   @@index([movementType])
   @@map("stock_movements")
+}
+
+// ============================================
+// FINANCIAL MANAGEMENT MODULE (PHASE 5)
+// ============================================
+
+// Income Management
+model IncomeTransaction {
+  id              String    @id @default(cuid())
+  transactionDate DateTime  @map("transaction_date") @db.Date
+  category        String    // egg_sales, bird_sales, manure_sales, other
+  amount          Decimal   @db.Decimal(12, 2)
+  quantity        Decimal?  @db.Decimal(10, 2) // eggs count, birds count, etc.
+  unitPrice       Decimal?  @map("unit_price") @db.Decimal(10, 2)
+  customerName    String?   @map("customer_name")
+  customerPhone   String?   @map("customer_phone")
+  paymentMethod   String    @map("payment_method") // cash, bank_transfer, cheque, mobile_money
+  paymentStatus   String    @map("payment_status") // paid, pending, partial
+  invoiceNumber   String?   @unique @map("invoice_number")
+  flockId         String?   @map("flock_id") // for egg sales
+  flock           Flock?    @relation("FlockEggSales", fields: [flockId], references: [id], onDelete: SetNull)
+  batchId         String?   @map("batch_id") // for bird sales
+  batch           Batch?    @relation("BatchBirdSales", fields: [batchId], references: [id], onDelete: SetNull)
+  description     String?   @db.Text
+  notes           String?   @db.Text
+  recordedBy      String    @map("recorded_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([transactionDate])
+  @@index([category])
+  @@index([paymentStatus])
+  @@index([flockId])
+  @@index([batchId])
+  @@map("income_transactions")
+}
+
+// Expense Management
+model ExpenseTransaction {
+  id              String    @id @default(cuid())
+  transactionDate DateTime  @map("transaction_date") @db.Date
+  category        String    // feed, labor, utilities, veterinary, maintenance, transport, other
+  amount          Decimal   @db.Decimal(12, 2)
+  quantity        Decimal?  @db.Decimal(10, 2)
+  unitCost        Decimal?  @map("unit_cost") @db.Decimal(10, 2)
+  vendorName      String?   @map("vendor_name")
+  vendorPhone     String?   @map("vendor_phone")
+  paymentMethod   String    @map("payment_method") // cash, bank_transfer, cheque, mobile_money
+  paymentStatus   String    @map("payment_status") // paid, pending, partial
+  receiptNumber   String?   @map("receipt_number")
+  feedPurchaseId  String?   @unique @map("feed_purchase_id") // link to feed purchases
+  feedPurchase    FeedPurchase? @relation("FeedExpenseLink", fields: [feedPurchaseId], references: [id], onDelete: SetNull)
+  employeeName    String?   @map("employee_name") // for labor expenses
+  employeeRole    String?   @map("employee_role") // for labor expenses
+  utilityType     String?   @map("utility_type") // electricity, water, diesel, gas
+  description     String    @db.Text
+  notes           String?   @db.Text
+  recordedBy      String    @map("recorded_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([transactionDate])
+  @@index([category])
+  @@index([paymentStatus])
+  @@index([feedPurchaseId])
+  @@map("expense_transactions")
+}
+
+// Budget Planning
+model Budget {
+  id          String    @id @default(cuid())
+  periodStart DateTime  @map("period_start") @db.Date
+  periodEnd   DateTime  @map("period_end") @db.Date
+  category    String    // feed, labor, utilities, veterinary, maintenance, other
+  budgetAmount Decimal  @map("budget_amount") @db.Decimal(12, 2)
+  actualSpent Decimal   @default(0) @map("actual_spent") @db.Decimal(12, 2)
+  variance    Decimal   @default(0) @db.Decimal(12, 2) // budgetAmount - actualSpent
+  notes       String?   @db.Text
+  isActive    Boolean   @default(true) @map("is_active")
+  createdBy   String    @map("created_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@index([category])
+  @@map("budgets")
+}
+
+// Cost Analysis Cache (for performance)
+model CostAnalysis {
+  id            String    @id @default(cuid())
+  analysisDate  DateTime  @map("analysis_date") @db.Date
+  flockId       String?   @map("flock_id")
+  flock         Flock?    @relation("FlockCostAnalysis", fields: [flockId], references: [id], onDelete: Cascade)
+  batchId       String?   @map("batch_id")
+  batch         Batch?    @relation("BatchCostAnalysis", fields: [batchId], references: [id], onDelete: Cascade)
+  totalFeedCost Decimal   @map("total_feed_cost") @db.Decimal(12, 2)
+  totalLaborCost Decimal  @map("total_labor_cost") @db.Decimal(12, 2)
+  totalUtilityCost Decimal @map("total_utility_cost") @db.Decimal(12, 2)
+  totalVeterinaryCost Decimal @map("total_veterinary_cost") @db.Decimal(12, 2)
+  totalOtherCost Decimal  @map("total_other_cost") @db.Decimal(12, 2)
+  totalIncome   Decimal   @map("total_income") @db.Decimal(12, 2)
+  netProfit     Decimal   @map("net_profit") @db.Decimal(12, 2)
+  costPerBird   Decimal?  @map("cost_per_bird") @db.Decimal(10, 2)
+  costPerEgg    Decimal?  @map("cost_per_egg") @db.Decimal(10, 4)
+  roi           Decimal?  @db.Decimal(10, 2) // Return on Investment percentage
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([analysisDate])
+  @@index([flockId])
+  @@index([batchId])
+  @@map("cost_analysis")
 }
