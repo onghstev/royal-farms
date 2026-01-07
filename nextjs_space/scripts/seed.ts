@@ -543,6 +543,243 @@ async function main() {
 
   console.log('✅ Production alerts created');
 
+  // ============================================
+  // 9. Create Feed Suppliers
+  // ============================================
+  console.log('🏭 Creating feed suppliers...');
+
+  const vitalFeedSupplier = await prisma.feedSupplier.upsert({
+    where: { supplierName: 'Vital Feed Mills Limited' },
+    update: {},
+    create: {
+      supplierName: 'Vital Feed Mills Limited',
+      contactPerson: 'Mr. Emeka Okoli',
+      phone: '+234 803 456 7890',
+      email: 'sales@vitalfeed.com',
+      address: '45 Industrial Road, Warri, Delta State',
+      isActive: true,
+    },
+  });
+
+  const topFeedsSupplier = await prisma.feedSupplier.upsert({
+    where: { supplierName: 'Top Feeds Nigeria Ltd' },
+    update: {},
+    create: {
+      supplierName: 'Top Feeds Nigeria Ltd',
+      contactPerson: 'Mrs. Ngozi Eze',
+      phone: '+234 806 123 4567',
+      email: 'info@topfeeds.ng',
+      address: '23 Sapele Road, Benin City, Edo State',
+      isActive: true,
+    },
+  });
+
+  const agriProSupplier = await prisma.feedSupplier.upsert({
+    where: { supplierName: 'AgriPro Feed Solutions' },
+    update: {},
+    create: {
+      supplierName: 'AgriPro Feed Solutions',
+      contactPerson: 'Alhaji Musa Ibrahim',
+      phone: '+234 809 876 5432',
+      email: 'contact@agriprofeed.com',
+      address: '78 Market Road, Asaba, Delta State',
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Feed suppliers created');
+
+  // ============================================
+  // 10. Create Feed Inventory
+  // ============================================
+  console.log('📦 Creating feed inventory items...');
+
+  const layerFeed1 = await prisma.feedInventory.create({
+    data: {
+      feedType: 'Layer',
+      feedBrand: 'Vital Layer Premium',
+      currentStockBags: 450,
+      reorderLevel: 100,
+      unitCostPerBag: 12500,
+      lastRestockDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      expiryDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 120 days from now
+      supplierId: vitalFeedSupplier.id,
+      isActive: true,
+    },
+  });
+
+  const layerFeed2 = await prisma.feedInventory.create({
+    data: {
+      feedType: 'Layer',
+      feedBrand: 'Top Layer Gold',
+      currentStockBags: 280,
+      reorderLevel: 80,
+      unitCostPerBag: 11800,
+      lastRestockDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      expiryDate: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
+      supplierId: topFeedsSupplier.id,
+      isActive: true,
+    },
+  });
+
+  const starterFeed = await prisma.feedInventory.create({
+    data: {
+      feedType: 'Starter',
+      feedBrand: 'AgriPro Chick Starter',
+      currentStockBags: 150,
+      reorderLevel: 50,
+      unitCostPerBag: 15200,
+      lastRestockDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      supplierId: agriProSupplier.id,
+      isActive: true,
+    },
+  });
+
+  const growerFeed = await prisma.feedInventory.create({
+    data: {
+      feedType: 'Grower',
+      feedBrand: 'Vital Grower Plus',
+      currentStockBags: 180,
+      reorderLevel: 60,
+      unitCostPerBag: 13500,
+      lastRestockDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      expiryDate: new Date(Date.now() + 110 * 24 * 60 * 60 * 1000),
+      supplierId: vitalFeedSupplier.id,
+      isActive: true,
+    },
+  });
+
+  const finisherFeed = await prisma.feedInventory.create({
+    data: {
+      feedType: 'Finisher',
+      feedBrand: 'Top Broiler Finisher',
+      currentStockBags: 220,
+      reorderLevel: 70,
+      unitCostPerBag: 12800,
+      lastRestockDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      expiryDate: new Date(Date.now() + 95 * 24 * 60 * 60 * 1000),
+      supplierId: topFeedsSupplier.id,
+      isActive: true,
+    },
+  });
+
+  const lowStockFeed = await prisma.feedInventory.create({
+    data: {
+      feedType: 'Grower',
+      feedBrand: 'AgriPro Growth Formula',
+      currentStockBags: 35, // Low stock for testing alerts
+      reorderLevel: 50,
+      unitCostPerBag: 13200,
+      lastRestockDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+      expiryDate: new Date(Date.now() + 80 * 24 * 60 * 60 * 1000),
+      supplierId: agriProSupplier.id,
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Feed inventory items created');
+
+  // ============================================
+  // 11. Create Feed Purchases
+  // ============================================
+  console.log('💰 Creating feed purchase records...');
+
+  // Purchase 1: Layer feed from Vital Feed (30 days ago)
+  await prisma.feedPurchase.create({
+    data: {
+      supplierId: vitalFeedSupplier.id,
+      inventoryId: layerFeed1.id,
+      quantityBags: 200,
+      pricePerBag: 12500,
+      totalCost: 200 * 12500,
+      purchaseDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      invoiceNumber: 'INV-VF-2024-001',
+      paymentStatus: 'Paid',
+      receivedBy: managerUser.id,
+      notes: 'Initial stock purchase for layer flocks',
+    },
+  });
+
+  // Purchase 2: Broiler starter (25 days ago)
+  await prisma.feedPurchase.create({
+    data: {
+      supplierId: agriProSupplier.id,
+      inventoryId: starterFeed.id,
+      quantityBags: 100,
+      pricePerBag: 15200,
+      totalCost: 100 * 15200,
+      purchaseDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+      invoiceNumber: 'INV-AP-2024-012',
+      paymentStatus: 'Paid',
+      receivedBy: supervisorUser.id,
+      notes: 'For new broiler batch',
+    },
+  });
+
+  // Purchase 3: Layer feed restock (14 days ago)
+  await prisma.feedPurchase.create({
+    data: {
+      supplierId: topFeedsSupplier.id,
+      inventoryId: layerFeed2.id,
+      quantityBags: 150,
+      pricePerBag: 11800,
+      totalCost: 150 * 11800,
+      purchaseDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      invoiceNumber: 'INV-TF-2024-045',
+      paymentStatus: 'Paid',
+      receivedBy: managerUser.id,
+    },
+  });
+
+  // Purchase 4: Grower feed (12 days ago)
+  await prisma.feedPurchase.create({
+    data: {
+      supplierId: vitalFeedSupplier.id,
+      inventoryId: growerFeed.id,
+      quantityBags: 120,
+      pricePerBag: 13500,
+      totalCost: 120 * 13500,
+      purchaseDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      invoiceNumber: 'INV-VF-2024-023',
+      paymentStatus: 'Paid',
+      receivedBy: managerUser.id,
+    },
+  });
+
+  // Purchase 5: Finisher feed (5 days ago)
+  await prisma.feedPurchase.create({
+    data: {
+      supplierId: topFeedsSupplier.id,
+      inventoryId: finisherFeed.id,
+      quantityBags: 150,
+      pricePerBag: 12800,
+      totalCost: 150 * 12800,
+      purchaseDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      invoiceNumber: 'INV-TF-2024-067',
+      paymentStatus: 'Paid',
+      receivedBy: supervisorUser.id,
+    },
+  });
+
+  // Purchase 6: Recent layer feed restock (2 days ago) - Pending payment
+  await prisma.feedPurchase.create({
+    data: {
+      supplierId: vitalFeedSupplier.id,
+      inventoryId: layerFeed1.id,
+      quantityBags: 250,
+      pricePerBag: 12500,
+      totalCost: 250 * 12500,
+      purchaseDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      invoiceNumber: 'INV-VF-2024-089',
+      paymentStatus: 'Pending',
+      receivedBy: managerUser.id,
+      notes: 'Payment due by end of week',
+    },
+  });
+
+  console.log('✅ Feed purchase records created');
+
   console.log('\n🎉 Database seeding completed successfully!\n');
   console.log('📊 Summary:');
   console.log('  - Roles: 3 (Farm Manager, Supervisor, Farm Worker)');
@@ -553,7 +790,10 @@ async function main() {
   console.log('  - Egg Collections: ~80 records (last 30 days)');
   console.log('  - Mortality Records: 45 records');
   console.log('  - Feed Consumption: 70 records');
-  console.log('  - Alerts: 3 production alerts\n');
+  console.log('  - Alerts: 3 production alerts');
+  console.log('  - Feed Suppliers: 3 suppliers');
+  console.log('  - Feed Inventory: 6 items (1 with low stock alert)');
+  console.log('  - Feed Purchases: 6 purchase records\n');
 }
 
 main()
