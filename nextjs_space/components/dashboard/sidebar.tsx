@@ -12,7 +12,8 @@ import {
   FileText,
   LogOut,
   Menu,
-  X
+  X,
+  Scale
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ export function Sidebar({ userRole }: SidebarProps) {
     { name: 'Batches (Broilers)', href: '/dashboard/batches', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Egg Collection', href: '/dashboard/egg-collection', icon: Egg, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Mortality Records', href: '/dashboard/mortality', icon: TrendingDown, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'Weight Tracking', href: '/dashboard/weight-tracking', icon: Scale, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText, roles: ['Farm Manager', 'Supervisor'] },
   ];
 

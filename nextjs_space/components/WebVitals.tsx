@@ -3,7 +3,7 @@
 import { useReportWebVitals } from 'next/web-vitals';
 import { sendGAEvent } from '@next/third-parties/google';
 
-export function WebVitals() {
+export default function WebVitals() {
   useReportWebVitals((metric) => {
     // Only send in production
     if (process.env.NODE_ENV === 'development') {

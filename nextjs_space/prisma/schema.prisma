@@ -36,6 +36,7 @@ model User {
   eggCollections         DailyEggCollection[]   @relation("EggCollectionRecorder")
   mortalityRecords       MortalityRecord[]      @relation("MortalityRecorder")
   feedConsumptions       DailyFeedConsumption[] @relation("FeedRecorder")
+  weightRecords          WeightRecord[]         @relation("WeightRecorder")
   resolvedAlerts         ProductionAlert[]      @relation("AlertResolver")
   accounts               Account[]
   sessions               Session[]
@@ -204,6 +205,7 @@ model Batch {
   // Relations
   mortalityRecords MortalityRecord[]
   feedConsumptions DailyFeedConsumption[]
+  weightRecords    WeightRecord[]
   alerts           ProductionAlert[]
 
   @@index([siteId])
@@ -268,6 +270,33 @@ model DailyFeedConsumption {
   @@index([consumptionDate])
   @@index([consumptionType])
   @@map("daily_feed_consumption")
+}
+
+// ============================================
+// WEIGHT TRACKING (Phase 2)
+// ============================================
+
+model WeightRecord {
+  id              String   @id @default(cuid())
+  batchId         String   @map("batch_id")
+  batch           Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  weighingDate    DateTime @map("weighing_date") @db.Date
+  ageInDays       Int      @map("age_in_days")
+  sampleSize      Int      @map("sample_size") // Number of birds weighed
+  averageWeight   Decimal  @map("average_weight") @db.Decimal(10, 2) // in kg
+  minWeight       Decimal? @map("min_weight") @db.Decimal(10, 2) // in kg
+  maxWeight       Decimal? @map("max_weight") @db.Decimal(10, 2) // in kg
+  uniformity      Decimal? @map("uniformity") @db.Decimal(5, 2) // percentage
+  recordedBy      String   @map("recorded_by")
+  recorder        User     @relation("WeightRecorder", fields: [recordedBy], references: [id])
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([batchId, weighingDate])
+  @@index([batchId])
+  @@index([weighingDate])
+  @@map("weight_records")
 }
 
 // ============================================

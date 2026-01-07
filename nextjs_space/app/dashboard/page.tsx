@@ -222,14 +222,45 @@ export default async function DashboardPage() {
 
   const data = await getDashboardData();
 
+  const currentDate = new Date().toLocaleDateString('en-NG', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Production Dashboard</h1>
-        <p className="text-gray-600 mt-1">
-          Welcome back, {(session.user as any)?.name || 'User'}!
-        </p>
+    <div className="space-y-8">
+      {/* Stunning Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 p-8 shadow-2xl">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        
+        <div className="relative z-10">
+          <div className="flex items-start justify-between">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-white">Live Dashboard</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                Production Dashboard
+              </h1>
+              <p className="text-lg text-green-50 max-w-2xl">
+                Welcome back, <span className="font-semibold">{(session.user as any)?.name || 'User'}</span>! 
+                Here's your farm overview for today.
+              </p>
+              <p className="text-sm text-green-100 opacity-80">{currentDate}</p>
+            </div>
+            
+            <div className="hidden lg:flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* KPIs */}
@@ -237,20 +268,43 @@ export default async function DashboardPage() {
 
       {/* Active Alerts */}
       {data.activeAlerts.length > 0 && (
-        <AlertsList alerts={data.activeAlerts} />
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+          <AlertsList alerts={data.activeAlerts} />
+        </div>
       )}
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <EggProductionChart data={data.eggProductionTrend} />
-        <MortalityChart data={data.mortalityTrend} />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <div className="w-1 h-8 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full" />
+            Production Analytics
+          </h2>
+          <div className="text-sm text-gray-600">Last 30 days</div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="animate-in fade-in slide-in-from-left-4 duration-500">
+            <EggProductionChart data={data.eggProductionTrend} />
+          </div>
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500 delay-100">
+            <MortalityChart data={data.mortalityTrend} />
+          </div>
+        </div>
       </div>
 
       {/* Recent Activity */}
-      <RecentActivity 
-        eggCollections={data.recentEggCollections}
-        mortalityRecords={data.recentMortality}
-      />
+      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full" />
+            Recent Activity
+          </h2>
+        </div>
+        <RecentActivity 
+          eggCollections={data.recentEggCollections}
+          mortalityRecords={data.recentMortality}
+        />
+      </div>
     </div>
   );
 }

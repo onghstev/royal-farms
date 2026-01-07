@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import WebVitals from '@/components/WebVitals';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,6 +35,8 @@ export default function RootLayout({
         <script src="https://apps.abacus.ai/chatllm/appllm-lib.js"></script>
       </head>
       <body className={inter.className} suppressHydrationWarning>
+        <GoogleAnalytics />
+        <WebVitals />
         <Providers>{children}</Providers>
       </body>
     </html>
