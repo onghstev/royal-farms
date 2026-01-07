@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Loader2, Package, ShoppingCart, TrendingDown, Users, AlertCircle, CheckCircle, DollarSign, Wheat } from 'lucide-react';
+import { Loader2, Package, ShoppingCart, TrendingDown, Users, AlertCircle, CheckCircle, DollarSign, Wheat, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function FeedManagementPage() {
@@ -91,14 +92,14 @@ export default function FeedManagementPage() {
       </div>
 
       {/* Welcome Card */}
-      <Card className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50">
+      <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-amber-600" />
-            Phase 2 Backend Complete!
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            Feed Management System Ready!
           </CardTitle>
           <CardDescription>
-            All Feed Management APIs are now operational. UI development is in progress.
+            Comprehensive feed tracking, inventory management, and cost analysis - all fully operational.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -109,7 +110,7 @@ export default function FeedManagementPage() {
               </div>
               <div>
                 <p className="font-medium text-sm">Feed Suppliers</p>
-                <p className="text-xs text-muted-foreground">Full CRUD API</p>
+                <p className="text-xs text-muted-foreground">Relationship management</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -118,7 +119,7 @@ export default function FeedManagementPage() {
               </div>
               <div>
                 <p className="font-medium text-sm">Inventory Tracking</p>
-                <p className="text-xs text-muted-foreground">Stock management</p>
+                <p className="text-xs text-muted-foreground">Real-time stock levels</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -127,7 +128,7 @@ export default function FeedManagementPage() {
               </div>
               <div>
                 <p className="font-medium text-sm">Feed Purchases</p>
-                <p className="text-xs text-muted-foreground">Auto inventory update</p>
+                <p className="text-xs text-muted-foreground">Auto inventory sync</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -136,7 +137,7 @@ export default function FeedManagementPage() {
               </div>
               <div>
                 <p className="font-medium text-sm">Consumption Tracking</p>
-                <p className="text-xs text-muted-foreground">Auto stock deduction</p>
+                <p className="text-xs text-muted-foreground">Auto stock updates</p>
               </div>
             </div>
           </div>
@@ -222,7 +223,7 @@ export default function FeedManagementPage() {
 
       {/* Feature Cards */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5 text-blue-600" />
@@ -240,19 +241,16 @@ export default function FeedManagementPage() {
                 <li>Link suppliers to inventory items</li>
               </ul>
             </div>
-            <div className="bg-blue-50 p-3 rounded border border-blue-200">
-              <p className="text-sm font-medium text-blue-900">API Status: ✅ Operational</p>
-              <p className="text-xs text-blue-700 mt-1">
-                Endpoint: <code>/api/feed/suppliers</code>
-              </p>
-            </div>
-            <Badge variant="outline" className="text-amber-600 border-amber-300">
-              UI: In Development
-            </Badge>
+            <Link href="/dashboard/feed/suppliers">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                Manage Suppliers
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5 text-green-600" />
@@ -270,19 +268,16 @@ export default function FeedManagementPage() {
                 <li>Expiry date tracking</li>
               </ul>
             </div>
-            <div className="bg-green-50 p-3 rounded border border-green-200">
-              <p className="text-sm font-medium text-green-900">API Status: ✅ Operational</p>
-              <p className="text-xs text-green-700 mt-1">
-                Endpoint: <code>/api/feed/inventory</code>
-              </p>
-            </div>
-            <Badge variant="outline" className="text-amber-600 border-amber-300">
-              UI: In Development
-            </Badge>
+            <Link href="/dashboard/feed/inventory">
+              <Button className="w-full bg-green-600 hover:bg-green-700">
+                Manage Inventory
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5 text-purple-600" />
@@ -300,19 +295,16 @@ export default function FeedManagementPage() {
                 <li>Cost analysis and reporting</li>
               </ul>
             </div>
-            <div className="bg-purple-50 p-3 rounded border border-purple-200">
-              <p className="text-sm font-medium text-purple-900">API Status: ✅ Operational</p>
-              <p className="text-xs text-purple-700 mt-1">
-                Endpoint: <code>/api/feed/purchases</code>
-              </p>
-            </div>
-            <Badge variant="outline" className="text-amber-600 border-amber-300">
-              UI: In Development
-            </Badge>
+            <Link href="/dashboard/feed/purchases">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                Manage Purchases
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingDown className="h-5 w-5 text-orange-600" />
@@ -330,62 +322,73 @@ export default function FeedManagementPage() {
                 <li>Feed cost per bird calculations</li>
               </ul>
             </div>
-            <div className="bg-orange-50 p-3 rounded border border-orange-200">
-              <p className="text-sm font-medium text-orange-900">API Status: ✅ Operational</p>
-              <p className="text-xs text-orange-700 mt-1">
-                Endpoint: <code>/api/feed/consumption</code>
-              </p>
-            </div>
-            <Badge variant="outline" className="text-amber-600 border-amber-300">
-              UI: In Development
-            </Badge>
+            <Link href="/dashboard/feed/consumption">
+              <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                Track Consumption
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
 
-      {/* Next Steps Card */}
-      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+      {/* Phase 2 Complete Card */}
+      <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
         <CardHeader>
-          <CardTitle>🚀 Next Steps for Complete Phase 2</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle className="h-6 w-6 text-green-600" />
+            Phase 2 Feed Management - Fully Operational! 🎉
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-semibold mb-2">Remaining Development Tasks:</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2">
-                <Badge variant="outline" className="text-amber-600 border-amber-300 mt-0.5">TODO</Badge>
-                <span>Build comprehensive UI for Suppliers, Inventory, Purchases, and Consumption modules</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Badge variant="outline" className="text-amber-600 border-amber-300 mt-0.5">TODO</Badge>
-                <span>Implement FCR (Feed Conversion Ratio) analytics dashboard</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Badge variant="outline" className="text-amber-600 border-amber-300 mt-0.5">TODO</Badge>
-                <span>Create feed cost analysis reports</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Badge variant="outline" className="text-amber-600 border-amber-300 mt-0.5">TODO</Badge>
-                <span>Add automated email alerts for low stock</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Badge variant="outline" className="text-amber-600 border-amber-300 mt-0.5">TODO</Badge>
-                <span>Integrate feed reports into main Reports module</span>
-              </li>
-            </ul>
+          <div className="bg-white p-4 rounded border border-green-200">
+            <p className="text-sm font-medium mb-3 text-green-900">✅ Complete Features:</p>
+            <div className="grid md:grid-cols-2 gap-3">
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Database schema with 4 new models (Suppliers, Inventory, Purchases, Consumption)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Full CRUD API endpoints for all feed operations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Automatic inventory tracking (purchases increment, consumption decrements)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Payment status tracking for purchases</span>
+                </li>
+              </ul>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Supplier relationship management UI</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Low stock detection and alert system</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Feed type categorization (Starter, Grower, Finisher, Layer)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span>Complete management interfaces for all modules</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <div className="bg-white p-4 rounded border">
-            <p className="text-sm font-medium mb-2">✅ Completed in This Session:</p>
-            <ul className="space-y-1 text-sm text-muted-foreground">
-              <li>• Database schema updated with 4 new models</li>
-              <li>• Created 4 comprehensive API endpoints with full CRUD operations</li>
-              <li>• Implemented automatic inventory tracking (purchases increment, consumption decrements)</li>
-              <li>• Added payment status tracking for purchases</li>
-              <li>• Built supplier relationship management</li>
-              <li>• Implemented low stock detection system</li>
-            </ul>
-          </div>
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertCircle className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="ml-2 text-sm text-blue-900">
+              <strong>Getting Started:</strong> Click on any of the "Manage" buttons above to start managing your feed operations. All data is automatically synced across modules for seamless tracking.
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     </div>
