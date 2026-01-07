@@ -15,7 +15,9 @@ import {
   X,
   Scale,
   Users,
-  BookOpen
+  BookOpen,
+  BarChart3,
+  Activity
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -36,6 +38,8 @@ export function Sidebar({ userRole }: SidebarProps) {
     { name: 'Egg Collection', href: '/dashboard/egg-collection', icon: Egg, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Mortality Records', href: '/dashboard/mortality', icon: TrendingDown, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Weight Tracking', href: '/dashboard/weight-tracking', icon: Scale, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'FCR Analysis', href: '/dashboard/fcr', icon: BarChart3, roles: ['Farm Manager', 'Supervisor'] },
+    { name: 'Health & Vaccination', href: '/dashboard/health', icon: Activity, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Feed Management', href: '/dashboard/feed', icon: Wheat, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText, roles: ['Farm Manager', 'Supervisor'] },
     { name: 'User Management', href: '/dashboard/users', icon: Users, roles: ['Farm Manager'] },

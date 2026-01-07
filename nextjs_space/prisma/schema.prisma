@@ -39,6 +39,10 @@ model User {
   feedPurchases          FeedPurchase[]         @relation("FeedReceiver")
   weightRecords          WeightRecord[]         @relation("WeightRecorder")
   resolvedAlerts         ProductionAlert[]      @relation("AlertResolver")
+  vaccinationRecords     VaccinationRecord[]    @relation("VaccinationAdministrator")
+  healthChecks           HealthCheck[]          @relation("HealthInspector")
+  diseaseOutbreaks       DiseaseOutbreak[]      @relation("OutbreakRecorder")
+  medicationRecords      MedicationRecord[]     @relation("MedicationAdministrator")
   accounts               Account[]
   sessions               Session[]
 
@@ -143,10 +147,14 @@ model Flock {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   // Relations
-  eggCollections   DailyEggCollection[]
-  mortalityRecords MortalityRecord[]
-  feedConsumptions DailyFeedConsumption[]
-  alerts           ProductionAlert[]
+  eggCollections     DailyEggCollection[]
+  mortalityRecords   MortalityRecord[]
+  feedConsumptions   DailyFeedConsumption[]
+  alerts             ProductionAlert[]
+  vaccinationRecords VaccinationRecord[]
+  healthChecks       HealthCheck[]
+  diseaseOutbreaks   DiseaseOutbreak[]
+  medicationRecords  MedicationRecord[]
 
   @@index([siteId])
   @@index([status])
@@ -204,10 +212,14 @@ model Batch {
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  mortalityRecords MortalityRecord[]
-  feedConsumptions DailyFeedConsumption[]
-  weightRecords    WeightRecord[]
-  alerts           ProductionAlert[]
+  mortalityRecords   MortalityRecord[]
+  feedConsumptions   DailyFeedConsumption[]
+  weightRecords      WeightRecord[]
+  alerts             ProductionAlert[]
+  vaccinationRecords VaccinationRecord[]
+  healthChecks       HealthCheck[]
+  diseaseOutbreaks   DiseaseOutbreak[]
+  medicationRecords  MedicationRecord[]
 
   @@index([siteId])
   @@index([status])
@@ -398,4 +410,147 @@ model ProductionAlert {
   @@index([isResolved])
   @@index([alertDate])
   @@map("production_alerts")
+}
+
+// ============================================
+// HEALTH & VACCINATION MODULE
+// ============================================
+
+model VaccinationSchedule {
+  id                  String               @id @default(cuid())
+  vaccineName         String               @map("vaccine_name")
+  diseaseTarget       String               @map("disease_target") // Newcastle, Gumboro, Fowl Pox, etc.
+  birdType            String               @map("bird_type") // Layer, Broiler
+  administrationRoute String               @map("administration_route") // Drinking water, Injection, Spray, Eye drop
+  ageInDays           Int                  @map("age_in_days") // Recommended age for administration
+  dosage              String               // e.g., "0.03ml per bird", "1 dose per 1000 birds"
+  frequency           String?              // e.g., "Once", "Booster after 2 weeks"
+  manufacturer        String?
+  notes               String?              @db.Text
+  isActive            Boolean              @default(true) @map("is_active")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  vaccinationRecords  VaccinationRecord[]
+
+  @@index([birdType])
+  @@index([ageInDays])
+  @@map("vaccination_schedules")
+}
+
+model VaccinationRecord {
+  id                  String              @id @default(cuid())
+  scheduleId          String?             @map("schedule_id")
+  schedule            VaccinationSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  flockId             String?             @map("flock_id")
+  flock               Flock?              @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId             String?             @map("batch_id")
+  batch               Batch?              @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  vaccinationDate     DateTime            @map("vaccination_date") @db.Date
+  vaccineName         String              @map("vaccine_name")
+  diseaseTarget       String              @map("disease_target")
+  administrationRoute String              @map("administration_route")
+  dosage              String
+  batchNumber         String?             @map("batch_number") // Vaccine batch/lot number
+  expiryDate          DateTime?           @map("expiry_date") @db.Date
+  birdsVaccinated     Int                 @map("birds_vaccinated")
+  administeredBy      String              @map("administered_by")
+  administrator       User                @relation("VaccinationAdministrator", fields: [administeredBy], references: [id])
+  cost                Decimal?            @db.Decimal(10, 2)
+  supplier            String?
+  notes               String?             @db.Text
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([vaccinationDate])
+  @@map("vaccination_records")
+}
+
+model HealthCheck {
+  id             String   @id @default(cuid())
+  flockId        String?  @map("flock_id")
+  flock          Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId        String?  @map("batch_id")
+  batch          Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  checkDate      DateTime @map("check_date") @db.Date
+  birdsInspected Int      @map("birds_inspected")
+  healthStatus   String   @map("health_status") // Excellent, Good, Fair, Poor
+  temperature    Decimal? @db.Decimal(5, 2) // House temperature in Celsius
+  humidity       Decimal? @db.Decimal(5, 2) // Humidity percentage
+  observations   String   @db.Text // General observations: behavior, droppings, appetite, etc.
+  issuesFound    String?  @db.Text // Any specific issues identified
+  actionsTaken   String?  @db.Text // Actions taken during inspection
+  inspectedBy    String   @map("inspected_by")
+  inspector      User     @relation("HealthInspector", fields: [inspectedBy], references: [id])
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([checkDate])
+  @@map("health_checks")
+}
+
+model DiseaseOutbreak {
+  id                String   @id @default(cuid())
+  flockId           String?  @map("flock_id")
+  flock             Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId           String?  @map("batch_id")
+  batch             Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  diseaseType       String   @map("disease_type") // Newcastle, Coccidiosis, Gumboro, etc.
+  outbreakDate      DateTime @map("outbreak_date") @db.Date
+  birdsAffected     Int      @map("birds_affected")
+  mortality         Int      @default(0)
+  symptoms          String   @db.Text
+  diagnosisMethod   String   @map("diagnosis_method") // Visual, Lab test, Post-mortem, Vet diagnosis
+  treatmentGiven    String?  @map("treatment_given") @db.Text
+  preventiveMeasures String? @map("preventive_measures") @db.Text
+  veterinarianName  String?  @map("veterinarian_name")
+  veterinarianContact String? @map("veterinarian_contact")
+  cost              Decimal? @db.Decimal(10, 2)
+  isResolved        Boolean  @default(false) @map("is_resolved")
+  resolvedDate      DateTime? @map("resolved_date") @db.Date
+  recordedBy        String   @map("recorded_by")
+  recorder          User     @relation("OutbreakRecorder", fields: [recordedBy], references: [id])
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([outbreakDate])
+  @@index([isResolved])
+  @@map("disease_outbreaks")
+}
+
+model MedicationRecord {
+  id                String   @id @default(cuid())
+  flockId           String?  @map("flock_id")
+  flock             Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId           String?  @map("batch_id")
+  batch             Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  medicationDate    DateTime @map("medication_date") @db.Date
+  medicationName    String   @map("medication_name")
+  medicationType    String   @map("medication_type") // Antibiotic, Vitamin, Probiotic, Anthelmintic, etc.
+  purpose           String   // Treatment, Prevention, Growth promotion, etc.
+  administrationRoute String @map("administration_route") // Drinking water, Feed mix, Injection
+  dosage            String
+  duration          String   // e.g., "5 days", "Single dose"
+  quantity          Decimal  @db.Decimal(10, 2)
+  unit              String   // kg, liters, doses, etc.
+  cost              Decimal? @db.Decimal(10, 2)
+  supplier          String?
+  prescribedBy      String?  @map("prescribed_by") // Veterinarian name
+  withdrawalPeriod  String?  @map("withdrawal_period") // e.g., "7 days before slaughter"
+  administeredBy    String   @map("administered_by")
+  administrator     User     @relation("MedicationAdministrator", fields: [administeredBy], references: [id])
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([medicationDate])
+  @@map("medication_records")
 }
