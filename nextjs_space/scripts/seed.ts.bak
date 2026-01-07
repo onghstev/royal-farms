@@ -794,6 +794,16 @@ async function main() {
   console.log('  - Feed Suppliers: 3 suppliers');
   console.log('  - Feed Inventory: 6 items (1 with low stock alert)');
   console.log('  - Feed Purchases: 6 purchase records\n');
+}
+
+main()
+  .catch((e) => {
+    console.error('❌ Error during seeding:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
 
   // ============================================
   // PHASE 4: INVENTORY MANAGEMENT SEED DATA
@@ -1013,7 +1023,7 @@ async function main() {
   ]);
   console.log(`✓ Created ${inventoryItems.length} inventory items`);
 
-  // Create Sample Purchase Orders  
+  // Create Sample Purchase Orders
   const purchaseOrders = await Promise.all([
     prisma.purchaseOrder.create({
       data: {
@@ -1070,6 +1080,8 @@ async function main() {
   console.log(`✓ Created ${purchaseOrders.length} purchase orders`);
 
   console.log('✅ Phase 4: Inventory Management data seeded successfully!');
+
+
 }
 
 main()

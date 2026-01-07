@@ -17,7 +17,8 @@ import {
   Users,
   BookOpen,
   BarChart3,
-  Activity
+  Activity,
+  Package
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export function Sidebar({ userRole }: SidebarProps) {
     { name: 'FCR Analysis', href: '/dashboard/fcr', icon: BarChart3, roles: ['Farm Manager', 'Supervisor'] },
     { name: 'Health & Vaccination', href: '/dashboard/health', icon: Activity, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Feed Management', href: '/dashboard/feed', icon: Wheat, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'Inventory Management', href: '/dashboard/inventory', icon: Package, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText, roles: ['Farm Manager', 'Supervisor'] },
     { name: 'User Management', href: '/dashboard/users', icon: Users, roles: ['Farm Manager'] },
     { name: 'User Manual', href: '/dashboard/user-manual', icon: BookOpen, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },

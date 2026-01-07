@@ -554,3 +554,147 @@ model MedicationRecord {
   @@index([medicationDate])
   @@map("medication_records")
 }
+
+// ============================================
+// PHASE 4: INVENTORY MANAGEMENT MODULE
+// ============================================
+
+model InventoryCategory {
+  id          String   @id @default(cuid())
+  categoryName String  @unique @map("category_name") // Equipment, Consumables, Spare Parts, Medical Supplies
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  items GeneralInventory[]
+
+  @@map("inventory_categories")
+}
+
+model GeneralInventorySupplier {
+  id              String   @id @default(cuid())
+  supplierName    String   @unique @map("supplier_name")
+  supplierType    String   @map("supplier_type") // Equipment, Consumables, Medical, Multi-category
+  contactPerson   String?  @map("contact_person")
+  phone           String?
+  email           String?
+  address         String?  @db.Text
+  taxIdNumber     String?  @map("tax_id_number")
+  paymentTerms    String?  @map("payment_terms") // e.g., "Net 30", "COD", "50% advance"
+  bankDetails     String?  @map("bank_details") @db.Text
+  rating          Decimal? @db.Decimal(3, 2) // 0.00 to 5.00
+  isActive        Boolean  @default(true) @map("is_active")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  purchaseOrders  PurchaseOrder[]
+  inventory       GeneralInventory[]
+
+  @@map("general_inventory_suppliers")
+}
+
+model GeneralInventory {
+  id                String                    @id @default(cuid())
+  itemName          String                    @map("item_name")
+  itemCode          String?                   @unique @map("item_code") // SKU or internal code
+  categoryId        String                    @map("category_id")
+  category          InventoryCategory         @relation(fields: [categoryId], references: [id])
+  description       String?                   @db.Text
+  unit              String                    // pieces, boxes, liters, kg, etc.
+  currentStock      Decimal                   @default(0) @map("current_stock") @db.Decimal(10, 2)
+  reorderLevel      Decimal                   @map("reorder_level") @db.Decimal(10, 2)
+  maxStockLevel     Decimal?                  @map("max_stock_level") @db.Decimal(10, 2)
+  unitCost          Decimal                   @map("unit_cost") @db.Decimal(10, 2)
+  supplierId        String?                   @map("supplier_id")
+  supplier          GeneralInventorySupplier? @relation(fields: [supplierId], references: [id])
+  storageLocation   String?                   @map("storage_location")
+  expiryDate        DateTime?                 @map("expiry_date") @db.Date
+  lastRestockDate   DateTime?                 @map("last_restock_date") @db.Date
+  isActive          Boolean                   @default(true) @map("is_active")
+  notes             String?                   @db.Text
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  purchaseOrderItems PurchaseOrderItem[]
+  stockMovements     StockMovement[]
+
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([itemCode])
+  @@map("general_inventory")
+}
+
+model PurchaseOrder {
+  id                String                    @id @default(cuid())
+  orderNumber       String                    @unique @map("order_number") // Auto-generated: PO-YYYYMMDD-XXX
+  orderDate         DateTime                  @map("order_date") @db.Date
+  supplierId        String                    @map("supplier_id")
+  supplier          GeneralInventorySupplier  @relation(fields: [supplierId], references: [id])
+  expectedDelivery  DateTime?                 @map("expected_delivery_date") @db.Date
+  actualDelivery    DateTime?                 @map("actual_delivery_date") @db.Date
+  status            String                    @default("draft") @map("status") // draft, submitted, approved, received, cancelled
+  totalAmount       Decimal                   @map("total_amount") @db.Decimal(12, 2)
+  paidAmount        Decimal                   @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  paymentStatus     String                    @default("pending") @map("payment_status") // pending, partial, paid
+  paymentDate       DateTime?                 @map("payment_date") @db.Date
+  paymentMethod     String?                   @map("payment_method") // Bank Transfer, Cash, Cheque, Credit
+  invoiceNumber     String?                   @map("invoice_number")
+  shippingAddress   String?                   @map("shipping_address") @db.Text
+  approvedBy        String?                   @map("approved_by") // User who approved the order
+  receivedBy        String?                   @map("received_by") // User who received the delivery
+  notes             String?                   @db.Text
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  items             PurchaseOrderItem[]
+
+  @@index([supplierId])
+  @@index([orderDate])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              String           @id @default(cuid())
+  purchaseOrderId String           @map("purchase_order_id")
+  purchaseOrder   PurchaseOrder    @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  inventoryId     String           @map("inventory_id")
+  inventory       GeneralInventory @relation(fields: [inventoryId], references: [id])
+  quantityOrdered Decimal          @map("quantity_ordered") @db.Decimal(10, 2)
+  quantityReceived Decimal         @default(0) @map("quantity_received") @db.Decimal(10, 2)
+  unitPrice       Decimal          @map("unit_price") @db.Decimal(10, 2)
+  totalPrice      Decimal          @map("total_price") @db.Decimal(12, 2)
+  notes           String?          @db.Text
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  @@index([purchaseOrderId])
+  @@index([inventoryId])
+  @@map("purchase_order_items")
+}
+
+model StockMovement {
+  id              String           @id @default(cuid())
+  inventoryId     String           @map("inventory_id")
+  inventory       GeneralInventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  movementDate    DateTime         @map("movement_date") @db.Date
+  movementType    String           @map("movement_type") // purchase, consumption, adjustment, return, damage
+  quantity        Decimal          @db.Decimal(10, 2)
+  balanceAfter    Decimal          @map("balance_after") @db.Decimal(10, 2)
+  referenceNumber String?          @map("reference_number") // PO number, consumption ticket, etc.
+  reason          String?          @db.Text
+  performedBy     String?          @map("performed_by")
+  notes           String?          @db.Text
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  @@index([inventoryId])
+  @@index([movementDate])
+  @@index([movementType])
+  @@map("stock_movements")
+}
