@@ -163,7 +163,7 @@ export default function FeedConsumptionPage() {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(consumption =>
-        consumption.inventory.feedBrand.toLowerCase().includes(query) ||
+        consumption.inventory?.feedBrand?.toLowerCase().includes(query) ||
         consumption.flock?.flockName?.toLowerCase().includes(query) ||
         consumption.batch?.batchName?.toLowerCase().includes(query)
       );
@@ -179,7 +179,7 @@ export default function FeedConsumptionPage() {
   const calculateStats = () => {
     const totalFeedUsed = filteredConsumptions.reduce((sum, consumption) => sum + consumption.feedQuantityBags, 0);
     const totalCost = filteredConsumptions.reduce((sum, consumption) => 
-      sum + (consumption.feedQuantityBags * consumption.inventory.unitCostPerBag), 0
+      sum + (consumption.feedQuantityBags * (consumption.inventory?.unitCostPerBag || 0)), 0
     );
     const totalRecords = filteredConsumptions.length;
     setStats({ totalFeedUsed, totalCost, totalRecords });
@@ -405,17 +405,17 @@ export default function FeedConsumptionPage() {
                         </Badge>
                       </td>
                       <td className="p-4 font-medium">
-                        {consumption.flock?.flockName || consumption.batch?.batchName}
+                        {consumption.flock?.flockName || consumption.batch?.batchName || '-'}
                       </td>
-                      <td className="p-4">{consumption.inventory.feedBrand}</td>
+                      <td className="p-4">{consumption.inventory?.feedBrand || '-'}</td>
                       <td className="p-4">
-                        <Badge variant="outline">{consumption.inventory.feedType}</Badge>
+                        <Badge variant="outline">{consumption.inventory?.feedType || 'N/A'}</Badge>
                       </td>
                       <td className="p-4 text-right">{consumption.feedQuantityBags} bags</td>
                       <td className="p-4 text-right">
-                        ₦{(consumption.feedQuantityBags * consumption.inventory.unitCostPerBag).toLocaleString()}
+                        ₦{(consumption.feedQuantityBags * (consumption.inventory?.unitCostPerBag || 0)).toLocaleString()}
                       </td>
-                      <td className="p-4">{consumption.recorder.fullName}</td>
+                      <td className="p-4">{consumption.recorder?.fullName || '-'}</td>
                       <td className="p-4">
                         <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="sm" onClick={() => openEditDialog(consumption)}>

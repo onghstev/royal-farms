@@ -50,20 +50,32 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Serialize purchases with proper number conversion
+    const serializedPurchases = purchases.map((p) => ({
+      ...p,
+      quantityBags: Number(p.quantityBags),
+      pricePerBag: Number(p.pricePerBag),
+      totalCost: Number(p.totalCost),
+      receiver: {
+        fullName: `${p.receiver.firstName} ${p.receiver.lastName}`,
+        email: p.receiver.email,
+      },
+    }));
+
     // Calculate summary statistics
     const totalSpent = purchases.reduce((sum, p) => sum + Number(p.totalCost), 0);
     const pendingAmount = purchases
-      .filter((p) => p.paymentStatus === 'pending')
+      .filter((p) => p.paymentStatus === 'Pending')
       .reduce((sum, p) => sum + Number(p.totalCost), 0);
 
     return NextResponse.json({
-      purchases,
+      purchases: serializedPurchases,
       summary: {
         totalPurchases: purchases.length,
-        totalSpent: totalSpent.toFixed(2),
-        pendingAmount: pendingAmount.toFixed(2),
-        paidCount: purchases.filter((p) => p.paymentStatus === 'paid').length,
-        pendingCount: purchases.filter((p) => p.paymentStatus === 'pending').length,
+        totalSpent: Number(totalSpent.toFixed(2)),
+        pendingPayments: Number(pendingAmount.toFixed(2)),
+        paidCount: purchases.filter((p) => p.paymentStatus === 'Paid').length,
+        pendingCount: purchases.filter((p) => p.paymentStatus === 'Pending').length,
       },
     });
   } catch (error) {

@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
           select: {
             feedType: true,
             feedBrand: true,
+            unitCostPerBag: true,
           },
         },
         recorder: {
@@ -62,23 +63,36 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Serialize consumptions with proper number conversion
+    const serializedConsumptions = consumptions.map((c) => ({
+      ...c,
+      feedQuantityBags: Number(c.feedQuantityBags),
+      inventory: c.inventory ? {
+        ...c.inventory,
+        unitCostPerBag: Number(c.inventory.unitCostPerBag),
+      } : null,
+      recorder: {
+        fullName: `${c.recorder.firstName} ${c.recorder.lastName}`,
+      },
+    }));
+
     // Calculate summary
     const totalFeedUsed = consumptions.reduce(
       (sum, c) => sum + Number(c.feedQuantityBags),
       0
     );
     const totalCost = consumptions.reduce(
-      (sum, c) => sum + Number(c.totalFeedCost),
+      (sum, c) => sum + (Number(c.feedQuantityBags) * (c.inventory ? Number(c.inventory.unitCostPerBag) : 0)),
       0
     );
 
     return NextResponse.json({
-      consumptions,
+      consumptions: serializedConsumptions,
       summary: {
         totalRecords: consumptions.length,
-        totalFeedUsedBags: totalFeedUsed.toFixed(2),
-        totalCost: totalCost.toFixed(2),
-        averageDailyCost: consumptions.length > 0 ? (totalCost / consumptions.length).toFixed(2) : '0',
+        totalFeedUsed: Number(totalFeedUsed.toFixed(2)),
+        totalCost: Number(totalCost.toFixed(2)),
+        averageDailyCost: consumptions.length > 0 ? Number((totalCost / consumptions.length).toFixed(2)) : 0,
       },
     });
   } catch (error) {
