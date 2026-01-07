@@ -36,6 +36,7 @@ model User {
   eggCollections         DailyEggCollection[]   @relation("EggCollectionRecorder")
   mortalityRecords       MortalityRecord[]      @relation("MortalityRecorder")
   feedConsumptions       DailyFeedConsumption[] @relation("FeedRecorder")
+  feedPurchases          FeedPurchase[]         @relation("FeedReceiver")
   weightRecords          WeightRecord[]         @relation("WeightRecorder")
   resolvedAlerts         ProductionAlert[]      @relation("AlertResolver")
   accounts               Account[]
@@ -247,26 +248,100 @@ model MortalityRecord {
 // FEED TRACKING
 // ============================================
 
+model FeedSupplier {
+  id              String   @id @default(cuid())
+  supplierName    String   @unique @map("supplier_name")
+  contactPerson   String?  @map("contact_person")
+  phone           String?
+  email           String?
+  address         String?  @db.Text
+  isActive        Boolean  @default(true) @map("is_active")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  purchases       FeedPurchase[]
+  inventory       FeedInventory[]
+
+  @@map("feed_suppliers")
+}
+
+model FeedInventory {
+  id                String        @id @default(cuid())
+  feedType          String        @map("feed_type") // Starter, Grower, Finisher, Layer
+  feedBrand         String?       @map("feed_brand")
+  supplierId        String?       @map("supplier_id")
+  supplier          FeedSupplier? @relation(fields: [supplierId], references: [id])
+  currentStockBags  Decimal       @default(0) @map("current_stock_bags") @db.Decimal(10, 2)
+  reorderLevel      Decimal       @default(50) @map("reorder_level") @db.Decimal(10, 2)
+  unitCostPerBag    Decimal       @map("unit_cost_per_bag") @db.Decimal(10, 2)
+  bagWeightKg       Decimal       @default(25) @map("bag_weight_kg") @db.Decimal(5, 2)
+  lastRestockDate   DateTime?     @map("last_restock_date") @db.Date
+  expiryDate        DateTime?     @map("expiry_date") @db.Date
+  storageLocation   String?       @map("storage_location")
+  isActive          Boolean       @default(true) @map("is_active")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  purchases         FeedPurchase[]
+  consumptions      DailyFeedConsumption[]
+
+  @@index([feedType])
+  @@index([supplierId])
+  @@map("feed_inventory")
+}
+
+model FeedPurchase {
+  id                String        @id @default(cuid())
+  purchaseDate      DateTime      @map("purchase_date") @db.Date
+  supplierId        String        @map("supplier_id")
+  supplier          FeedSupplier  @relation(fields: [supplierId], references: [id])
+  inventoryId       String        @map("inventory_id")
+  inventory         FeedInventory @relation(fields: [inventoryId], references: [id])
+  quantityBags      Decimal       @map("quantity_bags") @db.Decimal(10, 2)
+  pricePerBag       Decimal       @map("price_per_bag") @db.Decimal(10, 2)
+  totalCost         Decimal       @map("total_cost") @db.Decimal(12, 2)
+  paymentStatus     String        @default("pending") @map("payment_status") // pending, partial, paid
+  paymentDate       DateTime?     @map("payment_date") @db.Date
+  invoiceNumber     String?       @map("invoice_number")
+  deliveryDate      DateTime?     @map("delivery_date") @db.Date
+  receivedBy        String        @map("received_by")
+  receiver          User          @relation("FeedReceiver", fields: [receivedBy], references: [id])
+  notes             String?       @db.Text
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  @@index([supplierId])
+  @@index([inventoryId])
+  @@index([purchaseDate])
+  @@map("feed_purchases")
+}
+
 model DailyFeedConsumption {
-  id               String   @id @default(cuid())
-  consumptionType  String   @map("consumption_type") // flock, batch
-  flockId          String?  @map("flock_id")
-  flock            Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
-  batchId          String?  @map("batch_id")
-  batch            Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  consumptionDate  DateTime @map("consumption_date") @db.Date
-  feedQuantityBags Decimal  @map("feed_quantity_bags") @db.Decimal(10, 2)
-  feedPricePerBag  Decimal  @map("feed_price_per_bag") @db.Decimal(10, 2)
-  totalFeedCost    Decimal  @map("total_feed_cost") @db.Decimal(12, 2)
-  feedType         String?  @map("feed_type")
-  recordedBy       String   @map("recorded_by")
-  recorder         User     @relation("FeedRecorder", fields: [recordedBy], references: [id])
-  notes            String?  @db.Text
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id               String         @id @default(cuid())
+  consumptionType  String         @map("consumption_type") // flock, batch
+  flockId          String?        @map("flock_id")
+  flock            Flock?         @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId          String?        @map("batch_id")
+  batch            Batch?         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  inventoryId      String?        @map("inventory_id")
+  inventory        FeedInventory? @relation(fields: [inventoryId], references: [id])
+  consumptionDate  DateTime       @map("consumption_date") @db.Date
+  feedQuantityBags Decimal        @map("feed_quantity_bags") @db.Decimal(10, 2)
+  feedPricePerBag  Decimal        @map("feed_price_per_bag") @db.Decimal(10, 2)
+  totalFeedCost    Decimal        @map("total_feed_cost") @db.Decimal(12, 2)
+  feedType         String?        @map("feed_type")
+  recordedBy       String         @map("recorded_by")
+  recorder         User           @relation("FeedRecorder", fields: [recordedBy], references: [id])
+  notes            String?        @db.Text
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
 
   @@index([flockId])
   @@index([batchId])
+  @@index([inventoryId])
   @@index([consumptionDate])
   @@index([consumptionType])
   @@map("daily_feed_consumption")

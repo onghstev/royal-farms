@@ -36,6 +36,7 @@ export function Sidebar({ userRole }: SidebarProps) {
     { name: 'Egg Collection', href: '/dashboard/egg-collection', icon: Egg, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Mortality Records', href: '/dashboard/mortality', icon: TrendingDown, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Weight Tracking', href: '/dashboard/weight-tracking', icon: Scale, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'Feed Management', href: '/dashboard/feed', icon: Wheat, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText, roles: ['Farm Manager', 'Supervisor'] },
     { name: 'User Management', href: '/dashboard/users', icon: Users, roles: ['Farm Manager'] },
     { name: 'User Manual', href: '/dashboard/user-manual', icon: BookOpen, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
