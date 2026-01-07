@@ -13,7 +13,9 @@ import {
   LogOut,
   Menu,
   X,
-  Scale
+  Scale,
+  Users,
+  BookOpen
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -35,6 +37,8 @@ export function Sidebar({ userRole }: SidebarProps) {
     { name: 'Mortality Records', href: '/dashboard/mortality', icon: TrendingDown, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Weight Tracking', href: '/dashboard/weight-tracking', icon: Scale, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText, roles: ['Farm Manager', 'Supervisor'] },
+    { name: 'User Management', href: '/dashboard/users', icon: Users, roles: ['Farm Manager'] },
+    { name: 'User Manual', href: '/dashboard/user-manual', icon: BookOpen, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
   ];
 
   const filteredNavigation = navigation.filter(item => 
