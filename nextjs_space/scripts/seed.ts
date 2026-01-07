@@ -45,18 +45,31 @@ async function main() {
   // ============================================
   console.log('👥 Creating test users...');
   
-  const hashedPassword = await bcrypt.hash('johndoe123', 10);
+  // Farm Manager (main test account for users)
+  const managerUser = await prisma.user.upsert({
+    where: { email: 'manager@royalfarms.com' },
+    update: {},
+    create: {
+      email: 'manager@royalfarms.com',
+      passwordHash: await bcrypt.hash('manager123', 10),
+      firstName: 'Michael',
+      lastName: 'Adeyemi',
+      phone: '+234 803 123 4567',
+      roleId: farmManagerRole.id,
+      isActive: true,
+    },
+  });
   
-  // Farm Manager (test account - MUST NOT BE SURFACED TO USER)
+  // Additional Farm Manager (internal test account)
   const adminUser = await prisma.user.upsert({
     where: { email: 'john@doe.com' },
     update: {},
     create: {
       email: 'john@doe.com',
-      passwordHash: hashedPassword,
+      passwordHash: await bcrypt.hash('johndoe123', 10),
       firstName: 'John',
       lastName: 'Doe',
-      phone: '+234 803 123 4567',
+      phone: '+234 803 999 8888',
       roleId: farmManagerRole.id,
       isActive: true,
     },
