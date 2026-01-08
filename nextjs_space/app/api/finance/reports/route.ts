@@ -275,8 +275,8 @@ export async function GET(request: Request) {
 
       if (flocks && flocks.currentStock > 0) {
         costPerBird = totalExpense / flocks.currentStock;
-        const totalEggs = flocks.eggCollections.reduce(
-          (sum, ec) => sum + ec.totalEggsCount,
+        const totalEggs = (flocks.eggCollections || []).reduce(
+          (sum: number, ec: any) => sum + (ec.totalEggsCount || 0),
           0
         );
         if (totalEggs > 0) {

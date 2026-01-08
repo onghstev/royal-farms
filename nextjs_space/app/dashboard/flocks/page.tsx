@@ -44,7 +44,7 @@ export default async function FlocksPage() {
 
   const flocks = await getFlocks();
   const userRole = (session.user as any)?.role;
-  const canCreate = userRole === 'Farm Manager';
+  const canCreate = userRole === 'Farm Manager' || userRole === 'Supervisor';
 
   return (
     <div className="space-y-6">

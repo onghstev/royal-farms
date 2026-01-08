@@ -220,6 +220,7 @@ export default function BatchesPage() {
                     <SelectContent>
                       <SelectItem value="broilers">Broilers</SelectItem>
                       <SelectItem value="turkeys">Turkeys</SelectItem>
+                      <SelectItem value="pigs">Pigs (Piggery)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

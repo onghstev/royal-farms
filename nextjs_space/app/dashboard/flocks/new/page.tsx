@@ -149,6 +149,7 @@ export default function NewFlockPage() {
                   <SelectContent>
                     <SelectItem value="layers">Layers</SelectItem>
                     <SelectItem value="pullets">Pullets</SelectItem>
+                    <SelectItem value="breeders">Breeders</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
