@@ -41,6 +41,35 @@ async function main() {
   console.log('✅ Roles created');
 
   // ============================================
+  // 1.5. Create Livestock Types
+  // ============================================
+  console.log('🐄 Creating livestock types...');
+
+  const livestockTypesData = [
+    { name: 'Layers', category: 'poultry', description: 'Egg-laying chickens', icon: 'bird' },
+    { name: 'Broilers', category: 'poultry', description: 'Meat chickens', icon: 'bird' },
+    { name: 'Pullets', category: 'poultry', description: 'Young hens before laying', icon: 'bird' },
+    { name: 'Breeders', category: 'poultry', description: 'Breeding stock', icon: 'bird' },
+    { name: 'Turkeys', category: 'poultry', description: 'Turkey farming', icon: 'bird' },
+    { name: 'Cattle', category: 'livestock', description: 'Cows for dairy or beef', icon: 'beef' },
+    { name: 'Pigs', category: 'livestock', description: 'Pig farming (piggery)', icon: 'beef' },
+    { name: 'Goats', category: 'livestock', description: 'Goat farming', icon: 'beef' },
+    { name: 'Sheep', category: 'livestock', description: 'Sheep farming', icon: 'beef' },
+    { name: 'Fish', category: 'aquaculture', description: 'Fish farming (aquaculture)', icon: 'fish' },
+    { name: 'Rabbits', category: 'small_animals', description: 'Rabbit farming', icon: 'rabbit' },
+  ];
+
+  for (const typeData of livestockTypesData) {
+    await prisma.livestockType.upsert({
+      where: { name: typeData.name },
+      update: {},
+      create: typeData,
+    });
+  }
+
+  console.log('✅ Livestock types created');
+
+  // ============================================
   // 2. Create Test Users
   // ============================================
   console.log('👥 Creating test users...');

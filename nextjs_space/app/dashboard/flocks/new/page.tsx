@@ -18,11 +18,19 @@ interface Site {
   name: string;
 }
 
+interface LivestockType {
+  id: string;
+  name: string;
+  category: string;
+  isActive: boolean;
+}
+
 export default function NewFlockPage() {
   const { data: session, status } = useSession() || {};
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sites, setSites] = useState<Site[]>([]);
+  const [livestockTypes, setLivestockTypes] = useState<LivestockType[]>([]);
 
   const [formData, setFormData] = useState({
     flockName: '',
@@ -44,6 +52,7 @@ export default function NewFlockPage() {
 
   useEffect(() => {
     fetchSites();
+    fetchLivestockTypes();
   }, []);
 
   const fetchSites = async () => {
@@ -58,6 +67,18 @@ export default function NewFlockPage() {
       }
     } catch (error) {
       console.error('Error fetching sites:', error);
+    }
+  };
+
+  const fetchLivestockTypes = async () => {
+    try {
+      const response = await fetch('/api/livestock-types');
+      if (response.ok) {
+        const data = await response.json();
+        setLivestockTypes(data.filter((t: LivestockType) => t.isActive));
+      }
+    } catch (error) {
+      console.error('Error fetching livestock types:', error);
     }
   };
 
@@ -147,14 +168,22 @@ export default function NewFlockPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="layers">Layers (Poultry)</SelectItem>
-                    <SelectItem value="pullets">Pullets (Poultry)</SelectItem>
-                    <SelectItem value="breeders">Breeders (Poultry)</SelectItem>
-                    <SelectItem value="cattle">Cattle (Cows)</SelectItem>
-                    <SelectItem value="goats">Goats</SelectItem>
-                    <SelectItem value="sheep">Sheep</SelectItem>
-                    <SelectItem value="fish">Fish (Aquaculture)</SelectItem>
-                    <SelectItem value="rabbits">Rabbits</SelectItem>
+                    {livestockTypes.length > 0 ? (
+                      livestockTypes.map((type) => (
+                        <SelectItem key={type.id} value={type.name.toLowerCase()}>
+                          {type.name} ({type.category})
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <>
+                        <SelectItem value="layers">Layers (Poultry)</SelectItem>
+                        <SelectItem value="broilers">Broilers (Poultry)</SelectItem>
+                        <SelectItem value="cattle">Cattle</SelectItem>
+                        <SelectItem value="pigs">Pigs</SelectItem>
+                        <SelectItem value="goats">Goats</SelectItem>
+                        <SelectItem value="fish">Fish</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>

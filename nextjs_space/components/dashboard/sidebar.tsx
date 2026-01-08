@@ -35,6 +35,7 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'Livestock Types', href: '/dashboard/livestock-types', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Livestock Groups', href: '/dashboard/flocks', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Production Batches', href: '/dashboard/batches', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Egg Collection', href: '/dashboard/egg-collection', icon: Egg, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },

@@ -20,6 +20,13 @@ interface Site {
   name: string;
 }
 
+interface LivestockType {
+  id: string;
+  name: string;
+  category: string;
+  isActive: boolean;
+}
+
 interface Batch {
   id: string;
   batchName: string;
@@ -49,6 +56,7 @@ export default function BatchesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
+  const [livestockTypes, setLivestockTypes] = useState<LivestockType[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -74,7 +82,20 @@ export default function BatchesPage() {
   useEffect(() => {
     fetchBatches();
     fetchSites();
+    fetchLivestockTypes();
   }, []);
+
+  const fetchLivestockTypes = async () => {
+    try {
+      const response = await fetch('/api/livestock-types');
+      if (response.ok) {
+        const data = await response.json();
+        setLivestockTypes(data.filter((t: LivestockType) => t.isActive));
+      }
+    } catch (error) {
+      console.error('Error fetching livestock types:', error);
+    }
+  };
 
   const fetchBatches = async () => {
     setIsLoading(true);
@@ -218,14 +239,21 @@ export default function BatchesPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="broilers">Broilers (Poultry)</SelectItem>
-                      <SelectItem value="turkeys">Turkeys (Poultry)</SelectItem>
-                      <SelectItem value="pigs">Pigs (Piggery)</SelectItem>
-                      <SelectItem value="cattle">Cattle (Beef)</SelectItem>
-                      <SelectItem value="goats">Goats</SelectItem>
-                      <SelectItem value="sheep">Sheep</SelectItem>
-                      <SelectItem value="fish">Fish (Aquaculture)</SelectItem>
-                      <SelectItem value="rabbits">Rabbits</SelectItem>
+                      {livestockTypes.length > 0 ? (
+                        livestockTypes.map((type) => (
+                          <SelectItem key={type.id} value={type.name.toLowerCase()}>
+                            {type.name} ({type.category})
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <>
+                          <SelectItem value="broilers">Broilers (Poultry)</SelectItem>
+                          <SelectItem value="pigs">Pigs</SelectItem>
+                          <SelectItem value="cattle">Cattle</SelectItem>
+                          <SelectItem value="goats">Goats</SelectItem>
+                          <SelectItem value="fish">Fish</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
