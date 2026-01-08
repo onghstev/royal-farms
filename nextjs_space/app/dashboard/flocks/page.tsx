@@ -50,14 +50,14 @@ export default async function FlocksPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Layer Flocks</h1>
-          <p className="text-gray-600 mt-1">Manage your layer chicken flocks</p>
+          <h1 className="text-3xl font-bold text-gray-900">Livestock Groups</h1>
+          <p className="text-gray-600 mt-1">Manage all your livestock (poultry, cattle, fish, goats, etc.)</p>
         </div>
         {canCreate && (
           <Link href="/dashboard/flocks/new">
             <Button className="bg-gradient-to-r from-green-600 to-blue-600">
               <Plus className="w-4 h-4 mr-2" />
-              New Flock
+              New Livestock
             </Button>
           </Link>
         )}

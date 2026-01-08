@@ -108,9 +108,9 @@ export default function NewFlockPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <Bird className="w-8 h-8 text-green-600" />
-            Create New Flock
+            Create New Livestock Group
           </h1>
-          <p className="text-gray-600 mt-1">Add a new layer flock to your farm</p>
+          <p className="text-gray-600 mt-1">Add a new livestock group (poultry, cattle, fish, etc.)</p>
         </div>
       </div>
 
@@ -147,9 +147,14 @@ export default function NewFlockPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="layers">Layers</SelectItem>
-                    <SelectItem value="pullets">Pullets</SelectItem>
-                    <SelectItem value="breeders">Breeders</SelectItem>
+                    <SelectItem value="layers">Layers (Poultry)</SelectItem>
+                    <SelectItem value="pullets">Pullets (Poultry)</SelectItem>
+                    <SelectItem value="breeders">Breeders (Poultry)</SelectItem>
+                    <SelectItem value="cattle">Cattle (Cows)</SelectItem>
+                    <SelectItem value="goats">Goats</SelectItem>
+                    <SelectItem value="sheep">Sheep</SelectItem>
+                    <SelectItem value="fish">Fish (Aquaculture)</SelectItem>
+                    <SelectItem value="rabbits">Rabbits</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -130,7 +130,7 @@ model Site {
 model Flock {
   id           String   @id @default(cuid())
   flockName    String   @unique @map("flock_name")
-  flockType    String   @default("layers") @map("flock_type") // layers, pullets, breeders
+  flockType    String   @default("layers") @map("flock_type") // layers, pullets, breeders, cattle, goats, sheep, fish, rabbits
   breed        String?
   siteId       String   @map("site_id")
   site         Site     @relation(fields: [siteId], references: [id])
@@ -194,7 +194,7 @@ model DailyEggCollection {
 model Batch {
   id                String    @id @default(cuid())
   batchName         String    @unique @map("batch_name")
-  batchType         String    @default("broilers") @map("batch_type") // broilers, turkeys, pigs
+  batchType         String    @default("broilers") @map("batch_type") // broilers, turkeys, pigs, cattle, goats, sheep, fish, rabbits
   breed             String?
   siteId            String    @map("site_id")
   site              Site      @relation(fields: [siteId], references: [id])

@@ -35,8 +35,8 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
-    { name: 'Flocks (Layers)', href: '/dashboard/flocks', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
-    { name: 'Batches (Broilers)', href: '/dashboard/batches', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'Livestock Groups', href: '/dashboard/flocks', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
+    { name: 'Production Batches', href: '/dashboard/batches', icon: Bird, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Egg Collection', href: '/dashboard/egg-collection', icon: Egg, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Mortality Records', href: '/dashboard/mortality', icon: TrendingDown, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },
     { name: 'Weight Tracking', href: '/dashboard/weight-tracking', icon: Scale, roles: ['Farm Manager', 'Supervisor', 'Farm Worker'] },

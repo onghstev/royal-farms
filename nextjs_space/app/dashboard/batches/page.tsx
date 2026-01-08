@@ -218,9 +218,14 @@ export default function BatchesPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="broilers">Broilers</SelectItem>
-                      <SelectItem value="turkeys">Turkeys</SelectItem>
+                      <SelectItem value="broilers">Broilers (Poultry)</SelectItem>
+                      <SelectItem value="turkeys">Turkeys (Poultry)</SelectItem>
                       <SelectItem value="pigs">Pigs (Piggery)</SelectItem>
+                      <SelectItem value="cattle">Cattle (Beef)</SelectItem>
+                      <SelectItem value="goats">Goats</SelectItem>
+                      <SelectItem value="sheep">Sheep</SelectItem>
+                      <SelectItem value="fish">Fish (Aquaculture)</SelectItem>
+                      <SelectItem value="rabbits">Rabbits</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
