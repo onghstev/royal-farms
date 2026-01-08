@@ -12,7 +12,8 @@ import {
   LayoutDashboard, 
   Bird, 
   Egg, 
-  TrendingDown, 
+  TrendingDown,
+  TrendingUp,
   FileText, 
   Users, 
   Scale,
@@ -29,7 +30,9 @@ import {
   Search,
   Filter,
   Calendar,
-  BarChart3
+  BarChart3,
+  Package,
+  Activity
 } from 'lucide-react';
 
 export default function UserManualPage() {
@@ -475,6 +478,214 @@ export default function UserManualPage() {
             </CardContent>
           </Card>
 
+          {/* Feed Management Module */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-orange-600" />
+                Feed Management
+              </CardTitle>
+              <CardDescription>Manage feed suppliers, inventory, purchases, and consumption</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Feed Suppliers</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Click "Add Supplier" to register new feed vendors</li>
+                  <li>Enter supplier name, contact person, phone, email</li>
+                  <li>Add address and toggle active/inactive status</li>
+                  <li>View all suppliers with purchase history</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Feed Inventory</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Track stock levels for Starter, Grower, Finisher, Layer feeds</li>
+                  <li>Set reorder levels for low stock alerts</li>
+                  <li>Monitor unit costs and total inventory value</li>
+                  <li>View expiry dates and last restock dates</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Feed Purchases</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Record purchases from suppliers</li>
+                  <li>Stock is automatically incremented on purchase</li>
+                  <li>Track payment status (Paid/Pending)</li>
+                  <li>View purchase history with date range filters</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Daily Consumption</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Record daily feed usage per flock/batch</li>
+                  <li>Stock is automatically decremented on consumption</li>
+                  <li>System validates sufficient stock before saving</li>
+                  <li>Track consumption trends over time</li>
+                </ol>
+              </div>
+              <Alert className="border-orange-200 bg-orange-50">
+                <AlertCircle className="h-4 w-4 text-orange-600" />
+                <AlertDescription>
+                  <strong>Auto-Sync:</strong> Purchases automatically increase inventory, consumption automatically decreases it.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+
+          {/* Inventory Management Module */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-cyan-600" />
+                General Inventory
+              </CardTitle>
+              <CardDescription>Manage equipment, supplies, and procurement</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Categories</h4>
+                <p className="text-sm text-muted-foreground">Organize items into categories (Equipment, Medications, Supplies, Consumables)</p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Suppliers</h4>
+                <p className="text-sm text-muted-foreground">Manage vendors with payment terms, ratings, and contact details</p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Items</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Add inventory items with reorder levels</li>
+                  <li>Track stock quantities and unit costs</li>
+                  <li>Monitor expiry dates for medications</li>
+                  <li>View low stock alerts on dashboard</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Purchase Orders</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Create purchase orders for suppliers</li>
+                  <li>Track status: Draft → Ordered → Received</li>
+                  <li>Auto-update inventory when received</li>
+                  <li>Monitor payment status</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Stock Movements</h4>
+                <p className="text-sm text-muted-foreground">Full audit trail of all inventory changes (purchases, consumption, adjustments, returns)</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Health Module */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-red-600" />
+                Health Management
+              </CardTitle>
+              <CardDescription>Track vaccinations, medications, and health incidents</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Vaccinations</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Schedule and record vaccinations</li>
+                  <li>Track vaccine type, dosage, and batch numbers</li>
+                  <li>Set next due date reminders</li>
+                  <li>Monitor vaccination coverage</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Medications</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Record medication treatments</li>
+                  <li>Track dosage and treatment duration</li>
+                  <li>Note withdrawal periods</li>
+                  <li>Link to specific flocks/batches</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Health Incidents</h4>
+                <p className="text-sm text-muted-foreground">Log disease outbreaks, symptoms, and treatments for historical analysis</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Finance Module */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-emerald-600" />
+                Finance Management
+              </CardTitle>
+              <CardDescription>Track expenses, revenue, and financial performance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Expenses</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Record all farm expenses by category</li>
+                  <li>Categories: Feed, Labor, Utilities, Medication, Maintenance, Other</li>
+                  <li>Track payment status and receipt references</li>
+                  <li>View expense trends and summaries</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Revenue</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>Record egg and bird sales</li>
+                  <li>Track customer information</li>
+                  <li>Monitor payment collection</li>
+                  <li>Analyze revenue by product type</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Financial Summary</h4>
+                <p className="text-sm text-muted-foreground">Dashboard showing total expenses, revenue, and profit/loss with period comparisons</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* FCR Module */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-violet-600" />
+                Feed Conversion Ratio (FCR)
+              </CardTitle>
+              <CardDescription>Monitor feed efficiency for broiler batches</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Understanding FCR</h4>
+                <p className="text-sm text-muted-foreground mb-2">
+                  FCR = Total Feed Consumed (kg) / Total Weight Gained (kg)
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Lower FCR indicates better feed efficiency. Industry standard for broilers is 1.6-1.8.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">FCR Dashboard</h4>
+                <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>View FCR per batch with trend analysis</li>
+                  <li>Compare against industry benchmarks</li>
+                  <li>Identify high-performing and underperforming batches</li>
+                  <li>Correlate with feed type and management practices</li>
+                </ol>
+              </div>
+              <div className="bg-violet-50 p-4 rounded-lg border border-violet-200">
+                <p className="font-medium text-sm mb-2">FCR Targets:</p>
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  <p>• <Badge className="bg-green-500">Excellent</Badge> Below 1.6</p>
+                  <p>• <Badge className="bg-blue-500">Good</Badge> 1.6 - 1.8</p>
+                  <p>• <Badge className="bg-yellow-500">Average</Badge> 1.8 - 2.0</p>
+                  <p>• <Badge className="bg-red-500">Poor</Badge> Above 2.0</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Reports Module */}
           <Card>
             <CardHeader>
@@ -856,8 +1067,43 @@ export default function UserManualPage() {
                     </ul>
                   </div>
 
+                  <div className="border-l-4 border-orange-500 pl-4">
+                    <h4 className="font-semibold mb-2">8. Feed Management Testing</h4>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      <li>☐ Add a new feed supplier</li>
+                      <li>☐ Add feed inventory item</li>
+                      <li>☐ Record a feed purchase</li>
+                      <li>☐ Verify stock increases after purchase</li>
+                      <li>☐ Record daily consumption</li>
+                      <li>☐ Verify stock decreases after consumption</li>
+                      <li>☐ Test low stock alerts</li>
+                    </ul>
+                  </div>
+
+                  <div className="border-l-4 border-cyan-500 pl-4">
+                    <h4 className="font-semibold mb-2">9. Inventory Testing</h4>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      <li>☐ Create inventory category</li>
+                      <li>☐ Add inventory supplier</li>
+                      <li>☐ Add inventory items</li>
+                      <li>☐ Create purchase order</li>
+                      <li>☐ Receive purchase order</li>
+                      <li>☐ View stock movements</li>
+                    </ul>
+                  </div>
+
+                  <div className="border-l-4 border-emerald-500 pl-4">
+                    <h4 className="font-semibold mb-2">10. Finance Testing</h4>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      <li>☐ Record an expense</li>
+                      <li>☐ Record revenue/sale</li>
+                      <li>☐ View financial summary</li>
+                      <li>☐ Test date filtering</li>
+                    </ul>
+                  </div>
+
                   <div className="border-l-4 border-pink-500 pl-4">
-                    <h4 className="font-semibold mb-2">8. Reports Testing</h4>
+                    <h4 className="font-semibold mb-2">11. Reports Testing</h4>
                     <ul className="space-y-1 text-sm text-muted-foreground">
                       <li>☐ Generate Production Report</li>
                       <li>☐ Generate Mortality Report</li>
@@ -870,7 +1116,7 @@ export default function UserManualPage() {
                   </div>
 
                   <div className="border-l-4 border-gray-500 pl-4">
-                    <h4 className="font-semibold mb-2">9. User Management Testing (Manager Only)</h4>
+                    <h4 className="font-semibold mb-2">12. User Management Testing (Manager Only)</h4>
                     <ul className="space-y-1 text-sm text-muted-foreground">
                       <li>☐ View all users list</li>
                       <li>☐ Create a new test user</li>
@@ -883,7 +1129,7 @@ export default function UserManualPage() {
                   </div>
 
                   <div className="border-l-4 border-teal-500 pl-4">
-                    <h4 className="font-semibold mb-2">10. Mobile Responsiveness Testing</h4>
+                    <h4 className="font-semibold mb-2">13. Mobile Responsiveness Testing</h4>
                     <ul className="space-y-1 text-sm text-muted-foreground">
                       <li>☐ Test sidebar menu on mobile</li>
                       <li>☐ Test forms on mobile devices</li>
@@ -998,7 +1244,7 @@ export default function UserManualPage() {
             If you encounter any issues or need additional training, please contact your Farm Manager or system administrator.
           </p>
           <div className="flex flex-wrap gap-2 mt-4">
-            <Badge variant="outline">System Version: 1.0.0</Badge>
+            <Badge variant="outline">System Version: 2.0.0 (Phase 5)</Badge>
             <Badge variant="outline">Last Updated: January 2026</Badge>
             <Badge variant="outline">Royal Farms Ltd</Badge>
           </div>

@@ -1101,7 +1101,7 @@ async function main() {
             paymentMethod: ['cash', 'bank_transfer', 'mobile_money'][Math.floor(Math.random() * 3)],
             paymentStatus: Math.random() > 0.1 ? 'paid' : 'pending',
             invoiceNumber: `INV-EGG-${date.toISOString().split('T')[0]}-${Math.floor(Math.random() * 1000)}`,
-            flockId: flocks[0].id,
+            flockId: flock1.id,
             description: `Egg sales - ${quantity} pieces`,
             recordedBy: managerUser.id
           }
@@ -1128,7 +1128,7 @@ async function main() {
             paymentMethod: ['cash', 'bank_transfer'][Math.floor(Math.random() * 2)],
             paymentStatus: 'paid',
             invoiceNumber: `INV-BIRD-${date.toISOString().split('T')[0]}-${Math.floor(Math.random() * 1000)}`,
-            batchId: batches[0].id,
+            batchId: batch1.id,
             description: `Broiler sales - ${quantity} birds`,
             recordedBy: managerUser.id
           }
@@ -1174,8 +1174,8 @@ async function main() {
           amount: 45000 + Math.random() * 10000, // ₦45,000-55,000 daily
           quantity: 50 + Math.random() * 20,
           unitCost: 900,
-          vendorName: feedSuppliers[0].name,
-          vendorPhone: feedSuppliers[0].phone,
+          vendorName: topFeedsSupplier.supplierName,
+          vendorPhone: topFeedsSupplier.phone || '',
           paymentMethod: 'bank_transfer',
           paymentStatus: 'paid',
           receiptNumber: `REC-FEED-${date.toISOString().split('T')[0]}`,
