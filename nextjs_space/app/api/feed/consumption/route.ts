@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     const totalFeedCost = Number(feedQuantityBags) * Number(feedPricePerBag);
 
     // Use transaction to ensure data consistency
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Check if inventory has enough stock (if inventoryId provided)
       if (inventoryId) {
         const inventory = await tx.feedInventory.findUnique({
@@ -281,7 +281,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Use transaction for consistency
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Adjust inventory if quantity changed and inventory is tracked
       if (inventoryId) {
         const quantityDiff = Number(feedQuantityBags) - Number(oldConsumption.feedQuantityBags);
@@ -376,7 +376,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Use transaction to ensure consistency
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Delete consumption
       await tx.dailyFeedConsumption.delete({
         where: { id },

@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
     const totalCost = Number(quantityBags) * Number(pricePerBag);
 
     // Use transaction to ensure data consistency
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Create purchase record
       const purchase = await tx.feedPurchase.create({
         data: {
@@ -233,7 +233,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Use transaction for consistency
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Update purchase
       const purchase = await tx.feedPurchase.update({
         where: { id },
@@ -313,7 +313,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Use transaction to ensure consistency
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Delete purchase
       await tx.feedPurchase.delete({
         where: { id },
