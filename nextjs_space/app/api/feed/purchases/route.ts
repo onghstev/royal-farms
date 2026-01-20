@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Serialize purchases with proper number conversion
-    const serializedPurchases = purchases.map((p) => ({
+    const serializedPurchases = purchases.map((p: any) => ({
       ...p,
       quantityBags: Number(p.quantityBags),
       pricePerBag: Number(p.pricePerBag),

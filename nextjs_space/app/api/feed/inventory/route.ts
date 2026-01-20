@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
         totalItems: inventory.length,
         totalValue: totalValue.toFixed(2),
         lowStockCount: lowStockItems.length,
-        lowStockItems: lowStockItems.map((item) => ({
+        lowStockItems: lowStockItems.map((item: any) => ({
           id: item.id,
           feedType: item.feedType,
           currentStock: item.currentStockBags,

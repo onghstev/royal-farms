@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Serialize consumptions with proper number conversion
-    const serializedConsumptions = consumptions.map((c) => ({
+    const serializedConsumptions = consumptions.map((c: any) => ({
       ...c,
       feedQuantityBags: Number(c.feedQuantityBags),
       inventory: c.inventory ? {
