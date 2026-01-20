@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert Decimal to number for JSON serialization
-    const serializedCollections = eggCollections.map(collection => ({
+    const serializedCollections = eggCollections.map((collection: any) => ({
       ...collection,
       productionPercentage: collection.productionPercentage ? Number(collection.productionPercentage) : null,
     }));

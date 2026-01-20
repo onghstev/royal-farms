@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert Decimal to number for JSON serialization
-    const serializedFlocks = flocks.map(flock => ({
+    const serializedFlocks = flocks.map((flock: any) => ({
       ...flock,
       costPerBird: flock.costPerBird ? Number(flock.costPerBird) : null,
     }));

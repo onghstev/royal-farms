@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
             totalCollections: eggCollections.length,
           },
           byFlock: Object.values(byFlock),
-          collections: eggCollections.map((collection) => ({
+          collections: eggCollections.map((collection: any) => ({
             id: collection.id,
             date: collection.collectionDate,
             flockName: collection.flock.flockName,
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
           },
           byCause: Object.values(byCause),
           byGroup: Object.values(byGroup),
-          records: mortalityRecords.map((record) => ({
+          records: mortalityRecords.map((record: any) => ({
             id: record.id,
             date: record.mortalityDate,
             type: record.flockId ? 'Layer Flock' : 'Broiler Batch',
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
             activeFlocks: flocks.length,
             activeBatches: batches.length,
           },
-          flocks: flocks.map((flock) => ({
+          flocks: flocks.map((flock: any) => ({
             id: flock.id,
             name: flock.flockName,
             siteName: flock.site.name,
@@ -221,7 +221,7 @@ export async function GET(request: NextRequest) {
             currentStock: flock.currentStock,
             mortalityRate: ((flock.openingStock - flock.currentStock) / flock.openingStock * 100).toFixed(2),
           })),
-          batches: batches.map((batch) => ({
+          batches: batches.map((batch: any) => ({
             id: batch.id,
             name: batch.batchName,
             siteName: batch.site.name,
@@ -291,7 +291,7 @@ export async function GET(request: NextRequest) {
             totalSampled: weightRecords.reduce((sum: number, record) => sum + record.sampleSize, 0),
           },
           byBatch: Object.values(byBatch),
-          records: weightRecords.map((record) => ({
+          records: weightRecords.map((record: any) => ({
             id: record.id,
             date: record.weighingDate,
             batchName: record.batch.batchName,

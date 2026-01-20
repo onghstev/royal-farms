@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert Decimal to number for JSON serialization
-    const serializedBatches = batches.map(batch => ({
+    const serializedBatches = batches.map((batch: any) => ({
       ...batch,
       docCostPerBird: batch.docCostPerBird ? Number(batch.docCostPerBird) : null,
     }));

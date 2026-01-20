@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert Decimal to number for JSON serialization
-    const serializedRecords = weightRecords.map(record => ({
+    const serializedRecords = weightRecords.map((record: any) => ({
       ...record,
       averageWeight: Number(record.averageWeight),
       minWeight: record.minWeight ? Number(record.minWeight) : null,

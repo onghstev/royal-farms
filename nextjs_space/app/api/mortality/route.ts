@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert Decimal to number for JSON serialization
-    const serializedRecords = mortalityRecords.map(record => ({
+    const serializedRecords = mortalityRecords.map((record: any) => ({
       ...record,
       mortalityRate: record.mortalityRate ? Number(record.mortalityRate) : null,
     }));

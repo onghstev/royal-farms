@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get FCR trend over time
-    const fcrTrend = weightRecords.map((weightRecord, index) => {
+    const fcrTrend = weightRecords.map((weightRecord: any, index: number) => {
       // Calculate cumulative feed up to this weight record
       const feedUpToDate = feedRecords
         .filter(f => new Date(f.consumptionDate) <= new Date(weightRecord.weighingDate))

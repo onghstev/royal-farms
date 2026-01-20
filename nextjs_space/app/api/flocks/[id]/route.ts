@@ -53,11 +53,11 @@ export async function GET(
     const serializedFlock = {
       ...flock,
       costPerBird: flock.costPerBird ? Number(flock.costPerBird) : null,
-      eggCollections: flock.eggCollections.map(ec => ({
+      eggCollections: flock.eggCollections.map((ec: any) => ({
         ...ec,
         productionPercentage: ec.productionPercentage ? Number(ec.productionPercentage) : null,
       })),
-      mortalityRecords: flock.mortalityRecords.map(mr => ({
+      mortalityRecords: flock.mortalityRecords.map((mr: any) => ({
         ...mr,
         mortalityRate: mr.mortalityRate ? Number(mr.mortalityRate) : null,
       })),
