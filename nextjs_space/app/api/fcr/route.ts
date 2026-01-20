@@ -50,11 +50,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate total feed consumed (convert bags to kg, assuming 25kg per bag)
-    const totalFeedKg = feedRecords.reduce((sum, record) => {
+    const totalFeedKg = feedRecords.reduce((sum: number, record: any) => {
       return sum + (Number(record.feedQuantityBags) * 25);
     }, 0);
 
-    const totalFeedCost = feedRecords.reduce((sum, record) => {
+    const totalFeedCost = feedRecords.reduce((sum: number, record: any) => {
       return sum + Number(record.totalFeedCost);
     }, 0);
 
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
       where: { batchId },
     });
 
-    const totalMortality = mortalityRecords.reduce((sum, record) => {
+    const totalMortality = mortalityRecords.reduce((sum: number, record: any) => {
       return sum + record.mortalityCount;
     }, 0);
 
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       // Calculate cumulative feed up to this weight record
       const feedUpToDate = feedRecords
         .filter(f => new Date(f.consumptionDate) <= new Date(weightRecord.weighingDate))
-        .reduce((sum, record) => sum + (Number(record.feedQuantityBags) * 25), 0);
+        .reduce((sum: number, record: any) => sum + (Number(record.feedQuantityBags) * 25), 0);
 
       // Calculate weight gain at this point
       const weightAtPoint = Number(weightRecord.averageWeight);

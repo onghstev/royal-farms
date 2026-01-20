@@ -51,13 +51,13 @@ export async function GET(request: Request) {
     });
 
     // Calculate summary statistics
-    const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    const totalIncome = incomeTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
     const paidIncome = incomeTransactions
       .filter(t => t.paymentStatus === 'paid')
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
     const pendingIncome = incomeTransactions
       .filter(t => t.paymentStatus === 'pending')
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
     // Category breakdown
     const byCategory = incomeTransactions.reduce((acc: any, t) => {

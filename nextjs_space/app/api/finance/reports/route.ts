@@ -36,8 +36,8 @@ export async function GET(request: Request) {
         })
       ]);
 
-      const totalIncome = incomeData.reduce((sum, t) => sum + Number(t.amount), 0);
-      const totalExpense = expenseData.reduce((sum, t) => sum + Number(t.amount), 0);
+      const totalIncome = incomeData.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+      const totalExpense = expenseData.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const netProfit = totalIncome - totalExpense;
       const profitMargin = totalIncome > 0 ? (netProfit / totalIncome) * 100 : 0;
 
@@ -56,16 +56,16 @@ export async function GET(request: Request) {
       // Payment status summary
       const incomePaid = incomeData
         .filter(t => t.paymentStatus === 'paid')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const incomePending = incomeData
         .filter(t => t.paymentStatus === 'pending' || t.paymentStatus === 'partial')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const expensePaid = expenseData
         .filter(t => t.paymentStatus === 'paid')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const expensePending = expenseData
         .filter(t => t.paymentStatus === 'pending' || t.paymentStatus === 'partial')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
       return NextResponse.json({
         summary: {
@@ -255,7 +255,7 @@ export async function GET(request: Request) {
         where: { transactionDate: dateFilter }
       });
 
-      const totalIncome = incomeData.reduce((sum, t) => sum + Number(t.amount), 0);
+      const totalIncome = incomeData.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
       // Expense breakdown
       const expenseByCategory = expenseData.reduce((acc: any, t) => {

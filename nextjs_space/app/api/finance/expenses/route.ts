@@ -57,13 +57,13 @@ export async function GET(request: Request) {
     });
 
     // Calculate summary statistics
-    const totalExpense = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    const totalExpense = expenseTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
     const paidExpense = expenseTransactions
       .filter(t => t.paymentStatus === 'paid')
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
     const pendingExpense = expenseTransactions
       .filter(t => t.paymentStatus === 'pending')
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
     // Category breakdown
     const byCategory = expenseTransactions.reduce((acc: any, t) => {
