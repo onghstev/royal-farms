@@ -42,11 +42,11 @@ export async function GET(request: NextRequest) {
     // Calculate summary statistics
     const summary = {
       totalMovements: movements.length,
-      purchases: movements.filter(m => m.movementType === 'purchase').length,
-      consumptions: movements.filter(m => m.movementType === 'consumption').length,
-      adjustments: movements.filter(m => m.movementType === 'adjustment').length,
-      returns: movements.filter(m => m.movementType === 'return').length,
-      damages: movements.filter(m => m.movementType === 'damage').length
+      purchases: movements.filter((m: any) => m.movementType === 'purchase').length,
+      consumptions: movements.filter((m: any) => m.movementType === 'consumption').length,
+      adjustments: movements.filter((m: any) => m.movementType === 'adjustment').length,
+      returns: movements.filter((m: any) => m.movementType === 'return').length,
+      damages: movements.filter((m: any) => m.movementType === 'damage').length
     };
 
     return NextResponse.json({ success: true, data: movements, summary });

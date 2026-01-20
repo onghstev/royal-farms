@@ -63,10 +63,10 @@ export async function GET(request: NextRequest) {
     }));
 
     // Calculate summary statistics
-    const totalSpent = purchases.reduce((sum, p) => sum + Number(p.totalCost), 0);
+    const totalSpent = purchases.reduce((sum: number, p: any) => sum + Number(p.totalCost), 0);
     const pendingAmount = purchases
-      .filter((p) => p.paymentStatus === 'Pending')
-      .reduce((sum, p) => sum + Number(p.totalCost), 0);
+      .filter((p: any) => p.paymentStatus === 'Pending')
+      .reduce((sum: number, p: any) => sum + Number(p.totalCost), 0);
 
     return NextResponse.json({
       purchases: serializedPurchases,
@@ -74,8 +74,8 @@ export async function GET(request: NextRequest) {
         totalPurchases: purchases.length,
         totalSpent: Number(totalSpent.toFixed(2)),
         pendingPayments: Number(pendingAmount.toFixed(2)),
-        paidCount: purchases.filter((p) => p.paymentStatus === 'Paid').length,
-        pendingCount: purchases.filter((p) => p.paymentStatus === 'Pending').length,
+        paidCount: purchases.filter((p: any) => p.paymentStatus === 'Paid').length,
+        pendingCount: purchases.filter((p: any) => p.paymentStatus === 'Pending').length,
       },
     });
   } catch (error) {

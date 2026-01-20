@@ -53,10 +53,10 @@ export async function GET(request: Request) {
     // Calculate summary statistics
     const totalIncome = incomeTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
     const paidIncome = incomeTransactions
-      .filter(t => t.paymentStatus === 'paid')
+      .filter((t: any) => t.paymentStatus === 'paid')
       .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
     const pendingIncome = incomeTransactions
-      .filter(t => t.paymentStatus === 'pending')
+      .filter((t: any) => t.paymentStatus === 'pending')
       .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
     // Category breakdown

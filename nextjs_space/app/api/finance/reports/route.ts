@@ -55,16 +55,16 @@ export async function GET(request: Request) {
 
       // Payment status summary
       const incomePaid = incomeData
-        .filter(t => t.paymentStatus === 'paid')
+        .filter((t: any) => t.paymentStatus === 'paid')
         .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const incomePending = incomeData
-        .filter(t => t.paymentStatus === 'pending' || t.paymentStatus === 'partial')
+        .filter((t: any) => t.paymentStatus === 'pending' || t.paymentStatus === 'partial')
         .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const expensePaid = expenseData
-        .filter(t => t.paymentStatus === 'paid')
+        .filter((t: any) => t.paymentStatus === 'paid')
         .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
       const expensePending = expenseData
-        .filter(t => t.paymentStatus === 'pending' || t.paymentStatus === 'partial')
+        .filter((t: any) => t.paymentStatus === 'pending' || t.paymentStatus === 'partial')
         .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
       return NextResponse.json({
@@ -163,7 +163,7 @@ export async function GET(request: Request) {
       // Group by month
       const monthlyData: any = {};
 
-      incomeTransactions.forEach(t => {
+      incomeTransactions.forEach((t: any) => {
         const monthKey = t.transactionDate.toISOString().slice(0, 7); // YYYY-MM
         if (!monthlyData[monthKey]) {
           monthlyData[monthKey] = { income: 0, expense: 0, netCashFlow: 0 };
@@ -171,7 +171,7 @@ export async function GET(request: Request) {
         monthlyData[monthKey].income += Number(t.amount);
       });
 
-      expenseTransactions.forEach(t => {
+      expenseTransactions.forEach((t: any) => {
         const monthKey = t.transactionDate.toISOString().slice(0, 7);
         if (!monthlyData[monthKey]) {
           monthlyData[monthKey] = { income: 0, expense: 0, netCashFlow: 0 };
@@ -180,17 +180,17 @@ export async function GET(request: Request) {
       });
 
       // Calculate net cash flow
-      Object.keys(monthlyData).forEach(month => {
+      Object.keys(monthlyData).forEach((month: any) => {
         monthlyData[month].netCashFlow =
           monthlyData[month].income - monthlyData[month].expense;
       });
 
       const totalCashIn = incomeTransactions.reduce(
-        (sum, t) => sum + Number(t.amount),
+        (sum: number, t: any) => sum + Number(t.amount),
         0
       );
       const totalCashOut = expenseTransactions.reduce(
-        (sum, t) => sum + Number(t.amount),
+        (sum: number, t: any) => sum + Number(t.amount),
         0
       );
       const netCashFlow = totalCashIn - totalCashOut;

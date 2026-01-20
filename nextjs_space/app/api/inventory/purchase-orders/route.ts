@@ -46,11 +46,11 @@ export async function GET(request: NextRequest) {
     // Calculate summary statistics
     const summary = {
       totalOrders: orders.length,
-      draftOrders: orders.filter(o => o.status === 'draft').length,
-      pendingOrders: orders.filter(o => o.status === 'submitted' || o.status === 'approved').length,
-      receivedOrders: orders.filter(o => o.status === 'received').length,
-      totalValue: orders.reduce((sum, o) => sum + Number(o.totalAmount), 0),
-      totalPaid: orders.reduce((sum, o) => sum + Number(o.paidAmount), 0)
+      draftOrders: orders.filter((o: any) => o.status === 'draft').length,
+      pendingOrders: orders.filter((o: any) => o.status === 'submitted' || o.status === 'approved').length,
+      receivedOrders: orders.filter((o: any) => o.status === 'received').length,
+      totalValue: orders.reduce((sum: number, o: any) => sum + Number(o.totalAmount), 0),
+      totalPaid: orders.reduce((sum: number, o: any) => sum + Number(o.paidAmount), 0)
     };
 
     return NextResponse.json({ success: true, data: orders, summary });

@@ -78,11 +78,11 @@ export async function GET(request: NextRequest) {
 
     // Calculate summary
     const totalFeedUsed = consumptions.reduce(
-      (sum, c) => sum + Number(c.feedQuantityBags),
+      (sum: number, c: any) => sum + Number(c.feedQuantityBags),
       0
     );
     const totalCost = consumptions.reduce(
-      (sum, c) => sum + (Number(c.feedQuantityBags) * (c.inventory ? Number(c.inventory.unitCostPerBag) : 0)),
+      (sum: number, c: any) => sum + (Number(c.feedQuantityBags) * (c.inventory ? Number(c.inventory.unitCostPerBag) : 0)),
       0
     );
 

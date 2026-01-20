@@ -48,20 +48,20 @@ export async function GET(request: NextRequest) {
         });
 
         // Calculate totals
-        const totalEggs = eggCollections.reduce((sum: number, collection) => {
+        const totalEggs = eggCollections.reduce((sum: number, collection: any) => {
           return sum + collection.totalEggsCount;
         }, 0);
 
-        const totalGoodEggs = eggCollections.reduce((sum: number, collection) => sum + collection.goodEggsCount, 0);
-        const totalBrokenEggs = eggCollections.reduce((sum: number, collection) => sum + collection.brokenEggsCount, 0);
+        const totalGoodEggs = eggCollections.reduce((sum: number, collection: any) => sum + collection.goodEggsCount, 0);
+        const totalBrokenEggs = eggCollections.reduce((sum: number, collection: any) => sum + collection.brokenEggsCount, 0);
 
         // Calculate average production rate
         const avgProductionRate = eggCollections.length > 0
-          ? eggCollections.reduce((sum: number, collection) => sum + Number(collection.productionPercentage || 0), 0) / eggCollections.length
+          ? eggCollections.reduce((sum: number, collection: any) => sum + Number(collection.productionPercentage || 0), 0) / eggCollections.length
           : 0;
 
         // Group by flock
-        const byFlock = eggCollections.reduce((acc: any, collection) => {
+        const byFlock = eggCollections.reduce((acc: any, collection: any) => {
           const flockId = collection.flockId;
           if (!acc[flockId]) {
             acc[flockId] = {
@@ -125,10 +125,10 @@ export async function GET(request: NextRequest) {
         });
 
         // Calculate totals
-        const totalDeaths = mortalityRecords.reduce((sum: number, record) => sum + record.mortalityCount, 0);
+        const totalDeaths = mortalityRecords.reduce((sum: number, record: any) => sum + record.mortalityCount, 0);
 
         // Group by cause
-        const byCause = mortalityRecords.reduce((acc: any, record) => {
+        const byCause = mortalityRecords.reduce((acc: any, record: any) => {
           const cause = record.cause || 'Unknown';
           if (!acc[cause]) {
             acc[cause] = { cause, count: 0, records: 0 };
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
         }, {});
 
         // Group by flock/batch
-        const byGroup = mortalityRecords.reduce((acc: any, record) => {
+        const byGroup = mortalityRecords.reduce((acc: any, record: any) => {
           const groupId = record.flockId || record.batchId || 'unknown';
           const groupName = record.flock?.flockName || record.batch?.batchName || 'Unknown';
           const siteName = record.flock?.site.name || record.batch?.site.name || 'Unknown';
@@ -197,8 +197,8 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        const totalLayers = flocks.reduce((sum: number, flock) => sum + flock.currentStock, 0);
-        const totalBroilers = batches.reduce((sum: number, batch) => sum + batch.currentStock, 0);
+        const totalLayers = flocks.reduce((sum: number, flock: any) => sum + flock.currentStock, 0);
+        const totalBroilers = batches.reduce((sum: number, batch: any) => sum + batch.currentStock, 0);
         const totalBirds = totalLayers + totalBroilers;
 
         reportData = {
@@ -255,11 +255,11 @@ export async function GET(request: NextRequest) {
 
         // Calculate averages
         const avgWeight = weightRecords.length > 0
-          ? weightRecords.reduce((sum: number, record) => sum + Number(record.averageWeight), 0) / weightRecords.length
+          ? weightRecords.reduce((sum: number, record: any) => sum + Number(record.averageWeight), 0) / weightRecords.length
           : 0;
 
         // Group by batch
-        const byBatch = weightRecords.reduce((acc: any, record) => {
+        const byBatch = weightRecords.reduce((acc: any, record: any) => {
           const batchId = record.batchId;
           if (!acc[batchId]) {
             acc[batchId] = {
@@ -276,7 +276,7 @@ export async function GET(request: NextRequest) {
         }, {});
 
         // Calculate average weight for each batch
-        Object.keys(byBatch).forEach((batchId) => {
+        Object.keys(byBatch).forEach((batchId: any) => {
           const batchRecords = weightRecords.filter((r: any) => r.batchId === batchId);
           const totalWeight = batchRecords.reduce((sum: number, r: any) => sum + Number(r.averageWeight), 0);
           byBatch[batchId].avgWeight = batchRecords.length > 0
@@ -288,7 +288,7 @@ export async function GET(request: NextRequest) {
           summary: {
             avgWeight: Math.round(avgWeight * 100) / 100,
             totalRecords: weightRecords.length,
-            totalSampled: weightRecords.reduce((sum: number, record) => sum + record.sampleSize, 0),
+            totalSampled: weightRecords.reduce((sum: number, record: any) => sum + record.sampleSize, 0),
           },
           byBatch: Object.values(byBatch),
           records: weightRecords.map((record: any) => ({

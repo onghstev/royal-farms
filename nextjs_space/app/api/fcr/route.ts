@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
     const fcrTrend = weightRecords.map((weightRecord: any, index: number) => {
       // Calculate cumulative feed up to this weight record
       const feedUpToDate = feedRecords
-        .filter(f => new Date(f.consumptionDate) <= new Date(weightRecord.weighingDate))
+        .filter((f: any) => new Date(f.consumptionDate) <= new Date(weightRecord.weighingDate))
         .reduce((sum: number, record: any) => sum + (Number(record.feedQuantityBags) * 25), 0);
 
       // Calculate weight gain at this point

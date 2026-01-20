@@ -34,12 +34,12 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate low stock items
-    const lowStockItems = items.filter(item => 
+    const lowStockItems = items.filter((item: any) => 
       Number(item.currentStock) <= Number(item.reorderLevel)
     );
 
     // Calculate total inventory value
-    const totalValue = items.reduce((sum, item) => 
+    const totalValue = items.reduce((sum: number, item: any) => 
       sum + (Number(item.currentStock) * Number(item.unitCost)), 
       0
     );
