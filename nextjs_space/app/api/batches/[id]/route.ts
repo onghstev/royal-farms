@@ -53,11 +53,11 @@ export async function GET(
     const serializedBatch = {
       ...batch,
       docCostPerBird: batch.docCostPerBird ? Number(batch.docCostPerBird) : null,
-      mortalityRecords: batch.mortalityRecords.map(mr => ({
+      mortalityRecords: batch.mortalityRecords.map((mr: any) => ({
         ...mr,
         mortalityRate: mr.mortalityRate ? Number(mr.mortalityRate) : null,
       })),
-      weightRecords: batch.weightRecords.map(wr => ({
+      weightRecords: batch.weightRecords.map((wr: any) => ({
         ...wr,
         averageWeight: Number(wr.averageWeight),
         minWeight: wr.minWeight ? Number(wr.minWeight) : null,
