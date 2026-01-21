@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma, FeedInventory } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+
+// Type alias for FeedInventory
+type FeedInventory = Prisma.FeedInventoryGetPayload<{}>;
 
 /* ----------------------------------
    Helper Types

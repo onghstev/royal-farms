@@ -2,8 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
-// GET - Fetch all feed inventory
+// Type alias for FeedInventory
+type FeedInventory = Prisma.FeedInventoryGetPayload<{}>;
+
+/* ----------------------------------
+   Helper Types
+-----------------------------------*/
+type InventoryWithRelations = FeedInventory & {
+  supplier?: unknown | null;
+  _count: {
+    purchases: number;
+    consumptions: number;
+  };
+};
+
+/* ----------------------------------
+   GET – Fetch inventory
+-----------------------------------*/
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,13 +32,10 @@ export async function GET(request: NextRequest) {
     const includeInactive = searchParams.get('includeInactive') === 'true';
     const feedType = searchParams.get('feedType');
 
-    const where: any = {};
-    if (!includeInactive) {
-      where.isActive = true;
-    }
-    if (feedType) {
-      where.feedType = feedType;
-    }
+    const where: Prisma.FeedInventoryWhereInput = {
+      isActive: includeInactive ? undefined : true,
+      feedType: feedType || undefined,
+    };
 
     const inventory = await prisma.feedInventory.findMany({
       where,
@@ -34,28 +48,27 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: {
-        feedType: 'asc',
-      },
+      orderBy: { feedType: 'asc' },
     });
 
-    // Calculate total value and low stock items
-    const totalValue = inventory.reduce((sum: number, item: any) => {
-      const itemValue = Number(item.currentStockBags) * Number(item.unitCostPerBag);
-      return sum + itemValue;
-    }, 0);
+    const totalValue = inventory.reduce(
+      (sum: number, item: FeedInventory) =>
+        sum + Number(item.currentStockBags) * Number(item.unitCostPerBag),
+      0
+    );
 
-    const lowStockItems = inventory.filter((item: any) => 
-      Number(item.currentStockBags) <= Number(item.reorderLevel)
+    const lowStockItems = inventory.filter(
+      (item: FeedInventory) =>
+        Number(item.currentStockBags) <= Number(item.reorderLevel)
     );
 
     return NextResponse.json({
       inventory,
       summary: {
         totalItems: inventory.length,
-        totalValue: totalValue.toFixed(2),
+        totalValue: Number(totalValue.toFixed(2)),
         lowStockCount: lowStockItems.length,
-        lowStockItems: lowStockItems.map((item: any) => ({
+        lowStockItems: lowStockItems.map((item: FeedInventory) => ({
           id: item.id,
           feedType: item.feedType,
           currentStock: item.currentStockBags,
@@ -72,7 +85,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new feed inventory item
+/* ----------------------------------
+   POST – Create inventory item
+-----------------------------------*/
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -80,21 +95,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const {
-      feedType,
-      feedBrand,
-      supplierId,
-      currentStockBags,
-      reorderLevel,
-      unitCostPerBag,
-      bagWeightKg,
-      lastRestockDate,
-      expiryDate,
-      storageLocation,
-    } = body;
+    const body = (await request.json()) as {
+      feedType: string;
+      feedBrand?: string;
+      supplierId?: string;
+      currentStockBags?: number;
+      reorderLevel?: number;
+      unitCostPerBag: number;
+      bagWeightKg?: number;
+      lastRestockDate?: string;
+      expiryDate?: string;
+      storageLocation?: string;
+    };
 
-    if (!feedType || !unitCostPerBag) {
+    if (!body.feedType || !body.unitCostPerBag) {
       return NextResponse.json(
         { error: 'Feed type and unit cost are required' },
         { status: 400 }
@@ -103,21 +117,21 @@ export async function POST(request: NextRequest) {
 
     const inventory = await prisma.feedInventory.create({
       data: {
-        feedType,
-        feedBrand: feedBrand || null,
-        supplierId: supplierId || null,
-        currentStockBags: currentStockBags || 0,
-        reorderLevel: reorderLevel || 50,
-        unitCostPerBag,
-        bagWeightKg: bagWeightKg || 25,
-        lastRestockDate: lastRestockDate ? new Date(lastRestockDate) : null,
-        expiryDate: expiryDate ? new Date(expiryDate) : null,
-        storageLocation: storageLocation || null,
+        feedType: body.feedType,
+        feedBrand: body.feedBrand || null,
+        supplierId: body.supplierId || null,
+        currentStockBags: body.currentStockBags ?? 0,
+        reorderLevel: body.reorderLevel ?? 50,
+        unitCostPerBag: body.unitCostPerBag,
+        bagWeightKg: body.bagWeightKg ?? 25,
+        lastRestockDate: body.lastRestockDate
+          ? new Date(body.lastRestockDate)
+          : null,
+        expiryDate: body.expiryDate ? new Date(body.expiryDate) : null,
+        storageLocation: body.storageLocation || null,
         isActive: true,
       },
-      include: {
-        supplier: true,
-      },
+      include: { supplier: true },
     });
 
     return NextResponse.json(
@@ -133,7 +147,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT - Update feed inventory
+/* ----------------------------------
+   PUT – Update inventory
+-----------------------------------*/
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -141,23 +157,13 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const {
-      id,
-      feedType,
-      feedBrand,
-      supplierId,
-      currentStockBags,
-      reorderLevel,
-      unitCostPerBag,
-      bagWeightKg,
-      lastRestockDate,
-      expiryDate,
-      storageLocation,
-      isActive,
-    } = body;
+    const body = (await request.json()) as Partial<FeedInventory> & {
+      id: string;
+      lastRestockDate?: string;
+      expiryDate?: string;
+    };
 
-    if (!id) {
+    if (!body.id) {
       return NextResponse.json(
         { error: 'Inventory ID is required' },
         { status: 400 }
@@ -165,23 +171,25 @@ export async function PUT(request: NextRequest) {
     }
 
     const inventory = await prisma.feedInventory.update({
-      where: { id },
+      where: { id: body.id },
       data: {
-        feedType,
-        feedBrand: feedBrand || null,
-        supplierId: supplierId || null,
-        currentStockBags,
-        reorderLevel,
-        unitCostPerBag,
-        bagWeightKg,
-        lastRestockDate: lastRestockDate ? new Date(lastRestockDate) : null,
-        expiryDate: expiryDate ? new Date(expiryDate) : null,
-        storageLocation: storageLocation || null,
-        isActive,
+        feedType: body.feedType,
+        feedBrand: body.feedBrand || null,
+        supplierId: body.supplierId || null,
+        currentStockBags: body.currentStockBags,
+        reorderLevel: body.reorderLevel,
+        unitCostPerBag: body.unitCostPerBag,
+        bagWeightKg: body.bagWeightKg,
+        lastRestockDate: body.lastRestockDate
+          ? new Date(body.lastRestockDate)
+          : null,
+        expiryDate: body.expiryDate
+          ? new Date(body.expiryDate)
+          : null,
+        storageLocation: body.storageLocation || null,
+        isActive: body.isActive,
       },
-      include: {
-        supplier: true,
-      },
+      include: { supplier: true },
     });
 
     return NextResponse.json(
@@ -197,7 +205,9 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete feed inventory
+/* ----------------------------------
+   DELETE – Delete inventory
+-----------------------------------*/
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -215,29 +225,30 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Check if inventory has associated records
     const inventory = await prisma.feedInventory.findUnique({
       where: { id },
       include: {
         _count: {
-          select: {
-            purchases: true,
-            consumptions: true,
-          },
+          select: { purchases: true, consumptions: true },
         },
       },
     });
 
-    if (inventory && (inventory._count.purchases > 0 || inventory._count.consumptions > 0)) {
+    if (
+      inventory &&
+      (inventory._count.purchases > 0 ||
+        inventory._count.consumptions > 0)
+    ) {
       return NextResponse.json(
-        { error: 'Cannot delete inventory with associated records. Please deactivate instead.' },
+        {
+          error:
+            'Cannot delete inventory with associated records. Please deactivate instead.',
+        },
         { status: 400 }
       );
     }
 
-    await prisma.feedInventory.delete({
-      where: { id },
-    });
+    await prisma.feedInventory.delete({ where: { id } });
 
     return NextResponse.json(
       { message: 'Inventory deleted successfully' },

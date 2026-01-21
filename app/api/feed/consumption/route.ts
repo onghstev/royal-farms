@@ -2,22 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma, DailyFeedConsumption } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 /* ----------------------------------
    Helper Types
 -----------------------------------*/
 
-type ConsumptionWithRelations = DailyFeedConsumption & {
-  flock?: { flockName: string; flockType: string } | null;
-  batch?: { batchName: string; batchType: string } | null;
-  inventory?: {
-    feedType: string;
-    feedBrand: string;
-    unitCostPerBag: Prisma.Decimal;
-  } | null;
-  recorder: { firstName: string; lastName: string };
-};
+type ConsumptionWithRelations = Prisma.DailyFeedConsumptionGetPayload<{
+  include: {
+    flock: { select: { flockName: true; flockType: true } };
+    batch: { select: { batchName: true; batchType: true } };
+    inventory: { select: { feedType: true; feedBrand: true; unitCostPerBag: true } };
+    recorder: { select: { firstName: true; lastName: true } };
+  };
+}>;
 
 /* ----------------------------------
    GET – Fetch consumption records
@@ -147,7 +145,7 @@ export async function POST(request: NextRequest) {
 
     const totalFeedCost = Number(feedQuantityBags) * Number(feedPricePerBag);
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       if (inventoryId) {
         const inventory = await tx.feedInventory.findUnique({
           where: { id: inventoryId },

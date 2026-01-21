@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
-// GET - Fetch all feed purchases
+// Type alias for FeedPurchase
+type FeedPurchase = Prisma.FeedPurchaseGetPayload<{}>;
+
+/* ----------------------------------
+   GET – Fetch feed purchases
+-----------------------------------*/
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -17,15 +23,17 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
-    const where: any = {};
-    if (supplierId) where.supplierId = supplierId;
-    if (paymentStatus) where.paymentStatus = paymentStatus;
-    if (startDate && endDate) {
-      where.purchaseDate = {
-        gte: new Date(startDate),
-        lte: new Date(endDate),
-      };
-    }
+    const where: Prisma.FeedPurchaseWhereInput = {
+      supplierId: supplierId || undefined,
+      paymentStatus: paymentStatus || undefined,
+      purchaseDate:
+        startDate && endDate
+          ? {
+              gte: new Date(startDate),
+              lte: new Date(endDate),
+            }
+          : undefined,
+    };
 
     const purchases = await prisma.feedPurchase.findMany({
       where,
@@ -45,28 +53,30 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: {
-        purchaseDate: 'desc',
-      },
+      orderBy: { purchaseDate: 'desc' },
     });
 
-    // Serialize purchases with proper number conversion
-    const serializedPurchases = purchases.map((p: any) => ({
+    const serializedPurchases = purchases.map((p: FeedPurchase & any) => ({
       ...p,
       quantityBags: Number(p.quantityBags),
       pricePerBag: Number(p.pricePerBag),
       totalCost: Number(p.totalCost),
-      receiver: {
-        fullName: `${p.receiver.firstName} ${p.receiver.lastName}`,
-        email: p.receiver.email,
-      },
+      receiver: p.receiver
+        ? {
+            fullName: `${p.receiver.firstName} ${p.receiver.lastName}`,
+            email: p.receiver.email,
+          }
+        : null,
     }));
 
-    // Calculate summary statistics
-    const totalSpent = purchases.reduce((sum: number, p: any) => sum + Number(p.totalCost), 0);
+    const totalSpent = purchases.reduce(
+      (sum: number, p: FeedPurchase) => sum + Number(p.totalCost),
+      0
+    );
+
     const pendingAmount = purchases
-      .filter((p: any) => p.paymentStatus === 'Pending')
-      .reduce((sum: number, p: any) => sum + Number(p.totalCost), 0);
+      .filter((p: FeedPurchase) => p.paymentStatus === 'Pending')
+      .reduce((sum: number, p: FeedPurchase) => sum + Number(p.totalCost), 0);
 
     return NextResponse.json({
       purchases: serializedPurchases,
@@ -74,8 +84,12 @@ export async function GET(request: NextRequest) {
         totalPurchases: purchases.length,
         totalSpent: Number(totalSpent.toFixed(2)),
         pendingPayments: Number(pendingAmount.toFixed(2)),
-        paidCount: purchases.filter((p: any) => p.paymentStatus === 'Paid').length,
-        pendingCount: purchases.filter((p: any) => p.paymentStatus === 'Pending').length,
+        paidCount: purchases.filter(
+          (p: FeedPurchase) => p.paymentStatus === 'Paid'
+        ).length,
+        pendingCount: purchases.filter(
+          (p: FeedPurchase) => p.paymentStatus === 'Pending'
+        ).length,
       },
     });
   } catch (error) {
@@ -87,7 +101,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new feed purchase (with automatic inventory update)
+/* ----------------------------------
+   POST – Create purchase
+-----------------------------------*/
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -95,7 +111,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get current user
     const currentUser = await prisma.user.findUnique({
       where: { email: session.user.email! },
     });
@@ -104,82 +119,82 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
-    const {
-      purchaseDate,
-      supplierId,
-      inventoryId,
-      quantityBags,
-      pricePerBag,
-      paymentStatus,
-      paymentDate,
-      invoiceNumber,
-      deliveryDate,
-      notes,
-    } = body;
+    const body = (await request.json()) as {
+      purchaseDate: string;
+      supplierId: string;
+      inventoryId: string;
+      quantityBags: number;
+      pricePerBag: number;
+      paymentStatus?: string;
+      paymentDate?: string;
+      invoiceNumber?: string;
+      deliveryDate?: string;
+      notes?: string;
+    };
 
-    if (!purchaseDate || !supplierId || !inventoryId || !quantityBags || !pricePerBag) {
+    if (
+      !body.purchaseDate ||
+      !body.supplierId ||
+      !body.inventoryId ||
+      !body.quantityBags ||
+      !body.pricePerBag
+    ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    const totalCost = Number(quantityBags) * Number(pricePerBag);
+    const totalCost = Number(body.quantityBags) * Number(body.pricePerBag);
 
-    // Use transaction to ensure data consistency
-    const result = await prisma.$transaction(async (tx: any) => {
-      // Create purchase record
-      const purchase = await tx.feedPurchase.create({
-        data: {
-          purchaseDate: new Date(purchaseDate),
-          supplierId,
-          inventoryId,
-          quantityBags,
-          pricePerBag,
-          totalCost,
-          paymentStatus: paymentStatus || 'pending',
-          paymentDate: paymentDate ? new Date(paymentDate) : null,
-          invoiceNumber: invoiceNumber || null,
-          deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
-          receivedBy: currentUser.id,
-          notes: notes || null,
-        },
-        include: {
-          supplier: true,
-          inventory: true,
-          receiver: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
-        },
-      });
-
-      // Update inventory stock automatically
-      const inventory = await tx.feedInventory.findUnique({
-        where: { id: inventoryId },
-      });
-
-      if (inventory) {
-        await tx.feedInventory.update({
-          where: { id: inventoryId },
+    const result = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        const purchase = await tx.feedPurchase.create({
           data: {
-            currentStockBags: {
-              increment: Number(quantityBags),
+            purchaseDate: new Date(body.purchaseDate),
+            supplierId: body.supplierId,
+            inventoryId: body.inventoryId,
+            quantityBags: body.quantityBags,
+            pricePerBag: body.pricePerBag,
+            totalCost,
+            paymentStatus: body.paymentStatus || 'Pending',
+            paymentDate: body.paymentDate
+              ? new Date(body.paymentDate)
+              : null,
+            invoiceNumber: body.invoiceNumber || null,
+            deliveryDate: body.deliveryDate
+              ? new Date(body.deliveryDate)
+              : null,
+            receivedBy: currentUser.id,
+            notes: body.notes || null,
+          },
+          include: {
+            supplier: true,
+            inventory: true,
+            receiver: {
+              select: { firstName: true, lastName: true },
             },
-            lastRestockDate: new Date(purchaseDate),
-            unitCostPerBag: pricePerBag, // Update to latest price
           },
         });
-      }
 
-      return purchase;
-    });
+        await tx.feedInventory.update({
+          where: { id: body.inventoryId },
+          data: {
+            currentStockBags: { increment: Number(body.quantityBags) },
+            lastRestockDate: new Date(body.purchaseDate),
+            unitCostPerBag: body.pricePerBag,
+          },
+        });
+
+        return purchase;
+      }
+    );
 
     return NextResponse.json(
-      { purchase: result, message: 'Purchase recorded and inventory updated successfully' },
+      {
+        purchase: result,
+        message: 'Purchase recorded and inventory updated successfully',
+      },
       { status: 201 }
     );
   } catch (error) {
@@ -191,7 +206,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT - Update feed purchase
+/* ----------------------------------
+   PUT – Update purchase
+-----------------------------------*/
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -199,78 +216,74 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const {
-      id,
-      purchaseDate,
-      supplierId,
-      inventoryId,
-      quantityBags,
-      pricePerBag,
-      paymentStatus,
-      paymentDate,
-      invoiceNumber,
-      deliveryDate,
-      notes,
-    } = body;
+    const body = (await request.json()) as {
+      id: string;
+      purchaseDate: string;
+      supplierId: string;
+      inventoryId: string;
+      quantityBags: number;
+      pricePerBag: number;
+      paymentStatus?: string;
+      paymentDate?: string;
+      invoiceNumber?: string;
+      deliveryDate?: string;
+      notes?: string;
+    };
 
-    if (!id) {
+    if (!body.id) {
       return NextResponse.json(
         { error: 'Purchase ID is required' },
         { status: 400 }
       );
     }
 
-    const totalCost = Number(quantityBags) * Number(pricePerBag);
-
-    // Get old purchase to calculate inventory adjustment
     const oldPurchase = await prisma.feedPurchase.findUnique({
-      where: { id },
+      where: { id: body.id },
     });
 
     if (!oldPurchase) {
       return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
     }
 
-    // Use transaction for consistency
-    const result = await prisma.$transaction(async (tx: any) => {
-      // Update purchase
-      const purchase = await tx.feedPurchase.update({
-        where: { id },
-        data: {
-          purchaseDate: new Date(purchaseDate),
-          supplierId,
-          inventoryId,
-          quantityBags,
-          pricePerBag,
-          totalCost,
-          paymentStatus,
-          paymentDate: paymentDate ? new Date(paymentDate) : null,
-          invoiceNumber: invoiceNumber || null,
-          deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
-          notes: notes || null,
-        },
-        include: {
-          supplier: true,
-          inventory: true,
-        },
-      });
+    const totalCost = Number(body.quantityBags) * Number(body.pricePerBag);
 
-      // Adjust inventory if quantity changed
-      const quantityDiff = Number(quantityBags) - Number(oldPurchase.quantityBags);
-      if (quantityDiff !== 0) {
-        await tx.feedInventory.update({
-          where: { id: inventoryId },
+    const result = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        const purchase = await tx.feedPurchase.update({
+          where: { id: body.id },
           data: {
-            currentStockBags: {
-              increment: quantityDiff,
-            },
+            purchaseDate: new Date(body.purchaseDate),
+            supplierId: body.supplierId,
+            inventoryId: body.inventoryId,
+            quantityBags: body.quantityBags,
+            pricePerBag: body.pricePerBag,
+            totalCost,
+            paymentStatus: body.paymentStatus,
+            paymentDate: body.paymentDate
+              ? new Date(body.paymentDate)
+              : null,
+            invoiceNumber: body.invoiceNumber || null,
+            deliveryDate: body.deliveryDate
+              ? new Date(body.deliveryDate)
+              : null,
+            notes: body.notes || null,
           },
+          include: { supplier: true, inventory: true },
         });
-      }
 
-      return purchase;
-    });
+        const quantityDiff =
+          Number(body.quantityBags) - Number(oldPurchase.quantityBags);
+
+        if (quantityDiff !== 0) {
+          await tx.feedInventory.update({
+            where: { id: body.inventoryId },
+            data: { currentStockBags: { increment: quantityDiff } },
+          });
+        }
+
+        return purchase;
+      }
+    );
 
     return NextResponse.json(
       { purchase: result, message: 'Purchase updated successfully' },
@@ -285,7 +298,9 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete feed purchase
+/* ----------------------------------
+   DELETE – Delete purchase
+-----------------------------------*/
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -303,7 +318,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Get purchase details before deleting
     const purchase = await prisma.feedPurchase.findUnique({
       where: { id },
     });
@@ -312,23 +326,20 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
     }
 
-    // Use transaction to ensure consistency
-    await prisma.$transaction(async (tx: any) => {
-      // Delete purchase
-      await tx.feedPurchase.delete({
-        where: { id },
-      });
+    await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        await tx.feedPurchase.delete({ where: { id } });
 
-      // Adjust inventory (reverse the purchase)
-      await tx.feedInventory.update({
-        where: { id: purchase.inventoryId },
-        data: {
-          currentStockBags: {
-            decrement: Number(purchase.quantityBags),
+        await tx.feedInventory.update({
+          where: { id: purchase.inventoryId },
+          data: {
+            currentStockBags: {
+              decrement: Number(purchase.quantityBags),
+            },
           },
-        },
-      });
-    });
+        });
+      }
+    );
 
     return NextResponse.json(
       { message: 'Purchase deleted and inventory adjusted successfully' },

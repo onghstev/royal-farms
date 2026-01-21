@@ -3,6 +3,37 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
 
+interface ExpenseTransactionType {
+  id: string;
+  transactionDate: Date;
+  category: string;
+  amount: number;
+  quantity?: number | null;
+  unitCost?: number | null;
+  vendorName?: string | null;
+  vendorPhone?: string | null;
+  paymentMethod: string;
+  paymentStatus: string;
+  receiptNumber?: string | null;
+  feedPurchaseId?: string | null;
+  employeeName?: string | null;
+  employeeRole?: string | null;
+  utilityType?: string | null;
+  description: string;
+  notes?: string | null;
+  feedPurchase?: {
+    id: string;
+    invoiceNumber: string;
+    supplier?: { supplierName: string };
+    inventory?: { feedBrand: string; feedType: string };
+  } | null;
+}
+
+interface CategorySummary {
+  count: number;
+  total: number;
+}
+
 // GET - Fetch all expense transactions
 export async function GET(request: Request) {
   try {
@@ -19,27 +50,10 @@ export async function GET(request: Request) {
 
     const where: any = {};
 
-    if (category && category !== 'all') {
-      where.category = category;
-    }
-
-    if (paymentStatus && paymentStatus !== 'all') {
-      where.paymentStatus = paymentStatus;
-    }
-
-    if (startDate) {
-      where.transactionDate = {
-        ...where.transactionDate,
-        gte: new Date(startDate)
-      };
-    }
-
-    if (endDate) {
-      where.transactionDate = {
-        ...where.transactionDate,
-        lte: new Date(endDate)
-      };
-    }
+    if (category && category !== 'all') where.category = category;
+    if (paymentStatus && paymentStatus !== 'all') where.paymentStatus = paymentStatus;
+    if (startDate) where.transactionDate = { ...where.transactionDate, gte: new Date(startDate) };
+    if (endDate) where.transactionDate = { ...where.transactionDate, lte: new Date(endDate) };
 
     const expenseTransactions = await prisma.expenseTransaction.findMany({
       where,
@@ -49,41 +63,49 @@ export async function GET(request: Request) {
             id: true,
             invoiceNumber: true,
             supplier: { select: { supplierName: true } },
-            inventory: { select: { feedBrand: true, feedType: true } }
-          }
-        }
+            inventory: { select: { feedBrand: true, feedType: true } },
+          },
+        },
       },
-      orderBy: { transactionDate: 'desc' }
+      orderBy: { transactionDate: 'desc' },
     });
 
-    // Calculate summary statistics
-    const totalExpense = expenseTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-    const paidExpense = expenseTransactions
-      .filter((t: any) => t.paymentStatus === 'paid')
-      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-    const pendingExpense = expenseTransactions
-      .filter((t: any) => t.paymentStatus === 'pending')
-      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+    // Cast to typed array
+    const transactions: ExpenseTransactionType[] = expenseTransactions.map((t) => ({
+      ...t,
+      amount: Number(t.amount),
+      quantity: t.quantity ? Number(t.quantity) : null,
+      unitCost: t.unitCost ? Number(t.unitCost) : null,
+    }));
+
+    // Summary calculations
+    const totalExpense = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const paidExpense = transactions
+      .filter((t) => t.paymentStatus === 'paid')
+      .reduce((sum, t) => sum + t.amount, 0);
+    const pendingExpense = transactions
+      .filter((t) => t.paymentStatus === 'pending')
+      .reduce((sum, t) => sum + t.amount, 0);
 
     // Category breakdown
-    const byCategory = expenseTransactions.reduce((acc: any, t) => {
+    const byCategory: Record<string, CategorySummary> = transactions.reduce((acc, t) => {
       if (!acc[t.category]) {
         acc[t.category] = { count: 0, total: 0 };
       }
-      acc[t.category].count++;
-      acc[t.category].total += Number(t.amount);
+      acc[t.category].count += 1;
+      acc[t.category].total += t.amount;
       return acc;
-    }, {});
+    }, {} as Record<string, CategorySummary>);
 
     return NextResponse.json({
-      transactions: expenseTransactions,
+      transactions,
       summary: {
         total: totalExpense,
         paid: paidExpense,
         pending: pendingExpense,
-        transactionCount: expenseTransactions.length,
-        byCategory
-      }
+        transactionCount: transactions.length,
+        byCategory,
+      },
     });
   } catch (error: any) {
     console.error('Error fetching expense transactions:', error);
@@ -98,9 +120,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
     const {
@@ -119,25 +139,20 @@ export async function POST(request: Request) {
       employeeRole,
       utilityType,
       description,
-      notes
+      notes,
     } = body;
 
-    // Validation
     if (!transactionDate || !category || !amount || !paymentMethod || !paymentStatus || !description) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Create expense transaction
     const expenseTransaction = await prisma.expenseTransaction.create({
       data: {
         transactionDate: new Date(transactionDate),
         category,
-        amount: parseFloat(amount),
-        quantity: quantity ? parseFloat(quantity) : null,
-        unitCost: unitCost ? parseFloat(unitCost) : null,
+        amount: Number(amount),
+        quantity: quantity ? Number(quantity) : null,
+        unitCost: unitCost ? Number(unitCost) : null,
         vendorName,
         vendorPhone,
         paymentMethod,
@@ -149,7 +164,7 @@ export async function POST(request: Request) {
         utilityType,
         description,
         notes,
-        recordedBy: (session.user as any).id
+        recordedBy: (session.user as any).id,
       },
       include: {
         feedPurchase: {
@@ -157,10 +172,10 @@ export async function POST(request: Request) {
             id: true,
             invoiceNumber: true,
             supplier: { select: { supplierName: true } },
-            inventory: { select: { feedBrand: true, feedType: true } }
-          }
-        }
-      }
+            inventory: { select: { feedBrand: true, feedType: true } },
+          },
+        },
+      },
     });
 
     return NextResponse.json(expenseTransaction, { status: 201 });
@@ -177,29 +192,16 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
     const { id, ...updateData } = body;
+    if (!id) return NextResponse.json({ error: 'Transaction ID is required' }, { status: 400 });
 
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Transaction ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Convert date fields
-    if (updateData.transactionDate) {
-      updateData.transactionDate = new Date(updateData.transactionDate);
-    }
-
-    // Convert numeric fields
-    if (updateData.amount) updateData.amount = parseFloat(updateData.amount);
-    if (updateData.quantity) updateData.quantity = parseFloat(updateData.quantity);
-    if (updateData.unitCost) updateData.unitCost = parseFloat(updateData.unitCost);
+    if (updateData.transactionDate) updateData.transactionDate = new Date(updateData.transactionDate);
+    if (updateData.amount) updateData.amount = Number(updateData.amount);
+    if (updateData.quantity) updateData.quantity = Number(updateData.quantity);
+    if (updateData.unitCost) updateData.unitCost = Number(updateData.unitCost);
 
     const updatedTransaction = await prisma.expenseTransaction.update({
       where: { id },
@@ -210,10 +212,10 @@ export async function PUT(request: Request) {
             id: true,
             invoiceNumber: true,
             supplier: { select: { supplierName: true } },
-            inventory: { select: { feedBrand: true, feedType: true } }
-          }
-        }
-      }
+            inventory: { select: { feedBrand: true, feedType: true } },
+          },
+        },
+      },
     });
 
     return NextResponse.json(updatedTransaction);
@@ -230,37 +232,19 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Check if user is Farm Manager
     const userRole = (session.user as any).role?.name;
     if (userRole !== 'Farm Manager') {
-      return NextResponse.json(
-        { error: 'Only Farm Managers can delete expense transactions' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Only Farm Managers can delete expense transactions' }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'Transaction ID is required' }, { status: 400 });
 
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Transaction ID is required' },
-        { status: 400 }
-      );
-    }
-
-    await prisma.expenseTransaction.delete({
-      where: { id }
-    });
-
-    return NextResponse.json(
-      { message: 'Expense transaction deleted successfully' },
-      { status: 200 }
-    );
+    await prisma.expenseTransaction.delete({ where: { id } });
+    return NextResponse.json({ message: 'Expense transaction deleted successfully' }, { status: 200 });
   } catch (error: any) {
     console.error('Error deleting expense transaction:', error);
     return NextResponse.json(
