@@ -2,11 +2,21 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { prisma } from '@/lib/db';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
+// Lazy Prisma client for auth - only instantiated at runtime
+const globalForPrisma = globalThis as unknown as { authPrisma: PrismaClient | undefined };
+
+function getAuthPrisma(): PrismaClient {
+  if (!globalForPrisma.authPrisma) {
+    globalForPrisma.authPrisma = new PrismaClient();
+  }
+  return globalForPrisma.authPrisma;
+}
+
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(getAuthPrisma()),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -24,6 +34,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Please enter your email and password');
         }
 
+        const prisma = getAuthPrisma();
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
           include: { role: true },
@@ -50,55 +61,27 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          name: `${user.firstName} ${user.lastName}`,
-          role: user.role.name,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          role: user.role?.name || 'User',
           roleId: user.roleId,
         };
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
-        // For OAuth users, fetch or create role information
-        if (account?.provider === 'google') {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            include: { role: true },
-          });
-
-          if (dbUser) {
-            // If user exists with a role, use it
-            if (dbUser.role) {
-              token.role = dbUser.role.name;
-              token.roleId = dbUser.roleId;
-            } else {
-              // Assign default Worker role to OAuth users without a role
-              const workerRole = await prisma.role.findFirst({
-                where: { name: 'Worker' },
-              });
-              if (workerRole) {
-                await prisma.user.update({
-                  where: { id: user.id },
-                  data: { roleId: workerRole.id },
-                });
-                token.role = workerRole.name;
-                token.roleId = workerRole.id;
-              }
-            }
-          }
-        } else {
-          // For credentials provider, role is already in user object
-          token.role = (user as any).role;
-          token.roleId = (user as any).roleId;
-        }
-        token.id = user.id;
+        token.role = (user as any).role;
+        token.roleId = (user as any).roleId;
       }
       return token;
     },
     async session({ session, token }) {
-      if (session?.user) {
-        (session.user as any).id = token.id;
+      if (session.user) {
         (session.user as any).role = token.role;
         (session.user as any).roleId = token.roleId;
       }
@@ -109,9 +92,6 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
     error: '/login',
   },
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
-  },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 };
