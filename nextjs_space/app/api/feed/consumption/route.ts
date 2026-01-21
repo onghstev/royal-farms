@@ -8,6 +8,9 @@ import { Prisma } from '@prisma/client';
    Helper Types
 -----------------------------------*/
 
+// Base type alias for DailyFeedConsumption
+type DailyFeedConsumption = Prisma.DailyFeedConsumptionGetPayload<{}>;
+
 type ConsumptionWithRelations = Prisma.DailyFeedConsumptionGetPayload<{
   include: {
     flock: { select: { flockName: true; flockType: true } };

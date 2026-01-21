@@ -71,7 +71,7 @@ export async function GET(request: Request) {
     });
 
     // Cast to typed array
-    const transactions: ExpenseTransactionType[] = expenseTransactions.map((t) => ({
+    const transactions = expenseTransactions.map((t: any) => ({
       ...t,
       amount: Number(t.amount),
       quantity: t.quantity ? Number(t.quantity) : null,

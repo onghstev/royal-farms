@@ -226,6 +226,19 @@ export async function GET(request: Request) {
 
       if (flocks && flocks.currentStock > 0) {
         costPerBird = totalExpense / flocks.currentStock;
+        // Calculate cost per egg if egg production data is available
+        if (startDate && endDate) {
+          const totalEggs = await prisma.dailyEggCollection.aggregate({
+            where: {
+              flockId: flocks.id,
+              collectionDate: { gte: new Date(startDate), lte: new Date(endDate) }
+            },
+            _sum: { goodEggsCount: true }
+          });
+          if (totalEggs._sum.goodEggsCount && totalEggs._sum.goodEggsCount > 0) {
+            costPerEgg = totalExpense / totalEggs._sum.goodEggsCount;
+          }
+        }
       }
 
       return NextResponse.json({
@@ -236,8 +249,8 @@ export async function GET(request: Request) {
         financials: { totalIncome, totalExpense, netProfit, profitMargin: totalIncome > 0 ? ((netProfit / totalIncome) * 100).toFixed(2) : '0.00' },
         expenseBreakdown: expenseByCategory,
         metrics: {
-          costPerBird: costPerBird ? costPerBird.toFixed(2) : null,
-          costPerEgg: costPerEgg ? costPerEgg.toFixed(4) : null,
+          costPerBird: costPerBird !== null ? costPerBird.toFixed(2) : null,
+          costPerEgg: costPerEgg !== null ? costPerEgg.toFixed(4) : null,
           roi: totalExpense > 0 ? ((netProfit / totalExpense) * 100).toFixed(2) : null
         }
       });

@@ -56,7 +56,7 @@ export async function GET(request: Request) {
       orderBy: { transactionDate: 'desc' },
     });
 
-    const transactions: IncomeTransactionType[] = incomeTransactions.map((t) => ({
+    const transactions = incomeTransactions.map((t: any) => ({
       ...t,
       amount: Number(t.amount),
       quantity: t.quantity ? Number(t.quantity) : null,
