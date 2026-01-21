@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       0
     );
 
-    const totalCost = consumptions.reduce((sum: number, c) => {
+    const totalCost = consumptions.reduce((sum: number, c: any) => {
       const costPerBag = c.inventory ? Number(c.inventory.unitCostPerBag) : 0;
       return sum + Number(c.feedQuantityBags) * costPerBag;
     }, 0);

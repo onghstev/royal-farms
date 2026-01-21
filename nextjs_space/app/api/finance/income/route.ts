@@ -64,9 +64,9 @@ export async function GET(request: Request) {
     }));
 
     // Summary calculations
-    const totalIncome = transactions.reduce((sum, t) => sum + t.amount, 0);
-    const paidIncome = transactions.filter((t) => t.paymentStatus === 'paid').reduce((sum, t) => sum + t.amount, 0);
-    const pendingIncome = transactions.filter((t) => t.paymentStatus === 'pending').reduce((sum, t) => sum + t.amount, 0);
+    const totalIncome = transactions.reduce((sum: number, t: any) => sum + t.amount, 0);
+    const paidIncome = transactions.filter((t: any) => t.paymentStatus === 'paid').reduce((sum: number, t: any) => sum + t.amount, 0);
+    const pendingIncome = transactions.filter((t: any) => t.paymentStatus === 'pending').reduce((sum: number, t: any) => sum + t.amount, 0);
 
     // Category breakdown
     const byCategory: Record<string, CategorySummary> = transactions.reduce((acc, t) => {
