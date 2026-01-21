@@ -69,7 +69,7 @@ export async function GET(request: Request) {
     const pendingIncome = transactions.filter((t: any) => t.paymentStatus === 'pending').reduce((sum: number, t: any) => sum + t.amount, 0);
 
     // Category breakdown
-    const byCategory: Record<string, CategorySummary> = transactions.reduce((acc, t) => {
+    const byCategory: Record<string, CategorySummary> = transactions.reduce((acc: any, t: any) => {
       if (!acc[t.category]) acc[t.category] = { count: 0, total: 0 };
       acc[t.category].count += 1;
       acc[t.category].total += t.amount;

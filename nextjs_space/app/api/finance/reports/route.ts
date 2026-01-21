@@ -68,26 +68,26 @@ export async function GET(request: Request) {
         paymentStatus: t.paymentStatus
       }));
 
-      const totalIncome = incomeData.reduce((sum, t) => sum + t.amount, 0);
-      const totalExpense = expenseData.reduce((sum, t) => sum + t.amount, 0);
+      const totalIncome = incomeData.reduce((sum: number, t: any) => sum + t.amount, 0);
+      const totalExpense = expenseData.reduce((sum: number, t: any) => sum + t.amount, 0);
       const netProfit = totalIncome - totalExpense;
       const profitMargin = totalIncome > 0 ? (netProfit / totalIncome) * 100 : 0;
 
-      const incomeByCategory: ExpenseCategorySummary = incomeData.reduce((acc, t) => {
+      const incomeByCategory: ExpenseCategorySummary = incomeData.reduce((acc: any, t: any) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount;
         return acc;
       }, {} as ExpenseCategorySummary);
 
-      const expenseByCategory: ExpenseCategorySummary = expenseData.reduce((acc, t) => {
+      const expenseByCategory: ExpenseCategorySummary = expenseData.reduce((acc: any, t: any) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount;
         return acc;
       }, {} as ExpenseCategorySummary);
 
-      const incomePaid = incomeData.filter(t => t.paymentStatus === 'paid').reduce((sum, t) => sum + t.amount, 0);
-      const incomePending = incomeData.filter(t => t.paymentStatus === 'pending' || t.paymentStatus === 'partial').reduce((sum, t) => sum + t.amount, 0);
+      const incomePaid = incomeData.filter((t: any) => t.paymentStatus === 'paid').reduce((sum: number, t: any) => sum + t.amount, 0);
+      const incomePending = incomeData.filter((t: any) => t.paymentStatus === 'pending' || t.paymentStatus === 'partial').reduce((sum: number, t: any) => sum + t.amount, 0);
 
-      const expensePaid = expenseData.filter(t => t.paymentStatus === 'paid').reduce((sum, t) => sum + t.amount, 0);
-      const expensePending = expenseData.filter(t => t.paymentStatus === 'pending' || t.paymentStatus === 'partial').reduce((sum, t) => sum + t.amount, 0);
+      const expensePaid = expenseData.filter((t: any) => t.paymentStatus === 'paid').reduce((sum: number, t: any) => sum + t.amount, 0);
+      const expensePending = expenseData.filter((t: any) => t.paymentStatus === 'pending' || t.paymentStatus === 'partial').reduce((sum: number, t: any) => sum + t.amount, 0);
 
       return NextResponse.json({
         summary: { totalIncome, totalExpense, netProfit, profitMargin: profitMargin.toFixed(2) },
@@ -119,22 +119,22 @@ export async function GET(request: Request) {
         paymentStatus: t.paymentStatus
       }));
 
-      const incomeByCategory: Record<string, ProfitLossCategory> = incomeTransactions.reduce((acc, t) => {
+      const incomeByCategory: Record<string, ProfitLossCategory> = incomeTransactions.reduce((acc: any, t: any) => {
         if (!acc[t.category]) acc[t.category] = { transactions: [], total: 0 };
         acc[t.category].transactions.push(t);
         acc[t.category].total += t.amount;
         return acc;
       }, {} as Record<string, ProfitLossCategory>);
 
-      const expenseByCategory: Record<string, ProfitLossCategory> = expenseTransactions.reduce((acc, t) => {
+      const expenseByCategory: Record<string, ProfitLossCategory> = expenseTransactions.reduce((acc: any, t: any) => {
         if (!acc[t.category]) acc[t.category] = { transactions: [], total: 0 };
         acc[t.category].transactions.push(t);
         acc[t.category].total += t.amount;
         return acc;
       }, {} as Record<string, ProfitLossCategory>);
 
-      const totalIncome = Object.values(incomeByCategory).reduce((sum, cat) => sum + cat.total, 0);
-      const totalExpense = Object.values(expenseByCategory).reduce((sum, cat) => sum + cat.total, 0);
+      const totalIncome = Object.values(incomeByCategory).reduce((sum: number, cat: any) => sum + cat.total, 0);
+      const totalExpense = Object.values(expenseByCategory).reduce((sum: number, cat: any) => sum + cat.total, 0);
       const netProfit = totalIncome - totalExpense;
 
       return NextResponse.json({
@@ -175,8 +175,8 @@ export async function GET(request: Request) {
         monthlyData[month].netCashFlow = monthlyData[month].income - monthlyData[month].expense;
       });
 
-      const totalCashIn = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
-      const totalCashOut = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
+      const totalCashIn = incomeTransactions.reduce((sum: number, t: any) => sum + t.amount, 0);
+      const totalCashOut = expenseTransactions.reduce((sum: number, t: any) => sum + t.amount, 0);
       const netCashFlow = totalCashIn - totalCashOut;
 
       return NextResponse.json({
@@ -211,14 +211,14 @@ export async function GET(request: Request) {
       const expenseDataRaw = await prisma.expenseTransaction.findMany({ where: { transactionDate: dateFilter } });
       const expenseData: Transaction[] = expenseDataRaw.map(t => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus }));
 
-      const totalIncome = incomeData.reduce((sum, t) => sum + t.amount, 0);
+      const totalIncome = incomeData.reduce((sum: number, t: any) => sum + t.amount, 0);
 
-      const expenseByCategory: ExpenseCategorySummary = expenseData.reduce((acc, t) => {
+      const expenseByCategory: ExpenseCategorySummary = expenseData.reduce((acc: any, t: any) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount;
         return acc;
       }, {} as ExpenseCategorySummary);
 
-      const totalExpense = Object.values(expenseByCategory).reduce((sum, val) => sum + val, 0);
+      const totalExpense = Object.values(expenseByCategory).reduce((sum: number, val: any) => sum + val, 0);
       const netProfit = totalIncome - totalExpense;
 
       let costPerBird: number | null = null;
