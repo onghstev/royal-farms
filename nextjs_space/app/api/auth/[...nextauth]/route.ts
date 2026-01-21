@@ -1,9 +1,23 @@
-export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 import NextAuth from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
+import { getAuthOptions } from '@/lib/auth-options';
 
-const handler = NextAuth(authOptions);
+// Create handler lazily - only when request comes in
+let _handler: ReturnType<typeof NextAuth> | null = null;
 
-export { handler as GET, handler as POST };
+function getHandler() {
+  if (!_handler) {
+    _handler = NextAuth(getAuthOptions());
+  }
+  return _handler;
+}
+
+export async function GET(request: Request, context: any) {
+  return getHandler()(request, context);
+}
+
+export async function POST(request: Request, context: any) {
+  return getHandler()(request, context);
+}
