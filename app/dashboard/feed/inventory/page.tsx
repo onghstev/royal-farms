@@ -116,7 +116,7 @@ export default function FeedInventoryPage() {
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(item =>
+      filtered = filtered.filter((item: any) =>
         item.feedBrand.toLowerCase().includes(query) ||
         item.feedType.toLowerCase().includes(query) ||
         item.supplier.supplierName.toLowerCase().includes(query)
@@ -125,7 +125,7 @@ export default function FeedInventoryPage() {
 
     // Apply feed type filter
     if (filterFeedType !== 'all') {
-      filtered = filtered.filter(item => item.feedType === filterFeedType);
+      filtered = filtered.filter((item: any) => item.feedType === filterFeedType);
     }
 
     setFilteredInventory(filtered);
@@ -133,7 +133,7 @@ export default function FeedInventoryPage() {
 
   const calculateStats = () => {
     const totalValue = filteredInventory.reduce((sum: number, item: any) => sum + (item.currentStockBags * item.unitCostPerBag), 0);
-    const lowStockItems = filteredInventory.filter(item => item.currentStockBags <= item.reorderLevel).length;
+    const lowStockItems = filteredInventory.filter((item: any) => item.currentStockBags <= item.reorderLevel).length;
     const totalBags = filteredInventory.reduce((sum: number, item: any) => sum + item.currentStockBags, 0);
     setStats({ totalValue, lowStockItems, totalBags });
   };

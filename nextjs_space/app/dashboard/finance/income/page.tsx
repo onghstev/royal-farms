@@ -176,7 +176,7 @@ export default function IncomeManagementPage() {
     setIsDialogOpen(true);
   };
 
-  const filteredTransactions = transactions.filter(t =>
+  const filteredTransactions = transactions.filter((t: any) =>
     t.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.description?.toLowerCase().includes(searchTerm.toLowerCase())

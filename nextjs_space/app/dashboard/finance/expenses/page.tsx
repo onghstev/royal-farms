@@ -163,7 +163,7 @@ export default function ExpenseManagementPage() {
     setIsDialogOpen(true);
   };
 
-  const filteredTransactions = transactions.filter(t =>
+  const filteredTransactions = transactions.filter((t: any) =>
     t.vendorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.receiptNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.description?.toLowerCase().includes(searchTerm.toLowerCase())

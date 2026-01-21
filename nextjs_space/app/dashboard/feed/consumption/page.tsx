@@ -162,7 +162,7 @@ export default function FeedConsumptionPage() {
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(consumption =>
+      filtered = filtered.filter((consumption: any) =>
         consumption.inventory?.feedBrand?.toLowerCase().includes(query) ||
         consumption.flock?.flockName?.toLowerCase().includes(query) ||
         consumption.batch?.batchName?.toLowerCase().includes(query)
@@ -170,7 +170,7 @@ export default function FeedConsumptionPage() {
     }
 
     if (filterType !== 'all') {
-      filtered = filtered.filter(consumption => consumption.consumptionType === filterType);
+      filtered = filtered.filter((consumption: any) => consumption.consumptionType === filterType);
     }
 
     setFilteredConsumptions(filtered);

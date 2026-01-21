@@ -144,7 +144,7 @@ export default function FeedPurchasesPage() {
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(purchase =>
+      filtered = filtered.filter((purchase: any) =>
         purchase.supplier.supplierName.toLowerCase().includes(query) ||
         purchase.inventory.feedBrand.toLowerCase().includes(query) ||
         purchase.invoiceNumber?.toLowerCase().includes(query)
@@ -152,11 +152,11 @@ export default function FeedPurchasesPage() {
     }
 
     if (filterSupplier !== 'all') {
-      filtered = filtered.filter(purchase => purchase.supplierId === filterSupplier);
+      filtered = filtered.filter((purchase: any) => purchase.supplierId === filterSupplier);
     }
 
     if (filterPaymentStatus !== 'all') {
-      filtered = filtered.filter(purchase => purchase.paymentStatus === filterPaymentStatus);
+      filtered = filtered.filter((purchase: any) => purchase.paymentStatus === filterPaymentStatus);
     }
 
     setFilteredPurchases(filtered);
@@ -165,7 +165,7 @@ export default function FeedPurchasesPage() {
   const calculateStats = () => {
     const totalSpent = filteredPurchases.reduce((sum: number, purchase: any) => sum + purchase.totalCost, 0);
     const pendingPayments = filteredPurchases
-      .filter(p => p.paymentStatus === 'Pending')
+      .filter((p: any) => p.paymentStatus === 'Pending')
       .reduce((sum: number, purchase: any) => sum + purchase.totalCost, 0);
     const totalPurchases = filteredPurchases.length;
     setStats({ totalSpent, pendingPayments, totalPurchases });
@@ -279,7 +279,7 @@ export default function FeedPurchasesPage() {
   };
 
   const filteredInventoryForForm = formData.supplierId
-    ? inventoryItems.filter(item => item.supplier.id === formData.supplierId)
+    ? inventoryItems.filter((item: any) => item.supplier.id === formData.supplierId)
     : [];
 
   if (loading) {
@@ -617,7 +617,7 @@ export default function FeedPurchasesPage() {
                   <SelectValue placeholder={formData.supplierId ? "Select feed item" : "Select supplier first"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {inventoryItems.filter(item => item.supplier.id === formData.supplierId).map((item) => (
+                  {inventoryItems.filter((item: any) => item.supplier.id === formData.supplierId).map((item) => (
                     <SelectItem key={item.id} value={item.id}>
                       {item.feedBrand} - {item.feedType}
                     </SelectItem>

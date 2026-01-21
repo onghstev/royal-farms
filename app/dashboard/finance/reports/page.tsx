@@ -106,12 +106,12 @@ export default function FinancialReportsPage() {
       csvContent += `Profit Margin,${reportData.summary.profitMargin}%\n\n`;
       csvContent += '\nIncome by Category\n';
       csvContent += 'Category,Amount\n';
-      Object.entries(reportData.incomeByCategory || {}).forEach(([category, amount]) => {
+      Object.entries(reportData.incomeByCategory || {}).forEach(([category, amount]: [string, any]) => {
         csvContent += `${category},${amount}\n`;
       });
       csvContent += '\nExpense by Category\n';
       csvContent += 'Category,Amount\n';
-      Object.entries(reportData.expenseByCategory || {}).forEach(([category, amount]) => {
+      Object.entries(reportData.expenseByCategory || {}).forEach(([category, amount]: [string, any]) => {
         csvContent += `${category},${amount}\n`;
       });
     }

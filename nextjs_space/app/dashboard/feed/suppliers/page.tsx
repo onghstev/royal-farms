@@ -83,7 +83,7 @@ export default function FeedSuppliersPage() {
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(supplier =>
+      filtered = filtered.filter((supplier: any) =>
         supplier.supplierName.toLowerCase().includes(query) ||
         supplier.contactPerson?.toLowerCase().includes(query) ||
         supplier.phone?.toLowerCase().includes(query) ||
@@ -237,7 +237,7 @@ export default function FeedSuppliersPage() {
             <CardTitle className="text-sm font-medium">Active Suppliers</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{suppliers.filter(s => s.isActive).length}</div>
+            <div className="text-2xl font-bold">{suppliers.filter((s: any) => s.isActive).length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -245,7 +245,7 @@ export default function FeedSuppliersPage() {
             <CardTitle className="text-sm font-medium">Inactive Suppliers</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{suppliers.filter(s => !s.isActive).length}</div>
+            <div className="text-2xl font-bold">{suppliers.filter((s: any) => !s.isActive).length}</div>
           </CardContent>
         </Card>
       </div>

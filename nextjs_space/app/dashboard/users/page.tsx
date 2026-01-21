@@ -286,7 +286,7 @@ export default function UsersPage() {
             <Shield className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.filter(u => u.isActive).length}</div>
+            <div className="text-2xl font-bold">{users.filter((u: any) => u.isActive).length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -295,7 +295,7 @@ export default function UsersPage() {
             <Shield className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.filter(u => !u.isActive).length}</div>
+            <div className="text-2xl font-bold">{users.filter((u: any) => !u.isActive).length}</div>
           </CardContent>
         </Card>
       </div>
