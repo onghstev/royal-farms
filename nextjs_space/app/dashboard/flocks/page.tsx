@@ -1,15 +1,13 @@
+export const dynamic = 'force-dynamic';
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { redirect } from 'next/navigation';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/db';
 import { FlocksTable } from '@/components/flocks/flocks-table';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-
-const prisma = new PrismaClient();
-
-export const dynamic = 'force-dynamic';
 
 async function getFlocks() {
   const flocksRaw = await prisma.flock.findMany({

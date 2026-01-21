@@ -1,16 +1,14 @@
+export const dynamic = 'force-dynamic';
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { redirect } from 'next/navigation';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/db';
 import { DashboardKPIs } from '@/components/dashboard/dashboard-kpis';
 import { EggProductionChart } from '@/components/dashboard/egg-production-chart';
 import { MortalityChart } from '@/components/dashboard/mortality-chart';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { AlertsList } from '@/components/dashboard/alerts-list';
-
-const prisma = new PrismaClient();
-
-export const dynamic = 'force-dynamic';
 
 async function getDashboardData() {
   const today = new Date();
