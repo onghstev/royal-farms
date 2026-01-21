@@ -163,10 +163,10 @@ export default function FeedPurchasesPage() {
   };
 
   const calculateStats = () => {
-    const totalSpent = filteredPurchases.reduce((sum, purchase) => sum + purchase.totalCost, 0);
+    const totalSpent = filteredPurchases.reduce((sum: number, purchase: any) => sum + purchase.totalCost, 0);
     const pendingPayments = filteredPurchases
       .filter(p => p.paymentStatus === 'Pending')
-      .reduce((sum, purchase) => sum + purchase.totalCost, 0);
+      .reduce((sum: number, purchase: any) => sum + purchase.totalCost, 0);
     const totalPurchases = filteredPurchases.length;
     setStats({ totalSpent, pendingPayments, totalPurchases });
   };

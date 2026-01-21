@@ -246,7 +246,7 @@ export default function InventoryItemsPage() {
   };
 
   const lowStockItems = items.filter(item => Number(item.currentStock) <= Number(item.reorderLevel));
-  const totalValue = items.reduce((sum, item) => sum + (Number(item.currentStock) * Number(item.unitCost)), 0);
+  const totalValue = items.reduce((sum: number, item: any) => sum + (Number(item.currentStock) * Number(item.unitCost)), 0);
 
   if (status === 'loading' || loading) {
     return (

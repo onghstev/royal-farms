@@ -121,7 +121,7 @@ export default function PurchaseOrdersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ₦{orders.reduce((sum, o) => sum + Number(o.totalAmount), 0).toLocaleString()}
+              ₦{orders.reduce((sum: number, o: any) => sum + Number(o.totalAmount), 0).toLocaleString()}
             </div>
           </CardContent>
         </Card>

@@ -212,7 +212,7 @@ export default function CategoriesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {categories.reduce((sum, cat) => sum + (cat._count?.items || 0), 0)}
+              {categories.reduce((sum: number, cat: any) => sum + (cat._count?.items || 0), 0)}
             </div>
           </CardContent>
         </Card>

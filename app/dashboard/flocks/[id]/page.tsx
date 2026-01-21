@@ -83,7 +83,7 @@ export default function FlockDetailPage() {
     return null;
   }
 
-  const mortalityCount = flock.mortalityRecords.reduce((sum, record) => sum + record.mortalityCount, 0);
+  const mortalityCount = flock.mortalityRecords.reduce((sum: number, record: any) => sum + record.mortalityCount, 0);
   const survivalRate = flock.openingStock > 0 
     ? ((flock.currentStock / flock.openingStock) * 100).toFixed(1)
     : 0;

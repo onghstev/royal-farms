@@ -132,9 +132,9 @@ export default function FeedInventoryPage() {
   };
 
   const calculateStats = () => {
-    const totalValue = filteredInventory.reduce((sum, item) => sum + (item.currentStockBags * item.unitCostPerBag), 0);
+    const totalValue = filteredInventory.reduce((sum: number, item: any) => sum + (item.currentStockBags * item.unitCostPerBag), 0);
     const lowStockItems = filteredInventory.filter(item => item.currentStockBags <= item.reorderLevel).length;
-    const totalBags = filteredInventory.reduce((sum, item) => sum + item.currentStockBags, 0);
+    const totalBags = filteredInventory.reduce((sum: number, item: any) => sum + item.currentStockBags, 0);
     setStats({ totalValue, lowStockItems, totalBags });
   };
 

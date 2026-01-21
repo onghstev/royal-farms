@@ -211,7 +211,7 @@ export default function LivestockTypesPage() {
     setIsEditOpen(true);
   };
 
-  const filteredTypes = livestockTypes.filter((type) => {
+  const filteredTypes = livestockTypes.filter((type: any) => {
     const matchesSearch = type.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       type.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesActive = showInactive || type.isActive;
@@ -220,10 +220,10 @@ export default function LivestockTypesPage() {
 
   const stats = {
     total: livestockTypes.length,
-    active: livestockTypes.filter((t) => t.isActive).length,
-    poultry: livestockTypes.filter((t) => t.category === 'poultry').length,
-    livestock: livestockTypes.filter((t) => t.category === 'livestock').length,
-    aquaculture: livestockTypes.filter((t) => t.category === 'aquaculture').length,
+    active: livestockTypes.filter((t: any) => t.isActive).length,
+    poultry: livestockTypes.filter((t: any) => t.category === 'poultry').length,
+    livestock: livestockTypes.filter((t: any) => t.category === 'livestock').length,
+    aquaculture: livestockTypes.filter((t: any) => t.category === 'aquaculture').length,
   };
 
   if (status === 'loading' || loading) {

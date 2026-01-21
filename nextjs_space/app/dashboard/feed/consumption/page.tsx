@@ -177,8 +177,8 @@ export default function FeedConsumptionPage() {
   };
 
   const calculateStats = () => {
-    const totalFeedUsed = filteredConsumptions.reduce((sum, consumption) => sum + consumption.feedQuantityBags, 0);
-    const totalCost = filteredConsumptions.reduce((sum, consumption) => 
+    const totalFeedUsed = filteredConsumptions.reduce((sum: number, consumption: any) => sum + consumption.feedQuantityBags, 0);
+    const totalCost = filteredConsumptions.reduce((sum: number, consumption: any) => 
       sum + (consumption.feedQuantityBags * (consumption.inventory?.unitCostPerBag || 0)), 0
     );
     const totalRecords = filteredConsumptions.length;

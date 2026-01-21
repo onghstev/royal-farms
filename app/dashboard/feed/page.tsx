@@ -142,7 +142,7 @@ export default function FeedManagementPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {suppliers.filter((s) => s.isActive).length}
+              {suppliers.filter((s: any) => s.isActive).length}
             </div>
             <p className="text-xs text-muted-foreground">
               Total: {suppliers.length} suppliers
@@ -178,7 +178,7 @@ export default function FeedManagementPage() {
             </CardHeader>
             <CardContent className="text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {suppliers.filter((s) => s.isActive).length}
+                {suppliers.filter((s: any) => s.isActive).length}
               </div>
               <p className="text-xs text-muted-foreground mt-1">Active Suppliers</p>
             </CardContent>

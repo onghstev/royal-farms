@@ -102,8 +102,8 @@ async function getDashboardData() {
   });
 
   const totalOpening = 
-    allFlocks.reduce((sum, f) => sum + f.openingStock, 0) +
-    allBatches.reduce((sum, b) => sum + b.quantityReceived, 0);
+    allFlocks.reduce((sum: number, f: any) => sum + f.openingStock, 0) +
+    allBatches.reduce((sum: number, b: any) => sum + b.quantityReceived, 0);
 
   const mortalityRate = totalOpening > 0 
     ? ((totalMortality._sum?.mortalityCount || 0) / totalOpening) * 100 
