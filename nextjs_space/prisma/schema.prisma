@@ -1,0 +1,833 @@
+// Royal Farms Poultry Management System - Database Schema
+// This schema supports Phase 1: Production Tracking Module
+
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/royal_farms_poultry_system/nextjs_space/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  phone         String?
+  roleId        String    @map("role_id")
+  role          Role      @relation(fields: [roleId], references: [id])
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLogin     DateTime? @map("last_login")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  managedFlocks          Flock[]                @relation("FlockManager")
+  managedBatches         Batch[]                @relation("BatchManager")
+  eggCollections         DailyEggCollection[]   @relation("EggCollectionRecorder")
+  mortalityRecords       MortalityRecord[]      @relation("MortalityRecorder")
+  feedConsumptions       DailyFeedConsumption[] @relation("FeedRecorder")
+  feedPurchases          FeedPurchase[]         @relation("FeedReceiver")
+  weightRecords          WeightRecord[]         @relation("WeightRecorder")
+  resolvedAlerts         ProductionAlert[]      @relation("AlertResolver")
+  vaccinationRecords     VaccinationRecord[]    @relation("VaccinationAdministrator")
+  healthChecks           HealthCheck[]          @relation("HealthInspector")
+  diseaseOutbreaks       DiseaseOutbreak[]      @relation("OutbreakRecorder")
+  medicationRecords      MedicationRecord[]     @relation("MedicationAdministrator")
+  accounts               Account[]
+  sessions               Session[]
+
+  @@index([roleId])
+  @@index([email])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  users User[]
+
+  @@map("roles")
+}
+
+// NextAuth.js models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// FARM STRUCTURE
+// ============================================
+
+model Site {
+  id          String   @id @default(cuid())
+  name        String
+  location    String?
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  flocks Flock[]
+  batches Batch[]
+
+  @@map("sites")
+}
+
+// ============================================
+// PRODUCTION TRACKING - LAYERS
+// ============================================
+
+model LivestockType {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Layers", "Cattle", "Fish"
+  category    String   // "poultry", "livestock", "aquaculture"
+  description String?
+  icon        String?  // icon name for UI
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("livestock_types")
+}
+
+model Flock {
+  id           String   @id @default(cuid())
+  flockName    String   @unique @map("flock_name")
+  flockType    String   @default("layers") @map("flock_type") // layers, pullets, breeders, cattle, goats, sheep, fish, rabbits
+  breed        String?
+  siteId       String   @map("site_id")
+  site         Site     @relation(fields: [siteId], references: [id])
+  arrivalDate  DateTime @map("arrival_date") @db.Date
+  openingStock Int      @map("opening_stock")
+  currentStock Int      @map("current_stock")
+  status       String   @default("active") // active, declining, depleted, sold
+  supplier     String?
+  costPerBird  Decimal? @map("cost_per_bird") @db.Decimal(10, 2)
+  managedBy    String?  @map("managed_by")
+  manager      User?    @relation("FlockManager", fields: [managedBy], references: [id])
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  eggCollections     DailyEggCollection[]
+  mortalityRecords   MortalityRecord[]
+  feedConsumptions   DailyFeedConsumption[]
+  alerts             ProductionAlert[]
+  vaccinationRecords VaccinationRecord[]
+  healthChecks       HealthCheck[]
+  diseaseOutbreaks   DiseaseOutbreak[]
+  medicationRecords  MedicationRecord[]
+  incomeTransactions IncomeTransaction[]  @relation("FlockEggSales")
+  costAnalysis       CostAnalysis[]       @relation("FlockCostAnalysis")
+
+  @@index([siteId])
+  @@index([status])
+  @@index([arrivalDate])
+  @@index([flockName])
+  @@map("flocks")
+}
+
+model DailyEggCollection {
+  id                    String   @id @default(cuid())
+  flockId               String   @map("flock_id")
+  flock                 Flock    @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  collectionDate        DateTime @map("collection_date") @db.Date
+  goodEggsCount         Int      @default(0) @map("good_eggs_count") // in pieces
+  brokenEggsCount       Int      @default(0) @map("broken_eggs_count") // in pieces
+  totalEggsCount        Int      @default(0) @map("total_eggs_count") // auto-calculated
+  collectionTime        String?  @map("collection_time") // HH:mm format
+  productionPercentage  Decimal? @map("production_percentage") @db.Decimal(5, 2)
+  recordedBy            String   @map("recorded_by")
+  recorder              User     @relation("EggCollectionRecorder", fields: [recordedBy], references: [id])
+  notes                 String?  @db.Text
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@unique([flockId, collectionDate])
+  @@index([flockId])
+  @@index([collectionDate])
+  @@map("daily_egg_collection")
+}
+
+// ============================================
+// PRODUCTION TRACKING - BROILERS
+// ============================================
+
+model Batch {
+  id                String    @id @default(cuid())
+  batchName         String    @unique @map("batch_name")
+  batchType         String    @default("broilers") @map("batch_type") // broilers, turkeys, pigs, cattle, goats, sheep, fish, rabbits
+  breed             String?
+  siteId            String    @map("site_id")
+  site              Site      @relation(fields: [siteId], references: [id])
+  docArrivalDate    DateTime  @map("doc_arrival_date") @db.Date
+  quantityOrdered   Int       @map("quantity_ordered")
+  quantityReceived  Int       @map("quantity_received")
+  currentStock      Int       @map("current_stock")
+  status            String    @default("planning") // planning, active, growing, ready, harvested
+  supplier          String?
+  docCostPerBird    Decimal?  @map("doc_cost_per_bird") @db.Decimal(10, 2)
+  expectedSaleDate  DateTime? @map("expected_sale_date") @db.Date
+  actualHarvestDate DateTime? @map("actual_harvest_date") @db.Date
+  managedBy         String?   @map("managed_by")
+  manager           User?     @relation("BatchManager", fields: [managedBy], references: [id])
+  notes             String?   @db.Text
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  mortalityRecords   MortalityRecord[]
+  feedConsumptions   DailyFeedConsumption[]
+  weightRecords      WeightRecord[]
+  alerts             ProductionAlert[]
+  vaccinationRecords VaccinationRecord[]
+  healthChecks       HealthCheck[]
+  diseaseOutbreaks   DiseaseOutbreak[]
+  medicationRecords  MedicationRecord[]
+  incomeTransactions IncomeTransaction[]  @relation("BatchBirdSales")
+  costAnalysis       CostAnalysis[]       @relation("BatchCostAnalysis")
+
+  @@index([siteId])
+  @@index([status])
+  @@index([docArrivalDate])
+  @@index([batchName])
+  @@map("batches")
+}
+
+// ============================================
+// MORTALITY TRACKING
+// ============================================
+
+model MortalityRecord {
+  id             String   @id @default(cuid())
+  recordType     String   @map("record_type") // flock, batch
+  flockId        String?  @map("flock_id")
+  flock          Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId        String?  @map("batch_id")
+  batch          Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  mortalityDate  DateTime @map("mortality_date") @db.Date
+  mortalityCount Int      @map("mortality_count")
+  cause          String?  @default("Unknown") // Disease, Predator, Heat Stress, Unknown, Other
+  mortalityRate  Decimal? @map("mortality_rate") @db.Decimal(5, 2)
+  recordedBy     String   @map("recorded_by")
+  recorder       User     @relation("MortalityRecorder", fields: [recordedBy], references: [id])
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([mortalityDate])
+  @@index([recordType])
+  @@map("mortality_records")
+}
+
+// ============================================
+// FEED TRACKING
+// ============================================
+
+model FeedSupplier {
+  id              String   @id @default(cuid())
+  supplierName    String   @unique @map("supplier_name")
+  contactPerson   String?  @map("contact_person")
+  phone           String?
+  email           String?
+  address         String?  @db.Text
+  isActive        Boolean  @default(true) @map("is_active")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  purchases       FeedPurchase[]
+  inventory       FeedInventory[]
+
+  @@map("feed_suppliers")
+}
+
+model FeedInventory {
+  id                String        @id @default(cuid())
+  feedType          String        @map("feed_type") // Starter, Grower, Finisher, Layer
+  feedBrand         String?       @map("feed_brand")
+  supplierId        String?       @map("supplier_id")
+  supplier          FeedSupplier? @relation(fields: [supplierId], references: [id])
+  currentStockBags  Decimal       @default(0) @map("current_stock_bags") @db.Decimal(10, 2)
+  reorderLevel      Decimal       @default(50) @map("reorder_level") @db.Decimal(10, 2)
+  unitCostPerBag    Decimal       @map("unit_cost_per_bag") @db.Decimal(10, 2)
+  bagWeightKg       Decimal       @default(25) @map("bag_weight_kg") @db.Decimal(5, 2)
+  lastRestockDate   DateTime?     @map("last_restock_date") @db.Date
+  expiryDate        DateTime?     @map("expiry_date") @db.Date
+  storageLocation   String?       @map("storage_location")
+  isActive          Boolean       @default(true) @map("is_active")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  purchases         FeedPurchase[]
+  consumptions      DailyFeedConsumption[]
+
+  @@index([feedType])
+  @@index([supplierId])
+  @@map("feed_inventory")
+}
+
+model FeedPurchase {
+  id                String        @id @default(cuid())
+  purchaseDate      DateTime      @map("purchase_date") @db.Date
+  supplierId        String        @map("supplier_id")
+  supplier          FeedSupplier  @relation(fields: [supplierId], references: [id])
+  inventoryId       String        @map("inventory_id")
+  inventory         FeedInventory @relation(fields: [inventoryId], references: [id])
+  quantityBags      Decimal       @map("quantity_bags") @db.Decimal(10, 2)
+  pricePerBag       Decimal       @map("price_per_bag") @db.Decimal(10, 2)
+  totalCost         Decimal       @map("total_cost") @db.Decimal(12, 2)
+  paymentStatus     String        @default("pending") @map("payment_status") // pending, partial, paid
+  paymentDate       DateTime?     @map("payment_date") @db.Date
+  invoiceNumber     String?       @map("invoice_number")
+  deliveryDate      DateTime?     @map("delivery_date") @db.Date
+  receivedBy        String        @map("received_by")
+  receiver          User          @relation("FeedReceiver", fields: [receivedBy], references: [id])
+  notes             String?       @db.Text
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  expenseTransaction ExpenseTransaction? @relation("FeedExpenseLink")
+
+  @@index([supplierId])
+  @@index([inventoryId])
+  @@index([purchaseDate])
+  @@map("feed_purchases")
+}
+
+model DailyFeedConsumption {
+  id               String         @id @default(cuid())
+  consumptionType  String         @map("consumption_type") // flock, batch
+  flockId          String?        @map("flock_id")
+  flock            Flock?         @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId          String?        @map("batch_id")
+  batch            Batch?         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  inventoryId      String?        @map("inventory_id")
+  inventory        FeedInventory? @relation(fields: [inventoryId], references: [id])
+  consumptionDate  DateTime       @map("consumption_date") @db.Date
+  feedQuantityBags Decimal        @map("feed_quantity_bags") @db.Decimal(10, 2)
+  feedPricePerBag  Decimal        @map("feed_price_per_bag") @db.Decimal(10, 2)
+  totalFeedCost    Decimal        @map("total_feed_cost") @db.Decimal(12, 2)
+  feedType         String?        @map("feed_type")
+  recordedBy       String         @map("recorded_by")
+  recorder         User           @relation("FeedRecorder", fields: [recordedBy], references: [id])
+  notes            String?        @db.Text
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([inventoryId])
+  @@index([consumptionDate])
+  @@index([consumptionType])
+  @@map("daily_feed_consumption")
+}
+
+// ============================================
+// WEIGHT TRACKING (Phase 2)
+// ============================================
+
+model WeightRecord {
+  id              String   @id @default(cuid())
+  batchId         String   @map("batch_id")
+  batch           Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  weighingDate    DateTime @map("weighing_date") @db.Date
+  ageInDays       Int      @map("age_in_days")
+  sampleSize      Int      @map("sample_size") // Number of birds weighed
+  averageWeight   Decimal  @map("average_weight") @db.Decimal(10, 2) // in kg
+  minWeight       Decimal? @map("min_weight") @db.Decimal(10, 2) // in kg
+  maxWeight       Decimal? @map("max_weight") @db.Decimal(10, 2) // in kg
+  uniformity      Decimal? @map("uniformity") @db.Decimal(5, 2) // percentage
+  recordedBy      String   @map("recorded_by")
+  recorder        User     @relation("WeightRecorder", fields: [recordedBy], references: [id])
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([batchId, weighingDate])
+  @@index([batchId])
+  @@index([weighingDate])
+  @@map("weight_records")
+}
+
+// ============================================
+// ALERTS & MONITORING
+// ============================================
+
+model ProductionAlert {
+  id          String    @id @default(cuid())
+  alertType   String    @map("alert_type") // high_mortality, low_production, feed_spike, aging_batch
+  severity    String    @map("severity") // low, medium, high, critical
+  flockId     String?   @map("flock_id")
+  flock       Flock?    @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId     String?   @map("batch_id")
+  batch       Batch?    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  alertDate   DateTime  @map("alert_date") @db.Date
+  message     String    @db.Text
+  isResolved  Boolean   @default(false) @map("is_resolved")
+  resolvedBy  String?   @map("resolved_by")
+  resolver    User?     @relation("AlertResolver", fields: [resolvedBy], references: [id])
+  resolvedAt  DateTime? @map("resolved_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([alertType])
+  @@index([isResolved])
+  @@index([alertDate])
+  @@map("production_alerts")
+}
+
+// ============================================
+// HEALTH & VACCINATION MODULE
+// ============================================
+
+model VaccinationSchedule {
+  id                  String               @id @default(cuid())
+  vaccineName         String               @map("vaccine_name")
+  diseaseTarget       String               @map("disease_target") // Newcastle, Gumboro, Fowl Pox, etc.
+  birdType            String               @map("bird_type") // Layer, Broiler
+  administrationRoute String               @map("administration_route") // Drinking water, Injection, Spray, Eye drop
+  ageInDays           Int                  @map("age_in_days") // Recommended age for administration
+  dosage              String               // e.g., "0.03ml per bird", "1 dose per 1000 birds"
+  frequency           String?              // e.g., "Once", "Booster after 2 weeks"
+  manufacturer        String?
+  notes               String?              @db.Text
+  isActive            Boolean              @default(true) @map("is_active")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  vaccinationRecords  VaccinationRecord[]
+
+  @@index([birdType])
+  @@index([ageInDays])
+  @@map("vaccination_schedules")
+}
+
+model VaccinationRecord {
+  id                  String              @id @default(cuid())
+  scheduleId          String?             @map("schedule_id")
+  schedule            VaccinationSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  flockId             String?             @map("flock_id")
+  flock               Flock?              @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId             String?             @map("batch_id")
+  batch               Batch?              @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  vaccinationDate     DateTime            @map("vaccination_date") @db.Date
+  vaccineName         String              @map("vaccine_name")
+  diseaseTarget       String              @map("disease_target")
+  administrationRoute String              @map("administration_route")
+  dosage              String
+  batchNumber         String?             @map("batch_number") // Vaccine batch/lot number
+  expiryDate          DateTime?           @map("expiry_date") @db.Date
+  birdsVaccinated     Int                 @map("birds_vaccinated")
+  administeredBy      String              @map("administered_by")
+  administrator       User                @relation("VaccinationAdministrator", fields: [administeredBy], references: [id])
+  cost                Decimal?            @db.Decimal(10, 2)
+  supplier            String?
+  notes               String?             @db.Text
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([vaccinationDate])
+  @@map("vaccination_records")
+}
+
+model HealthCheck {
+  id             String   @id @default(cuid())
+  flockId        String?  @map("flock_id")
+  flock          Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId        String?  @map("batch_id")
+  batch          Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  checkDate      DateTime @map("check_date") @db.Date
+  birdsInspected Int      @map("birds_inspected")
+  healthStatus   String   @map("health_status") // Excellent, Good, Fair, Poor
+  temperature    Decimal? @db.Decimal(5, 2) // House temperature in Celsius
+  humidity       Decimal? @db.Decimal(5, 2) // Humidity percentage
+  observations   String   @db.Text // General observations: behavior, droppings, appetite, etc.
+  issuesFound    String?  @db.Text // Any specific issues identified
+  actionsTaken   String?  @db.Text // Actions taken during inspection
+  inspectedBy    String   @map("inspected_by")
+  inspector      User     @relation("HealthInspector", fields: [inspectedBy], references: [id])
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([checkDate])
+  @@map("health_checks")
+}
+
+model DiseaseOutbreak {
+  id                String   @id @default(cuid())
+  flockId           String?  @map("flock_id")
+  flock             Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId           String?  @map("batch_id")
+  batch             Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  diseaseType       String   @map("disease_type") // Newcastle, Coccidiosis, Gumboro, etc.
+  outbreakDate      DateTime @map("outbreak_date") @db.Date
+  birdsAffected     Int      @map("birds_affected")
+  mortality         Int      @default(0)
+  symptoms          String   @db.Text
+  diagnosisMethod   String   @map("diagnosis_method") // Visual, Lab test, Post-mortem, Vet diagnosis
+  treatmentGiven    String?  @map("treatment_given") @db.Text
+  preventiveMeasures String? @map("preventive_measures") @db.Text
+  veterinarianName  String?  @map("veterinarian_name")
+  veterinarianContact String? @map("veterinarian_contact")
+  cost              Decimal? @db.Decimal(10, 2)
+  isResolved        Boolean  @default(false) @map("is_resolved")
+  resolvedDate      DateTime? @map("resolved_date") @db.Date
+  recordedBy        String   @map("recorded_by")
+  recorder          User     @relation("OutbreakRecorder", fields: [recordedBy], references: [id])
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([outbreakDate])
+  @@index([isResolved])
+  @@map("disease_outbreaks")
+}
+
+model MedicationRecord {
+  id                String   @id @default(cuid())
+  flockId           String?  @map("flock_id")
+  flock             Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId           String?  @map("batch_id")
+  batch             Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  medicationDate    DateTime @map("medication_date") @db.Date
+  medicationName    String   @map("medication_name")
+  medicationType    String   @map("medication_type") // Antibiotic, Vitamin, Probiotic, Anthelmintic, etc.
+  purpose           String   // Treatment, Prevention, Growth promotion, etc.
+  administrationRoute String @map("administration_route") // Drinking water, Feed mix, Injection
+  dosage            String
+  duration          String   // e.g., "5 days", "Single dose"
+  quantity          Decimal  @db.Decimal(10, 2)
+  unit              String   // kg, liters, doses, etc.
+  cost              Decimal? @db.Decimal(10, 2)
+  supplier          String?
+  prescribedBy      String?  @map("prescribed_by") // Veterinarian name
+  withdrawalPeriod  String?  @map("withdrawal_period") // e.g., "7 days before slaughter"
+  administeredBy    String   @map("administered_by")
+  administrator     User     @relation("MedicationAdministrator", fields: [administeredBy], references: [id])
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([medicationDate])
+  @@map("medication_records")
+}
+
+// ============================================
+// PHASE 4: INVENTORY MANAGEMENT MODULE
+// ============================================
+
+model InventoryCategory {
+  id          String   @id @default(cuid())
+  categoryName String  @unique @map("category_name") // Equipment, Consumables, Spare Parts, Medical Supplies
+  description String?  @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  items GeneralInventory[]
+
+  @@map("inventory_categories")
+}
+
+model GeneralInventorySupplier {
+  id              String   @id @default(cuid())
+  supplierName    String   @unique @map("supplier_name")
+  supplierType    String   @map("supplier_type") // Equipment, Consumables, Medical, Multi-category
+  contactPerson   String?  @map("contact_person")
+  phone           String?
+  email           String?
+  address         String?  @db.Text
+  taxIdNumber     String?  @map("tax_id_number")
+  paymentTerms    String?  @map("payment_terms") // e.g., "Net 30", "COD", "50% advance"
+  bankDetails     String?  @map("bank_details") @db.Text
+  rating          Decimal? @db.Decimal(3, 2) // 0.00 to 5.00
+  isActive        Boolean  @default(true) @map("is_active")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  purchaseOrders  PurchaseOrder[]
+  inventory       GeneralInventory[]
+
+  @@map("general_inventory_suppliers")
+}
+
+model GeneralInventory {
+  id                String                    @id @default(cuid())
+  itemName          String                    @map("item_name")
+  itemCode          String?                   @unique @map("item_code") // SKU or internal code
+  categoryId        String                    @map("category_id")
+  category          InventoryCategory         @relation(fields: [categoryId], references: [id])
+  description       String?                   @db.Text
+  unit              String                    // pieces, boxes, liters, kg, etc.
+  currentStock      Decimal                   @default(0) @map("current_stock") @db.Decimal(10, 2)
+  reorderLevel      Decimal                   @map("reorder_level") @db.Decimal(10, 2)
+  maxStockLevel     Decimal?                  @map("max_stock_level") @db.Decimal(10, 2)
+  unitCost          Decimal                   @map("unit_cost") @db.Decimal(10, 2)
+  supplierId        String?                   @map("supplier_id")
+  supplier          GeneralInventorySupplier? @relation(fields: [supplierId], references: [id])
+  storageLocation   String?                   @map("storage_location")
+  expiryDate        DateTime?                 @map("expiry_date") @db.Date
+  lastRestockDate   DateTime?                 @map("last_restock_date") @db.Date
+  isActive          Boolean                   @default(true) @map("is_active")
+  notes             String?                   @db.Text
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  purchaseOrderItems PurchaseOrderItem[]
+  stockMovements     StockMovement[]
+
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([itemCode])
+  @@map("general_inventory")
+}
+
+model PurchaseOrder {
+  id                String                    @id @default(cuid())
+  orderNumber       String                    @unique @map("order_number") // Auto-generated: PO-YYYYMMDD-XXX
+  orderDate         DateTime                  @map("order_date") @db.Date
+  supplierId        String                    @map("supplier_id")
+  supplier          GeneralInventorySupplier  @relation(fields: [supplierId], references: [id])
+  expectedDelivery  DateTime?                 @map("expected_delivery_date") @db.Date
+  actualDelivery    DateTime?                 @map("actual_delivery_date") @db.Date
+  status            String                    @default("draft") @map("status") // draft, submitted, approved, received, cancelled
+  totalAmount       Decimal                   @map("total_amount") @db.Decimal(12, 2)
+  paidAmount        Decimal                   @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  paymentStatus     String                    @default("pending") @map("payment_status") // pending, partial, paid
+  paymentDate       DateTime?                 @map("payment_date") @db.Date
+  paymentMethod     String?                   @map("payment_method") // Bank Transfer, Cash, Cheque, Credit
+  invoiceNumber     String?                   @map("invoice_number")
+  shippingAddress   String?                   @map("shipping_address") @db.Text
+  approvedBy        String?                   @map("approved_by") // User who approved the order
+  receivedBy        String?                   @map("received_by") // User who received the delivery
+  notes             String?                   @db.Text
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  items             PurchaseOrderItem[]
+
+  @@index([supplierId])
+  @@index([orderDate])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              String           @id @default(cuid())
+  purchaseOrderId String           @map("purchase_order_id")
+  purchaseOrder   PurchaseOrder    @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  inventoryId     String           @map("inventory_id")
+  inventory       GeneralInventory @relation(fields: [inventoryId], references: [id])
+  quantityOrdered Decimal          @map("quantity_ordered") @db.Decimal(10, 2)
+  quantityReceived Decimal         @default(0) @map("quantity_received") @db.Decimal(10, 2)
+  unitPrice       Decimal          @map("unit_price") @db.Decimal(10, 2)
+  totalPrice      Decimal          @map("total_price") @db.Decimal(12, 2)
+  notes           String?          @db.Text
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  @@index([purchaseOrderId])
+  @@index([inventoryId])
+  @@map("purchase_order_items")
+}
+
+model StockMovement {
+  id              String           @id @default(cuid())
+  inventoryId     String           @map("inventory_id")
+  inventory       GeneralInventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  movementDate    DateTime         @map("movement_date") @db.Date
+  movementType    String           @map("movement_type") // purchase, consumption, adjustment, return, damage
+  quantity        Decimal          @db.Decimal(10, 2)
+  balanceAfter    Decimal          @map("balance_after") @db.Decimal(10, 2)
+  referenceNumber String?          @map("reference_number") // PO number, consumption ticket, etc.
+  reason          String?          @db.Text
+  performedBy     String?          @map("performed_by")
+  notes           String?          @db.Text
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  @@index([inventoryId])
+  @@index([movementDate])
+  @@index([movementType])
+  @@map("stock_movements")
+}
+
+// ============================================
+// FINANCIAL MANAGEMENT MODULE (PHASE 5)
+// ============================================
+
+// Income Management
+model IncomeTransaction {
+  id              String    @id @default(cuid())
+  transactionDate DateTime  @map("transaction_date") @db.Date
+  category        String    // egg_sales, bird_sales, manure_sales, other
+  amount          Decimal   @db.Decimal(12, 2)
+  quantity        Decimal?  @db.Decimal(10, 2) // eggs count, birds count, etc.
+  unitPrice       Decimal?  @map("unit_price") @db.Decimal(10, 2)
+  customerName    String?   @map("customer_name")
+  customerPhone   String?   @map("customer_phone")
+  paymentMethod   String    @map("payment_method") // cash, bank_transfer, cheque, mobile_money
+  paymentStatus   String    @map("payment_status") // paid, pending, partial
+  invoiceNumber   String?   @unique @map("invoice_number")
+  flockId         String?   @map("flock_id") // for egg sales
+  flock           Flock?    @relation("FlockEggSales", fields: [flockId], references: [id], onDelete: SetNull)
+  batchId         String?   @map("batch_id") // for bird sales
+  batch           Batch?    @relation("BatchBirdSales", fields: [batchId], references: [id], onDelete: SetNull)
+  description     String?   @db.Text
+  notes           String?   @db.Text
+  recordedBy      String    @map("recorded_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([transactionDate])
+  @@index([category])
+  @@index([paymentStatus])
+  @@index([flockId])
+  @@index([batchId])
+  @@map("income_transactions")
+}
+
+// Expense Management
+model ExpenseTransaction {
+  id              String    @id @default(cuid())
+  transactionDate DateTime  @map("transaction_date") @db.Date
+  category        String    // feed, labor, utilities, veterinary, maintenance, transport, other
+  amount          Decimal   @db.Decimal(12, 2)
+  quantity        Decimal?  @db.Decimal(10, 2)
+  unitCost        Decimal?  @map("unit_cost") @db.Decimal(10, 2)
+  vendorName      String?   @map("vendor_name")
+  vendorPhone     String?   @map("vendor_phone")
+  paymentMethod   String    @map("payment_method") // cash, bank_transfer, cheque, mobile_money
+  paymentStatus   String    @map("payment_status") // paid, pending, partial
+  receiptNumber   String?   @map("receipt_number")
+  feedPurchaseId  String?   @unique @map("feed_purchase_id") // link to feed purchases
+  feedPurchase    FeedPurchase? @relation("FeedExpenseLink", fields: [feedPurchaseId], references: [id], onDelete: SetNull)
+  employeeName    String?   @map("employee_name") // for labor expenses
+  employeeRole    String?   @map("employee_role") // for labor expenses
+  utilityType     String?   @map("utility_type") // electricity, water, diesel, gas
+  description     String    @db.Text
+  notes           String?   @db.Text
+  recordedBy      String    @map("recorded_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([transactionDate])
+  @@index([category])
+  @@index([paymentStatus])
+  @@index([feedPurchaseId])
+  @@map("expense_transactions")
+}
+
+// Budget Planning
+model Budget {
+  id          String    @id @default(cuid())
+  periodStart DateTime  @map("period_start") @db.Date
+  periodEnd   DateTime  @map("period_end") @db.Date
+  category    String    // feed, labor, utilities, veterinary, maintenance, other
+  budgetAmount Decimal  @map("budget_amount") @db.Decimal(12, 2)
+  actualSpent Decimal   @default(0) @map("actual_spent") @db.Decimal(12, 2)
+  variance    Decimal   @default(0) @db.Decimal(12, 2) // budgetAmount - actualSpent
+  notes       String?   @db.Text
+  isActive    Boolean   @default(true) @map("is_active")
+  createdBy   String    @map("created_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@index([category])
+  @@map("budgets")
+}
+
+// Cost Analysis Cache (for performance)
+model CostAnalysis {
+  id            String    @id @default(cuid())
+  analysisDate  DateTime  @map("analysis_date") @db.Date
+  flockId       String?   @map("flock_id")
+  flock         Flock?    @relation("FlockCostAnalysis", fields: [flockId], references: [id], onDelete: Cascade)
+  batchId       String?   @map("batch_id")
+  batch         Batch?    @relation("BatchCostAnalysis", fields: [batchId], references: [id], onDelete: Cascade)
+  totalFeedCost Decimal   @map("total_feed_cost") @db.Decimal(12, 2)
+  totalLaborCost Decimal  @map("total_labor_cost") @db.Decimal(12, 2)
+  totalUtilityCost Decimal @map("total_utility_cost") @db.Decimal(12, 2)
+  totalVeterinaryCost Decimal @map("total_veterinary_cost") @db.Decimal(12, 2)
+  totalOtherCost Decimal  @map("total_other_cost") @db.Decimal(12, 2)
+  totalIncome   Decimal   @map("total_income") @db.Decimal(12, 2)
+  netProfit     Decimal   @map("net_profit") @db.Decimal(12, 2)
+  costPerBird   Decimal?  @map("cost_per_bird") @db.Decimal(10, 2)
+  costPerEgg    Decimal?  @map("cost_per_egg") @db.Decimal(10, 4)
+  roi           Decimal?  @db.Decimal(10, 2) // Return on Investment percentage
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([analysisDate])
+  @@index([flockId])
+  @@index([batchId])
+  @@map("cost_analysis")
+}
