@@ -3,13 +3,36 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
 
+interface IncomeTransactionType {
+  id: string;
+  transactionDate: Date;
+  category: string;
+  amount: number;
+  quantity?: number | null;
+  unitPrice?: number | null;
+  customerName?: string | null;
+  customerPhone?: string | null;
+  paymentMethod: string;
+  paymentStatus: string;
+  invoiceNumber?: string | null;
+  flockId?: string | null;
+  batchId?: string | null;
+  description: string;
+  notes?: string | null;
+  flock?: { id: string; flockName: string } | null;
+  batch?: { id: string; batchName: string } | null;
+}
+
+interface CategorySummary {
+  count: number;
+  total: number;
+}
+
 // GET - Fetch all income transactions
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
@@ -19,72 +42,53 @@ export async function GET(request: Request) {
 
     const where: any = {};
 
-    if (category && category !== 'all') {
-      where.category = category;
-    }
-
-    if (paymentStatus && paymentStatus !== 'all') {
-      where.paymentStatus = paymentStatus;
-    }
-
-    if (startDate) {
-      where.transactionDate = {
-        ...where.transactionDate,
-        gte: new Date(startDate)
-      };
-    }
-
-    if (endDate) {
-      where.transactionDate = {
-        ...where.transactionDate,
-        lte: new Date(endDate)
-      };
-    }
+    if (category && category !== 'all') where.category = category;
+    if (paymentStatus && paymentStatus !== 'all') where.paymentStatus = paymentStatus;
+    if (startDate) where.transactionDate = { ...where.transactionDate, gte: new Date(startDate) };
+    if (endDate) where.transactionDate = { ...where.transactionDate, lte: new Date(endDate) };
 
     const incomeTransactions = await prisma.incomeTransaction.findMany({
       where,
       include: {
         flock: { select: { id: true, flockName: true } },
-        batch: { select: { id: true, batchName: true } }
+        batch: { select: { id: true, batchName: true } },
       },
-      orderBy: { transactionDate: 'desc' }
+      orderBy: { transactionDate: 'desc' },
     });
 
-    // Calculate summary statistics
-    const totalIncome = incomeTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-    const paidIncome = incomeTransactions
-      .filter((t: any) => t.paymentStatus === 'paid')
-      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-    const pendingIncome = incomeTransactions
-      .filter((t: any) => t.paymentStatus === 'pending')
-      .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+    const transactions: IncomeTransactionType[] = incomeTransactions.map((t) => ({
+      ...t,
+      amount: Number(t.amount),
+      quantity: t.quantity ? Number(t.quantity) : null,
+      unitPrice: t.unitPrice ? Number(t.unitPrice) : null,
+    }));
+
+    // Summary calculations
+    const totalIncome = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const paidIncome = transactions.filter((t) => t.paymentStatus === 'paid').reduce((sum, t) => sum + t.amount, 0);
+    const pendingIncome = transactions.filter((t) => t.paymentStatus === 'pending').reduce((sum, t) => sum + t.amount, 0);
 
     // Category breakdown
-    const byCategory = incomeTransactions.reduce((acc: any, t) => {
-      if (!acc[t.category]) {
-        acc[t.category] = { count: 0, total: 0 };
-      }
-      acc[t.category].count++;
-      acc[t.category].total += Number(t.amount);
+    const byCategory: Record<string, CategorySummary> = transactions.reduce((acc, t) => {
+      if (!acc[t.category]) acc[t.category] = { count: 0, total: 0 };
+      acc[t.category].count += 1;
+      acc[t.category].total += t.amount;
       return acc;
-    }, {});
+    }, {} as Record<string, CategorySummary>);
 
     return NextResponse.json({
-      transactions: incomeTransactions,
+      transactions,
       summary: {
         total: totalIncome,
         paid: paidIncome,
         pending: pendingIncome,
-        transactionCount: incomeTransactions.length,
-        byCategory
-      }
+        transactionCount: transactions.length,
+        byCategory,
+      },
     });
   } catch (error: any) {
     console.error('Error fetching income transactions:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch income transactions', details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch income transactions', details: error.message }, { status: 500 });
   }
 }
 
@@ -92,9 +96,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
     const {
@@ -111,38 +113,26 @@ export async function POST(request: Request) {
       flockId,
       batchId,
       description,
-      notes
+      notes,
     } = body;
 
-    // Validation
-    if (!transactionDate || !category || !amount || !paymentMethod || !paymentStatus) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (!transactionDate || !category || !amount || !paymentMethod || !paymentStatus || !description) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Check if invoice number already exists
+    // Check if invoice number exists
     if (invoiceNumber) {
-      const existing = await prisma.incomeTransaction.findUnique({
-        where: { invoiceNumber }
-      });
-      if (existing) {
-        return NextResponse.json(
-          { error: 'Invoice number already exists' },
-          { status: 400 }
-        );
-      }
+      const existing = await prisma.incomeTransaction.findUnique({ where: { invoiceNumber } });
+      if (existing) return NextResponse.json({ error: 'Invoice number already exists' }, { status: 400 });
     }
 
-    // Create income transaction
     const incomeTransaction = await prisma.incomeTransaction.create({
       data: {
         transactionDate: new Date(transactionDate),
         category,
-        amount: parseFloat(amount),
-        quantity: quantity ? parseFloat(quantity) : null,
-        unitPrice: unitPrice ? parseFloat(unitPrice) : null,
+        amount: Number(amount),
+        quantity: quantity ? Number(quantity) : null,
+        unitPrice: unitPrice ? Number(unitPrice) : null,
         customerName,
         customerPhone,
         paymentMethod,
@@ -152,21 +142,18 @@ export async function POST(request: Request) {
         batchId: batchId || null,
         description,
         notes,
-        recordedBy: (session.user as any).id
+        recordedBy: (session.user as any).id,
       },
       include: {
         flock: { select: { id: true, flockName: true } },
-        batch: { select: { id: true, batchName: true } }
-      }
+        batch: { select: { id: true, batchName: true } },
+      },
     });
 
     return NextResponse.json(incomeTransaction, { status: 201 });
   } catch (error: any) {
     console.error('Error creating income transaction:', error);
-    return NextResponse.json(
-      { error: 'Failed to create income transaction', details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create income transaction', details: error.message }, { status: 500 });
   }
 }
 
@@ -174,62 +161,37 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
     const { id, ...updateData } = body;
+    if (!id) return NextResponse.json({ error: 'Transaction ID is required' }, { status: 400 });
 
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Transaction ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Check if invoice number already exists (excluding current transaction)
     if (updateData.invoiceNumber) {
       const existing = await prisma.incomeTransaction.findFirst({
-        where: {
-          invoiceNumber: updateData.invoiceNumber,
-          NOT: { id }
-        }
+        where: { invoiceNumber: updateData.invoiceNumber, NOT: { id } },
       });
-      if (existing) {
-        return NextResponse.json(
-          { error: 'Invoice number already exists' },
-          { status: 400 }
-        );
-      }
+      if (existing) return NextResponse.json({ error: 'Invoice number already exists' }, { status: 400 });
     }
 
-    // Convert date fields
-    if (updateData.transactionDate) {
-      updateData.transactionDate = new Date(updateData.transactionDate);
-    }
-
-    // Convert numeric fields
-    if (updateData.amount) updateData.amount = parseFloat(updateData.amount);
-    if (updateData.quantity) updateData.quantity = parseFloat(updateData.quantity);
-    if (updateData.unitPrice) updateData.unitPrice = parseFloat(updateData.unitPrice);
+    if (updateData.transactionDate) updateData.transactionDate = new Date(updateData.transactionDate);
+    if (updateData.amount) updateData.amount = Number(updateData.amount);
+    if (updateData.quantity) updateData.quantity = Number(updateData.quantity);
+    if (updateData.unitPrice) updateData.unitPrice = Number(updateData.unitPrice);
 
     const updatedTransaction = await prisma.incomeTransaction.update({
       where: { id },
       data: updateData,
       include: {
         flock: { select: { id: true, flockName: true } },
-        batch: { select: { id: true, batchName: true } }
-      }
+        batch: { select: { id: true, batchName: true } },
+      },
     });
 
     return NextResponse.json(updatedTransaction);
   } catch (error: any) {
     console.error('Error updating income transaction:', error);
-    return NextResponse.json(
-      { error: 'Failed to update income transaction', details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update income transaction', details: error.message }, { status: 500 });
   }
 }
 
@@ -237,42 +199,19 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Check if user is Farm Manager
     const userRole = (session.user as any).role?.name;
-    if (userRole !== 'Farm Manager') {
-      return NextResponse.json(
-        { error: 'Only Farm Managers can delete income transactions' },
-        { status: 403 }
-      );
-    }
+    if (userRole !== 'Farm Manager') return NextResponse.json({ error: 'Only Farm Managers can delete income transactions' }, { status: 403 });
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'Transaction ID is required' }, { status: 400 });
 
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Transaction ID is required' },
-        { status: 400 }
-      );
-    }
-
-    await prisma.incomeTransaction.delete({
-      where: { id }
-    });
-
-    return NextResponse.json(
-      { message: 'Income transaction deleted successfully' },
-      { status: 200 }
-    );
+    await prisma.incomeTransaction.delete({ where: { id } });
+    return NextResponse.json({ message: 'Income transaction deleted successfully' }, { status: 200 });
   } catch (error: any) {
     console.error('Error deleting income transaction:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete income transaction', details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete income transaction', details: error.message }, { status: 500 });
   }
 }
