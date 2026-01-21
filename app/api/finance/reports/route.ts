@@ -56,13 +56,13 @@ export async function GET(request: Request) {
         })
       ]);
 
-      const incomeData: Transaction[] = incomeDataRaw.map(t => ({
+      const incomeData: Transaction[] = incomeDataRaw.map((t: any) => ({
         amount: Number(t.amount),
         category: t.category,
         paymentStatus: t.paymentStatus
       }));
 
-      const expenseData: Transaction[] = expenseDataRaw.map(t => ({
+      const expenseData: Transaction[] = expenseDataRaw.map((t: any) => ({
         amount: Number(t.amount),
         category: t.category,
         paymentStatus: t.paymentStatus
@@ -107,13 +107,13 @@ export async function GET(request: Request) {
         prisma.expenseTransaction.findMany({ where: { transactionDate: dateFilter }, orderBy: { transactionDate: 'asc' } })
       ]);
 
-      const incomeTransactions: Transaction[] = incomeTransactionsRaw.map(t => ({
+      const incomeTransactions: Transaction[] = incomeTransactionsRaw.map((t: any) => ({
         amount: Number(t.amount),
         category: t.category,
         paymentStatus: t.paymentStatus
       }));
 
-      const expenseTransactions: Transaction[] = expenseTransactionsRaw.map(t => ({
+      const expenseTransactions: Transaction[] = expenseTransactionsRaw.map((t: any) => ({
         amount: Number(t.amount),
         category: t.category,
         paymentStatus: t.paymentStatus
@@ -154,8 +154,8 @@ export async function GET(request: Request) {
         prisma.expenseTransaction.findMany({ where: { transactionDate: dateFilter, paymentStatus: 'paid' }, orderBy: { transactionDate: 'asc' } })
       ]);
 
-      const incomeTransactions: Transaction[] = incomeTransactionsRaw.map(t => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus, transactionDate: t.transactionDate }));
-      const expenseTransactions: Transaction[] = expenseTransactionsRaw.map(t => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus, transactionDate: t.transactionDate }));
+      const incomeTransactions: Transaction[] = incomeTransactionsRaw.map((t: any) => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus, transactionDate: t.transactionDate }));
+      const expenseTransactions: Transaction[] = expenseTransactionsRaw.map((t: any) => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus, transactionDate: t.transactionDate }));
 
       const monthlyData: Record<string, MonthlyCashFlow> = {};
 
@@ -206,10 +206,10 @@ export async function GET(request: Request) {
         batchId ? prisma.batch.findUnique({ where: { id: batchId } }) : Promise.resolve(null)
       ]);
 
-      const incomeData: Transaction[] = incomeDataRaw.map(t => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus }));
+      const incomeData: Transaction[] = incomeDataRaw.map((t: any) => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus }));
 
       const expenseDataRaw = await prisma.expenseTransaction.findMany({ where: { transactionDate: dateFilter } });
-      const expenseData: Transaction[] = expenseDataRaw.map(t => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus }));
+      const expenseData: Transaction[] = expenseDataRaw.map((t: any) => ({ amount: Number(t.amount), category: t.category, paymentStatus: t.paymentStatus }));
 
       const totalIncome = incomeData.reduce((sum: number, t: any) => sum + t.amount, 0);
 
