@@ -2,15 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 
-// Type alias for FeedInventory
-type FeedInventory = Prisma.FeedInventoryGetPayload<{}>;
+// Type alias for any
+
 
 /* ----------------------------------
    Helper Types
 -----------------------------------*/
-type InventoryWithRelations = FeedInventory & {
+type InventoryWithRelations = any & {
   supplier?: unknown | null;
   _count: {
     purchases: number;
@@ -32,7 +31,7 @@ export async function GET(request: NextRequest) {
     const includeInactive = searchParams.get('includeInactive') === 'true';
     const feedType = searchParams.get('feedType');
 
-    const where: Prisma.FeedInventoryWhereInput = {
+    const where: any = {
       isActive: includeInactive ? undefined : true,
       feedType: feedType || undefined,
     };
@@ -52,13 +51,13 @@ export async function GET(request: NextRequest) {
     });
 
     const totalValue = inventory.reduce(
-      (sum: number, item: FeedInventory) =>
+      (sum: number, item: any) =>
         sum + Number(item.currentStockBags) * Number(item.unitCostPerBag),
       0
     );
 
     const lowStockItems = inventory.filter(
-      (item: FeedInventory) =>
+      (item: any) =>
         Number(item.currentStockBags) <= Number(item.reorderLevel)
     );
 
@@ -68,7 +67,7 @@ export async function GET(request: NextRequest) {
         totalItems: inventory.length,
         totalValue: Number(totalValue.toFixed(2)),
         lowStockCount: lowStockItems.length,
-        lowStockItems: lowStockItems.map((item: FeedInventory) => ({
+        lowStockItems: lowStockItems.map((item: any) => ({
           id: item.id,
           feedType: item.feedType,
           currentStock: item.currentStockBags,
@@ -157,7 +156,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = (await request.json()) as Partial<FeedInventory> & {
+    const body = (await request.json()) as Partial<any> & {
       id: string;
       lastRestockDate?: string;
       expiryDate?: string;

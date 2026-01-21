@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 
-// Type alias for FeedPurchase
-type FeedPurchase = Prisma.FeedPurchaseGetPayload<{}>;
+// Type alias for any
+
 
 /* ----------------------------------
    GET – Fetch feed purchases
@@ -23,7 +22,7 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
-    const where: Prisma.FeedPurchaseWhereInput = {
+    const where: any = {
       supplierId: supplierId || undefined,
       paymentStatus: paymentStatus || undefined,
       purchaseDate:
@@ -56,7 +55,7 @@ export async function GET(request: NextRequest) {
       orderBy: { purchaseDate: 'desc' },
     });
 
-    const serializedPurchases = purchases.map((p: FeedPurchase & any) => ({
+    const serializedPurchases = purchases.map((p: any) => ({
       ...p,
       quantityBags: Number(p.quantityBags),
       pricePerBag: Number(p.pricePerBag),
@@ -70,13 +69,13 @@ export async function GET(request: NextRequest) {
     }));
 
     const totalSpent = purchases.reduce(
-      (sum: number, p: FeedPurchase) => sum + Number(p.totalCost),
+      (sum: number, p: any) => sum + Number(p.totalCost),
       0
     );
 
     const pendingAmount = purchases
-      .filter((p: FeedPurchase) => p.paymentStatus === 'Pending')
-      .reduce((sum: number, p: FeedPurchase) => sum + Number(p.totalCost), 0);
+      .filter((p: any) => p.paymentStatus === 'Pending')
+      .reduce((sum: number, p: any) => sum + Number(p.totalCost), 0);
 
     return NextResponse.json({
       purchases: serializedPurchases,
@@ -85,10 +84,10 @@ export async function GET(request: NextRequest) {
         totalSpent: Number(totalSpent.toFixed(2)),
         pendingPayments: Number(pendingAmount.toFixed(2)),
         paidCount: purchases.filter(
-          (p: FeedPurchase) => p.paymentStatus === 'Paid'
+          (p: any) => p.paymentStatus === 'Paid'
         ).length,
         pendingCount: purchases.filter(
-          (p: FeedPurchase) => p.paymentStatus === 'Pending'
+          (p: any) => p.paymentStatus === 'Pending'
         ).length,
       },
     });
@@ -148,7 +147,7 @@ export async function POST(request: NextRequest) {
     const totalCost = Number(body.quantityBags) * Number(body.pricePerBag);
 
     const result = await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
+      async (tx: any) => {
         const purchase = await tx.feedPurchase.create({
           data: {
             purchaseDate: new Date(body.purchaseDate),
@@ -248,7 +247,7 @@ export async function PUT(request: NextRequest) {
     const totalCost = Number(body.quantityBags) * Number(body.pricePerBag);
 
     const result = await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
+      async (tx: any) => {
         const purchase = await tx.feedPurchase.update({
           where: { id: body.id },
           data: {
@@ -327,7 +326,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
+      async (tx: any) => {
         await tx.feedPurchase.delete({ where: { id } });
 
         await tx.feedInventory.update({

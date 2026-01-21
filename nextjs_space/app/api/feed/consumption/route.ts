@@ -2,23 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma } from '@prisma/client';
-
-/* ----------------------------------
-   Helper Types
------------------------------------*/
-
-// Base type alias for DailyFeedConsumption
-type DailyFeedConsumption = Prisma.DailyFeedConsumptionGetPayload<{}>;
-
-type ConsumptionWithRelations = Prisma.DailyFeedConsumptionGetPayload<{
-  include: {
-    flock: { select: { flockName: true; flockType: true } };
-    batch: { select: { batchName: true; batchType: true } };
-    inventory: { select: { feedType: true; feedBrand: true; unitCostPerBag: true } };
-    recorder: { select: { firstName: true; lastName: true } };
-  };
-}>;
 
 /* ----------------------------------
    GET – Fetch consumption records
@@ -32,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    const where: Prisma.DailyFeedConsumptionWhereInput = {
+    const where: any = {
       consumptionType: searchParams.get('consumptionType') || undefined,
       flockId: searchParams.get('flockId') || undefined,
       batchId: searchParams.get('batchId') || undefined,
@@ -58,7 +41,7 @@ export async function GET(request: NextRequest) {
       orderBy: { consumptionDate: 'desc' },
     });
 
-    const serializedConsumptions = consumptions.map((c: ConsumptionWithRelations) => ({
+    const serializedConsumptions = consumptions.map((c: any) => ({
       ...c,
       feedQuantityBags: Number(c.feedQuantityBags),
       inventory: c.inventory
@@ -70,7 +53,7 @@ export async function GET(request: NextRequest) {
     }));
 
     const totalFeedUsed = consumptions.reduce(
-      (sum: number, c: DailyFeedConsumption) => sum + Number(c.feedQuantityBags),
+      (sum: number, c: any) => sum + Number(c.feedQuantityBags),
       0
     );
 
@@ -148,7 +131,7 @@ export async function POST(request: NextRequest) {
 
     const totalFeedCost = Number(feedQuantityBags) * Number(feedPricePerBag);
 
-    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       if (inventoryId) {
         const inventory = await tx.feedInventory.findUnique({
           where: { id: inventoryId },

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 
 // GET: Fetch stock movements
 export async function GET(request: NextRequest) {
@@ -84,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create movement and update inventory in a transaction
-    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Get current inventory
       const inventory = await tx.generalInventory.findUnique({
         where: { id: inventoryId }
@@ -166,7 +165,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete movement and reverse inventory changes in a transaction
-    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await prisma.$transaction(async (tx: any) => {
       const movement = await tx.stockMovement.findUnique({
         where: { id },
         include: { inventory: true }

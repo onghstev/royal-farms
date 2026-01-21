@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 
 // Generate PO number
 function generatePONumber(): string {
@@ -93,7 +92,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Create purchase order with items in a transaction
-    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const order = await prisma.$transaction(async (tx: any) => {
       const po = await tx.purchaseOrder.create({
         data: {
           orderNumber: generatePONumber(),
@@ -167,7 +166,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update purchase order in a transaction
-    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const order = await prisma.$transaction(async (tx: any) => {
       // If status is changing to 'received', update inventory
       const existingOrder = await tx.purchaseOrder.findUnique({
         where: { id },
