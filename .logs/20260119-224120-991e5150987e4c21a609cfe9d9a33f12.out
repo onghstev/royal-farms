@@ -1,0 +1,113 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1224ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3s (847 modules)
+ GET / 200 in 3432ms
+ ✓ Compiled in 517ms (305 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 224ms (539 modules)
+ GET /api/auth/providers 200 in 629ms
+ GET / 200 in 73ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 510ms (866 modules)
+ GET /api/auth/session 200 in 632ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/csrf 200 in 42ms
+ ✓ Compiled /api/signup in 176ms (584 modules)
+ POST /api/signup 201 in 432ms
+ GET / 200 in 73ms
+ GET /api/auth/signin 302 in 46ms
+ GET /login?callbackUrl=https://166f2b6db8.preview.abacusai.app 200 in 43ms
+ GET /api/auth/csrf 200 in 29ms
+ POST /api/auth/callback/credentials 302 in 175ms
+ ✓ Compiled /middleware in 311ms (174 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 2.6s (2295 modules)
+ GET /dashboard 200 in 2885ms
+ GET / 200 in 58ms
+ GET /dashboard 200 in 77ms
+ GET /api/auth/session 200 in 101ms
+ GET /api/auth/session 200 in 48ms
+ GET /api/auth/session 200 in 112ms
+ GET /dashboard?_rsc=16jui 200 in 157ms
+ GET /api/auth/session 200 in 86ms
+ ○ Compiling /dashboard/flocks ...
+ ✓ Compiled /dashboard/flocks in 2.5s (2666 modules)
+ GET /dashboard/batches 200 in 3058ms
+ GET /dashboard/inventory 200 in 3057ms
+ GET /dashboard/reports 200 in 3045ms
+ GET /dashboard/weight-tracking 200 in 3058ms
+ GET /dashboard/finance 200 in 3007ms
+ GET /dashboard/egg-collection 200 in 3009ms
+ GET /dashboard/mortality 200 in 3008ms
+ GET /dashboard/livestock-types 200 in 3010ms
+ GET /dashboard/health 200 in 3010ms
+ GET /dashboard/feed 200 in 3013ms
+ GET /dashboard/user-manual 200 in 3016ms
+ GET /dashboard/flocks 200 in 3032ms
+ GET /dashboard/fcr 200 in 3083ms
+ GET /dashboard/users 200 in 3032ms
+ ○ Compiling /api/weight-tracking ...
+ GET /api/auth/session 200 in 3962ms
+ ✓ Compiled /api/mortality in 4.4s (1499 modules)
+ ✓ Compiled (1513 modules)
+ GET /api/auth/session 200 in 1143ms
+ GET /api/auth/session 200 in 1144ms
+ ○ Compiling /dashboard/flocks/[id]/edit ...
+ ✓ Compiled /dashboard/flocks/[id]/edit in 2.1s (2706 modules)
+ GET /dashboard/flocks/new 200 in 2436ms
+ GET /dashboard/flocks/cmkl9y2p5000nxls0zrxx0jik 200 in 2714ms
+ GET /dashboard/flocks/cmkl9y2pb000rxls0jwfj369q 200 in 2634ms
+ GET /dashboard/flocks/cmkl9y2p8000pxls03z7e7ji1 200 in 2719ms
+ GET /dashboard/flocks/cmkl9y2pb000rxls0jwfj369q/edit 200 in 2944ms
+ GET /dashboard/flocks/cmkl9y2p8000pxls03z7e7ji1/edit 200 in 2865ms
+ GET /dashboard/flocks/cmkl9y2p5000nxls0zrxx0jik/edit 200 in 2868ms
+ GET /api/sites 200 in 200ms
+ GET /api/livestock-types 200 in 293ms
+ GET /api/livestock-types 200 in 272ms
+ GET /api/auth/session 200 in 299ms
+ GET /api/sites 200 in 231ms
+ GET /api/auth/session 200 in 228ms
+ ○ Compiling /api/flocks/[id] ...
+ ✓ Compiled /api/flocks/[id] in 870ms (1530 modules)
+ GET /api/auth/session 200 in 1608ms
+ GET /api/auth/session 200 in 95ms
+ GET /api/auth/session 200 in 100ms
+ GET /api/flocks/cmkl9y2pb000rxls0jwfj369q 200 in 1824ms
+ GET /api/flocks/cmkl9y2p8000pxls03z7e7ji1 200 in 1733ms
+ GET /api/flocks/cmkl9y2p5000nxls0zrxx0jik 200 in 2077ms
+ GET /api/auth/session 200 in 135ms
+ GET /api/flocks/cmkl9y2p8000pxls03z7e7ji1 200 in 166ms
+ GET /api/flocks/cmkl9y2p5000nxls0zrxx0jik 200 in 135ms
+ GET /api/flocks/cmkl9y2pb000rxls0jwfj369q 200 in 136ms
+ GET /api/auth/session 200 in 69ms
+ GET /api/flocks/cmkl9y2pb000rxls0jwfj369q 200 in 121ms
+ GET /api/flocks/cmkl9y2p5000nxls0zrxx0jik 200 in 129ms
+ GET /api/flocks/cmkl9y2p8000pxls03z7e7ji1 200 in 134ms
+ GET /api/auth/session 200 in 164ms
+ GET /api/flocks/cmkl9y2pb000rxls0jwfj369q 200 in 171ms
+ GET /api/flocks/cmkl9y2p5000nxls0zrxx0jik 200 in 155ms
+ GET /api/flocks/cmkl9y2p8000pxls03z7e7ji1 200 in 147ms
+ GET /api/auth/session 200 in 75ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 60ms
+ GET /api/auth/session 200 in 45ms
+ GET /api/auth/session 200 in 73ms
+ GET /api/auth/session 200 in 114ms
+ GET /api/auth/session 200 in 56ms
+ GET /api/auth/session 200 in 43ms
+ GET /api/auth/session 200 in 63ms
+ GET /api/auth/session 200 in 46ms
+ GET /api/auth/session 200 in 48ms
+ GET /api/auth/session 200 in 31ms
+ GET /api/auth/session 200 in 56ms
+ GET /api/auth/session 200 in 39ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 56ms
+[?25h

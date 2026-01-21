@@ -1,0 +1,64 @@
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+  ▲ Next.js 14.2.28
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/18) ...
+   Generating static pages (4/18) 
+   Generating static pages (8/18) 
+   Generating static pages (13/18) 
+ ✓ Generating static pages (18/18)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    139 B          87.5 kB
+├ ƒ /_not-found                          876 B          88.2 kB
+├ ƒ /api/auth/[...nextauth]              0 B                0 B
+├ ƒ /api/batches                         0 B                0 B
+├ ƒ /api/batches/[id]                    0 B                0 B
+├ ƒ /api/egg-collection                  0 B                0 B
+├ ƒ /api/fcr                             0 B                0 B
+├ ƒ /api/flocks                          0 B                0 B
+├ ƒ /api/flocks/[id]                     0 B                0 B
+├ ƒ /api/mortality                       0 B                0 B
+├ ƒ /api/reports                         0 B                0 B
+├ ƒ /api/roles                           0 B                0 B
+├ ƒ /api/signup                          0 B                0 B
+├ ƒ /api/sites                           0 B                0 B
+├ ƒ /api/users                           0 B                0 B
+├ ƒ /api/weight-tracking                 0 B                0 B
+├ ƒ /api/weight-tracking/[id]            0 B                0 B
+├ ƒ /dashboard                           116 kB          216 kB
+├ ƒ /dashboard/batches                   5.44 kB         147 kB
+├ ƒ /dashboard/egg-collection            4.79 kB         146 kB
+├ ƒ /dashboard/flocks                    3.81 kB         112 kB
+├ ƒ /dashboard/flocks/[id]               4.62 kB         126 kB
+├ ƒ /dashboard/flocks/[id]/edit          3.86 kB         151 kB
+├ ƒ /dashboard/flocks/new                3.98 kB         151 kB
+├ ƒ /dashboard/mortality                 5.16 kB         147 kB
+├ ƒ /dashboard/reports                   5.55 kB         150 kB
+├ ƒ /dashboard/user-manual               12.7 kB         110 kB
+├ ƒ /dashboard/users                     6.39 kB         153 kB
+├ ƒ /dashboard/weight-tracking           5.41 kB         147 kB
+└ ƒ /login                               4.1 kB          117 kB
++ First Load JS shared by all            87.4 kB
+  ├ chunks/117-bd8363f77a61c601.js       31.8 kB
+  ├ chunks/fd9d1056-1881595f36131b7a.js  53.6 kB
+  └ other shared chunks (total)          1.96 kB
+
+
+ƒ Middleware                             49.4 kB
+
+ƒ  (Dynamic)  server-rendered on demand
+
+Successfully built app artifact

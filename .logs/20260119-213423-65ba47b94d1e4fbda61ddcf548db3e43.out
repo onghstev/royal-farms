@@ -1,0 +1,8 @@
+[master 873db57] Railway deployment configuration ready
+ 6 files changed, 141 insertions(+), 1 deletion(-)
+ create mode 100644 nextjs_space/.env.example
+ create mode 100644 nextjs_space/.gitignore
+ create mode 100644 nextjs_space/Procfile
+ create mode 100644 nextjs_space/README.md
+ create mode 100644 nextjs_space/railway.json
+###873db5754f69c65d7a6d815f97fee73116065590###

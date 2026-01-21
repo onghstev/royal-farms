@@ -1,0 +1,48 @@
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+  ▲ Next.js 14.2.28
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/13) ...
+   Generating static pages (3/13) 
+   Generating static pages (6/13) 
+   Generating static pages (9/13) 
+ ✓ Generating static pages (13/13)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    160 B          87.5 kB
+├ ƒ /_not-found                          876 B          88.3 kB
+├ ƒ /api/auth/[...nextauth]              0 B                0 B
+├ ƒ /api/signup                          0 B                0 B
+├ ƒ /dashboard                           102 kB          202 kB
+├ ƒ /dashboard/batches                   160 B          87.5 kB
+├ ƒ /dashboard/egg-collection            160 B          87.5 kB
+├ ƒ /dashboard/flocks                    2.38 kB         112 kB
+├ ƒ /dashboard/flocks/[id]               160 B          87.5 kB
+├ ƒ /dashboard/flocks/[id]/edit          160 B          87.5 kB
+├ ƒ /dashboard/flocks/new                160 B          87.5 kB
+├ ƒ /dashboard/mortality                 160 B          87.5 kB
+├ ƒ /dashboard/reports                   159 B          87.5 kB
+└ ƒ /login                               3.38 kB         117 kB
++ First Load JS shared by all            87.4 kB
+  ├ chunks/117-444dcd33c1d8e94a.js       31.8 kB
+  ├ chunks/fd9d1056-23ff71d971343e97.js  53.6 kB
+  └ other shared chunks (total)          2 kB
+
+
+ƒ Middleware                             49.4 kB
+
+ƒ  (Dynamic)  server-rendered on demand
+
+Successfully built app artifact

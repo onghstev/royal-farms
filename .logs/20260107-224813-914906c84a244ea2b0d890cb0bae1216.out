@@ -1,0 +1,15 @@
+[master 21d700e] Phase 4 Inventory Management Complete
+ 16 files changed, 4817 insertions(+), 3 deletions(-)
+ create mode 100644 nextjs_space/app/api/inventory/categories/route.ts
+ create mode 100644 nextjs_space/app/api/inventory/items/route.ts
+ create mode 100644 nextjs_space/app/api/inventory/purchase-orders/route.ts
+ create mode 100644 nextjs_space/app/api/inventory/stock-movements/route.ts
+ create mode 100644 nextjs_space/app/api/inventory/suppliers/route.ts
+ create mode 100644 nextjs_space/app/dashboard/inventory/categories/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/inventory/items/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/inventory/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/inventory/purchase-orders/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/inventory/stock-movements/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/inventory/suppliers/page.tsx
+ create mode 100644 nextjs_space/scripts/seed.ts.bak
+###21d700e3c773e144e86a25e0005f1e1b38c6c1c7###

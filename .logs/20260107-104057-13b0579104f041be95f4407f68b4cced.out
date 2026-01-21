@@ -1,0 +1,10 @@
+[master fcd3930] Complete CRUD for Flocks, Batches, Eggs, Mortality
+ 19 files changed, 3087 insertions(+), 69 deletions(-)
+ create mode 100644 nextjs_space/app/api/batches/[id]/route.ts
+ create mode 100644 nextjs_space/app/api/batches/route.ts
+ create mode 100644 nextjs_space/app/api/egg-collection/route.ts
+ create mode 100644 nextjs_space/app/api/flocks/[id]/route.ts
+ create mode 100644 nextjs_space/app/api/flocks/route.ts
+ create mode 100644 nextjs_space/app/api/mortality/route.ts
+ create mode 100644 nextjs_space/app/api/sites/route.ts
+###fcd3930d0cb9b307bd489e9ad2b33ac9560f0f27###

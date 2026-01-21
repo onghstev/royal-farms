@@ -1,0 +1,35 @@
+➤ YN0000: · Yarn 4.12.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + @next/swc-wasm-nodejs@npm:14.2.33, @next/third-parties@npm:16.1.4, @typescript-eslint/eslint-plugin@npm:6.21.0, @typescript-eslint/parser@npm:6.21.0, and 55 more.
+➤ YN0085: │ - @azure/abort-controller@npm:2.1.2, @azure/core-auth@npm:1.10.1, @azure/core-client@npm:1.10.1, @azure/core-http-compat@npm:2.3.1, and 55 more.
+➤ YN0000: └ Completed in 1s 466ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0060: │ @types/react is listed by your project with version 18.2.22 (p6349eb), which doesn't satisfy what react-redux (via recharts) and other dependencies request (^18.2.25).
+➤ YN0002: │ app@workspace:. doesn't provide prettier (pd88b5f), requested by eslint-plugin-prettier.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 43 packages were added to the project (+ 290.95 MiB).
+➤ YN0000: └ Completed in 10s 548ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 41s 688ms
+➤ YN0000: · Done with warnings in 53s 873ms
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.7.0) to ./node_modules/.prisma/client in 203ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+Starting server...
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1629ms

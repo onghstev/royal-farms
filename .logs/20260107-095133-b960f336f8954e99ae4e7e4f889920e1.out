@@ -1,0 +1,2 @@
+app/layout.tsx(5,10): error TS2614: Module '"@/components/GoogleAnalytics"' has no exported member 'GoogleAnalytics'. Did you mean to use 'import GoogleAnalytics from "@/components/GoogleAnalytics"' instead?
+exit_code=2

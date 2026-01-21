@@ -1,0 +1,120 @@
+Error fetching weight records: PrismaClientKnownRequestError: 
+Invalid `_lib_db__WEBPACK_IMPORTED_MODULE_3__.prisma.weightRecord.findMany()` invocation in
+/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/api/weight-tracking/route.js:263:94
+
+  260 const where = batchId ? {
+  261     batchId
+  262 } : {};
+→ 263 const weightRecords = await _lib_db__WEBPACK_IMPORTED_MODULE_3__.prisma.weightRecord.findMany(
+Too many database connections opened: FATAL: too many connections for role "role_a0e5b30a5"
+Prisma Accelerate has built-in connection pooling to prevent such errors: https://pris.ly/client/error-accelerate
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7459)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async GET (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/api/weight-tracking/route.js:263:31)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'P2037',
+  meta: {
+    modelName: 'WeightRecord',
+    message: 'FATAL: too many connections for role "role_a0e5b30a5"'
+  },
+  clientVersion: '6.7.0'
+}
+Error fetching livestock types: PrismaClientKnownRequestError: 
+Invalid `_lib_db__WEBPACK_IMPORTED_MODULE_3__.prisma.livestockType.findMany()` invocation in
+/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/api/livestock-types/route.js:260:96
+
+  257         status: 401
+  258     });
+  259 }
+→ 260 const livestockTypes = await _lib_db__WEBPACK_IMPORTED_MODULE_3__.prisma.livestockType.findMany(
+Too many database connections opened: FATAL: too many connections for role "role_a0e5b30a5"
+Prisma Accelerate has built-in connection pooling to prevent such errors: https://pris.ly/client/error-accelerate
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7459)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async GET (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/api/livestock-types/route.js:260:32)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'P2037',
+  meta: {
+    modelName: 'LivestockType',
+    message: 'FATAL: too many connections for role "role_a0e5b30a5"'
+  },
+  clientVersion: '6.7.0'
+}
+Error fetching flocks: PrismaClientKnownRequestError: 
+Invalid `_lib_db__WEBPACK_IMPORTED_MODULE_3__.prisma.flock.findMany()` invocation in
+/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/api/flocks/route.js:258:80
+
+  255         status: 401
+  256     });
+  257 }
+→ 258 const flocks = await _lib_db__WEBPACK_IMPORTED_MODULE_3__.prisma.flock.findMany(
+Too many database connections opened: FATAL: too many connections for role "role_a0e5b30a5"
+Prisma Accelerate has built-in connection pooling to prevent such errors: https://pris.ly/client/error-accelerate
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7459)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async GET (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/api/flocks/route.js:258:24)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'P2037',
+  meta: {
+    modelName: 'Flock',
+    message: 'FATAL: too many connections for role "role_a0e5b30a5"'
+  },
+  clientVersion: '6.7.0'
+}

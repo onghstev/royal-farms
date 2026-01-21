@@ -1,0 +1,56 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 2.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (847 modules)
+ GET / 200 in 3423ms
+ ✓ Compiled in 523ms (305 modules)
+ GET / 200 in 52ms
+ GET / 200 in 46ms
+ ✓ Compiled /login in 232ms (539 modules)
+ ✓ Compiled in 389ms (309 modules)
+ GET /api/auth/session 200 in 1122ms
+ GET /api/auth/session 200 in 42ms
+ GET / 200 in 75ms
+ GET / 200 in 39ms
+ GET / 200 in 37ms
+ GET /api/auth/session 200 in 54ms
+ GET /api/auth/session 200 in 46ms
+ GET / 200 in 39ms
+ GET / 200 in 37ms
+ GET / 200 in 37ms
+ GET / 200 in 37ms
+ GET / 200 in 34ms
+ GET / 200 in 41ms
+ GET / 200 in 36ms
+ GET / 200 in 37ms
+ GET / 200 in 34ms
+ GET / 200 in 36ms
+ GET /api/auth/session 200 in 56ms
+ GET /api/auth/session 200 in 67ms
+ GET / 200 in 39ms
+ GET / 200 in 45ms
+ GET / 200 in 46ms
+ GET / 200 in 36ms
+ GET / 200 in 36ms
+ GET / 200 in 41ms
+ GET / 200 in 37ms
+ GET / 200 in 39ms
+ GET / 200 in 33ms
+ GET / 200 in 35ms
+ GET / 200 in 38ms
+ GET / 200 in 41ms
+ GET / 200 in 39ms
+ GET / 200 in 35ms
+ GET / 200 in 35ms
+ GET / 200 in 35ms
+ GET / 200 in 38ms
+ GET / 200 in 34ms
+ GET / 200 in 36ms
+ GET /api/auth/session 200 in 46ms
+ GET /api/auth/session 200 in 51ms

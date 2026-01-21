@@ -1,0 +1,4 @@
+[master a542f48] Added npmrc for Railway compatibility
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ create mode 100644 nextjs_space/.npmrc
+###a542f485285850a75fb9b3128a8079d7aa4d10c0###

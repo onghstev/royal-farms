@@ -1,0 +1,90 @@
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., flockId: ..., collectionDate: ..., goodEggsCount: ..., brokenEggsCount: ..., totalEggsCount: ..., collectionTime: ..., productionPercentage: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., recorder: ...}
+                                                                                                                                                         ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^
+Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., recordType: "batch", flockId: ..., batchId: ..., mortalityDate: ..., mortalityCount: ..., cause: ..., mortalityRate: Decimal, recordedBy: ..., notes: ..., createdAt: ..., updatedAt: ..., flock: ..., batch: ..., recorder: ...}
+                                                                                                                                 ^^^^^^^

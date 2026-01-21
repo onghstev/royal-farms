@@ -1,0 +1,4 @@
+app/api/roles/route.ts(4,8): error TS2613: Module '"/home/ubuntu/royal_farms_poultry_system/nextjs_space/lib/db"' has no default export. Did you mean to use 'import { prisma } from "/home/ubuntu/royal_farms_poultry_system/nextjs_space/lib/db"' instead?
+app/api/users/route.ts(4,8): error TS2613: Module '"/home/ubuntu/royal_farms_poultry_system/nextjs_space/lib/db"' has no default export. Did you mean to use 'import { prisma } from "/home/ubuntu/royal_farms_poultry_system/nextjs_space/lib/db"' instead?
+app/api/users/route.ts(39,39): error TS7006: Parameter 'user' implicitly has an 'any' type.
+exit_code=2

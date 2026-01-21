@@ -1,0 +1,49 @@
+app/api/reports/route.ts(36,45): error TS2339: Property 'eggCollection' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+app/api/reports/route.ts(51,50): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(51,55): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(55,54): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(55,59): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(56,56): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(56,61): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(57,58): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(57,63): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(61,36): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(61,41): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(65,58): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(96,44): error TS7006: Parameter 'collection' implicitly has an 'any' type.
+app/api/reports/route.ts(113,47): error TS2339: Property 'mortality' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+app/api/reports/route.ts(133,54): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(133,59): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(136,61): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(147,60): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(175,42): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(219,25): error TS2339: Property 'name' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 11 more ...; notes: string | null; }'.
+app/api/reports/route.ts(223,54): error TS2339: Property 'dateOfBirth' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 11 more ...; notes: string | null; }'.
+app/api/reports/route.ts(225,33): error TS2339: Property 'initialStock' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 11 more ...; notes: string | null; }'.
+app/api/reports/route.ts(227,36): error TS2339: Property 'initialStock' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 11 more ...; notes: string | null; }'.
+app/api/reports/route.ts(227,79): error TS2339: Property 'initialStock' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 11 more ...; notes: string | null; }'.
+app/api/reports/route.ts(231,25): error TS2339: Property 'name' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 14 more ...; actualHarvestDate: Date | null; }'.
+app/api/reports/route.ts(235,54): error TS2339: Property 'dateOfBirth' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 14 more ...; actualHarvestDate: Date | null; }'.
+app/api/reports/route.ts(237,33): error TS2339: Property 'initialStock' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 14 more ...; actualHarvestDate: Date | null; }'.
+app/api/reports/route.ts(239,36): error TS2339: Property 'initialStock' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 14 more ...; actualHarvestDate: Date | null; }'.
+app/api/reports/route.ts(239,79): error TS2339: Property 'initialStock' does not exist on type '{ site: { name: string; id: string; isActive: boolean; createdAt: Date; updatedAt: Date; description: string | null; location: string | null; }; } & { status: string; id: string; createdAt: Date; ... 14 more ...; actualHarvestDate: Date | null; }'.
+app/api/reports/route.ts(247,41): error TS2339: Property 'fCRRecord' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+app/api/reports/route.ts(263,32): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(263,37): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(266,54): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(266,59): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(267,52): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(267,57): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(270,54): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(304,36): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(320,44): error TS2339: Property 'weightTracking' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+app/api/reports/route.ts(336,35): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(336,40): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(340,57): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(358,54): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/api/reports/route.ts(359,52): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(359,57): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/api/reports/route.ts(369,49): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+app/api/reports/route.ts(369,54): error TS7006: Parameter 'record' implicitly has an 'any' type.
+app/api/reports/route.ts(372,39): error TS7006: Parameter 'record' implicitly has an 'any' type.
+exit_code=2

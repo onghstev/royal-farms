@@ -1,0 +1,4 @@
+[master 4842c55] Multi-livestock support added
+ 7 files changed, 25 insertions(+), 52 deletions(-)
+ delete mode 100644 nextjs_space/scripts/export-data.ts
+###4842c5589b919d6cd88e8d40b844e40a4ff6e53e###

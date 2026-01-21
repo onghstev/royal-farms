@@ -1,0 +1,2 @@
+scripts/seed.ts(1177,40): error TS2339: Property 'name' does not exist on type '{ id: string; createdAt: Date; email: string | null; phone: string | null; isActive: boolean; updatedAt: Date; notes: string | null; supplierName: string; contactPerson: string | null; address: string | null; }'.
+exit_code=2

@@ -1,0 +1,86 @@
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:3498:15)\n' +
+    '    at decrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:3523:20)\n' +
+    '    at flattenedDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:312:52)\n' +
+    '    at async compactDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:106:23)\n' +
+    '    at async jwtDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:1513:23)\n' +
+    '    at async Object.decode (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4671:7)\n' +
+    '    at async Object.session (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4232:28)\n' +
+    '    at async AuthHandler (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:1524:27)\n' +
+    '    at async getServerSession (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4870:19)\n' +
+    '    at async Home (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/app/page.js:619:21)',
+  name: 'JWEDecryptionFailed'
+}
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:3498:15)\n' +
+    '    at decrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:3523:20)\n' +
+    '    at flattenedDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:312:52)\n' +
+    '    at async compactDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:106:23)\n' +
+    '    at async jwtDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:1513:23)\n' +
+    '    at async Object.decode (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4671:7)\n' +
+    '    at async Object.session (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4232:28)\n' +
+    '    at async AuthHandler (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:1524:27)\n' +
+    '    at async NextAuthRouteHandler (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4798:28)\n' +
+    '    at async NextAuth._args$ (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4830:16)\n' +
+    '    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)\n' +
+    '    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)\n' +
+    '    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)\n' +
+    '    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  name: 'JWEDecryptionFailed'
+}
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:3498:15)\n' +
+    '    at decrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:3523:20)\n' +
+    '    at flattenedDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:312:52)\n' +
+    '    at async compactDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:106:23)\n' +
+    '    at async jwtDecrypt (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/jose.js:1513:23)\n' +
+    '    at async Object.decode (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4671:7)\n' +
+    '    at async Object.session (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4232:28)\n' +
+    '    at async AuthHandler (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:1524:27)\n' +
+    '    at async NextAuthRouteHandler (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4798:28)\n' +
+    '    at async NextAuth._args$ (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.next/server/vendor-chunks/next-auth.js:4830:16)\n' +
+    '    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)\n' +
+    '    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)\n' +
+    '    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)\n' +
+    '    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  name: 'JWEDecryptionFailed'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.

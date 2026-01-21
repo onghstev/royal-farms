@@ -1,0 +1,14 @@
+Error fetching roles: n [Error]: Dynamic server usage: Route /api/roles couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/opt/hostedapp/node/root/app/.build/server/chunks/9276.js:1:37220)
+    at d (/opt/hostedapp/node/root/app/.build/server/chunks/1083.js:25:30391)
+    at s (/opt/hostedapp/node/root/app/.build/server/chunks/1083.js:25:20511)
+    at u (/opt/hostedapp/node/root/app/.build/server/app/api/roles/route.js:1:1305)
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/roles couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}

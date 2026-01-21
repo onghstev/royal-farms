@@ -1,0 +1,11 @@
+[master ca9cbb7] 8aab7711-4c1f-40c4-aaf3-ea953705ec5c
+ 12 files changed, 3664 insertions(+), 2 deletions(-)
+ create mode 100644 nextjs_space/app/api/finance/expenses/route.ts
+ create mode 100644 nextjs_space/app/api/finance/income/route.ts
+ create mode 100644 nextjs_space/app/api/finance/reports/route.ts
+ create mode 100644 nextjs_space/app/dashboard/finance/expenses/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/finance/income/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/finance/page.tsx
+ create mode 100644 nextjs_space/app/dashboard/finance/reports/page.tsx
+ create mode 100644 nextjs_space/scripts/seed-phase5.ts
+###ca9cbb72cef61bd1c7a567d13319eb9051ca4e8f###

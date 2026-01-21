@@ -1,0 +1,28 @@
+Error fetching roles: n [Error]: Dynamic server usage: Route /api/roles couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/chunks/4372.js:1:37216)
+    at d (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/chunks/957.js:25:30403)
+    at s (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/chunks/957.js:25:20519)
+    at p (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/app/api/roles/route.js:1:1306)
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/roles couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error generating financial report: n [Error]: Dynamic server usage: Route /api/finance/reports couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/chunks/4372.js:1:37216)
+    at d (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/chunks/957.js:25:30403)
+    at s (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/chunks/957.js:25:20519)
+    at d (/home/ubuntu/royal_farms_poultry_system/nextjs_space/.build/server/app/api/finance/reports/route.js:1:1304)
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/finance/reports couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}

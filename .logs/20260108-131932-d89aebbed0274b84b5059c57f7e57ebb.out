@@ -1,0 +1,5 @@
+[master a157e0a] Dynamic livestock types management
+ 8 files changed, 846 insertions(+), 17 deletions(-)
+ create mode 100644 nextjs_space/app/api/livestock-types/route.ts
+ create mode 100644 nextjs_space/app/dashboard/livestock-types/page.tsx
+###a157e0aaf9d707d6146d6822f93c1c81a47fb66a###

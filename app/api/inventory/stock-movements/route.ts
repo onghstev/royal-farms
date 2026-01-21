@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create movement and update inventory in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Get current inventory
       const inventory = await tx.generalInventory.findUnique({
         where: { id: inventoryId }
@@ -165,7 +165,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete movement and reverse inventory changes in a transaction
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       const movement = await tx.stockMovement.findUnique({
         where: { id },
         include: { inventory: true }

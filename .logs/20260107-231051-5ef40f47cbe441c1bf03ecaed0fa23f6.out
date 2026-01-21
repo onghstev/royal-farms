@@ -1,0 +1,22 @@
+app/api/finance/expenses/route.ts(51,35): error TS2322: Type '{ name: true; }' is not assignable to type 'FeedSupplierSelect<DefaultArgs>'.
+  Object literal may only specify known properties, and 'name' does not exist in type 'FeedSupplierSelect<DefaultArgs>'.
+app/api/finance/expenses/route.ts(152,21): error TS18048: 'session.user' is possibly 'undefined'.
+app/api/finance/expenses/route.ts(152,34): error TS2339: Property 'id' does not exist on type '{ name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; }'.
+app/api/finance/expenses/route.ts(159,35): error TS2322: Type '{ name: true; }' is not assignable to type 'FeedSupplierSelect<DefaultArgs>'.
+  Object literal may only specify known properties, and 'name' does not exist in type 'FeedSupplierSelect<DefaultArgs>'.
+app/api/finance/expenses/route.ts(212,35): error TS2322: Type '{ name: true; }' is not assignable to type 'FeedSupplierSelect<DefaultArgs>'.
+  Object literal may only specify known properties, and 'name' does not exist in type 'FeedSupplierSelect<DefaultArgs>'.
+app/api/finance/expenses/route.ts(238,22): error TS18048: 'session.user' is possibly 'undefined'.
+app/api/finance/expenses/route.ts(238,35): error TS2339: Property 'role' does not exist on type '{ name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; }'.
+app/api/finance/income/route.ts(155,21): error TS18048: 'session.user' is possibly 'undefined'.
+app/api/finance/income/route.ts(155,34): error TS2339: Property 'id' does not exist on type '{ name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; }'.
+app/api/finance/income/route.ts(245,22): error TS18048: 'session.user' is possibly 'undefined'.
+app/api/finance/income/route.ts(245,35): error TS2339: Property 'role' does not exist on type '{ name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; }'.
+scripts/seed-phase5.ts(130,38): error TS2339: Property 'name' does not exist on type '{ id: string; email: string | null; phone: string | null; isActive: boolean; createdAt: Date; updatedAt: Date; notes: string | null; supplierName: string; contactPerson: string | null; address: string | null; }'.
+scripts/seed-phase5.ts(254,36): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+scripts/seed-phase5.ts(254,69): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+scripts/seed.ts(1104,22): error TS2552: Cannot find name 'flocks'. Did you mean 'flock1'?
+scripts/seed.ts(1131,22): error TS2304: Cannot find name 'batches'.
+scripts/seed.ts(1177,23): error TS2552: Cannot find name 'feedSuppliers'. Did you mean 'topFeedsSupplier'?
+scripts/seed.ts(1178,24): error TS2552: Cannot find name 'feedSuppliers'. Did you mean 'topFeedsSupplier'?
+exit_code=2

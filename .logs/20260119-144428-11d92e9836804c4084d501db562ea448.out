@@ -1,0 +1,6 @@
+[master 1d9c520] Production deployment guide added
+ 4 files changed, 498 insertions(+), 1 deletion(-)
+ create mode 100644 DEPLOYMENT_GUIDE.md
+ create mode 100644 DEPLOYMENT_GUIDE.pdf
+ create mode 100644 nextjs_space/scripts/clean-database.ts
+###1d9c520a8354470f2cbaed3ecd0e440724189ca0###

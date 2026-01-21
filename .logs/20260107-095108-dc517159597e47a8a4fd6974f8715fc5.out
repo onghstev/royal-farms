@@ -1,0 +1,4 @@
+app/dashboard/page.tsx(233,6): error TS17008: JSX element 'div' has no corresponding closing tag.
+app/dashboard/page.tsx(309,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+app/dashboard/page.tsx(310,1): error TS1005: '</' expected.
+exit_code=2

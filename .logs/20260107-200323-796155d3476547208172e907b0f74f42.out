@@ -1,0 +1,8 @@
+[master 26628a2] Phase 2 Backend Complete - Feed Management APIs
+ 8 files changed, 1660 insertions(+), 17 deletions(-)
+ create mode 100644 nextjs_space/app/api/feed/consumption/route.ts
+ create mode 100644 nextjs_space/app/api/feed/inventory/route.ts
+ create mode 100644 nextjs_space/app/api/feed/purchases/route.ts
+ create mode 100644 nextjs_space/app/api/feed/suppliers/route.ts
+ create mode 100644 nextjs_space/app/dashboard/feed/page.tsx
+###26628a2572419866a09a1e8b13b7fd51de27cc5b###

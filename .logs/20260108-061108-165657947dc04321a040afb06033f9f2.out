@@ -1,0 +1,5 @@
+scripts/seed.ts(1104,22): error TS2552: Cannot find name 'flocks'. Did you mean 'flock1'?
+scripts/seed.ts(1131,22): error TS2304: Cannot find name 'batches'.
+scripts/seed.ts(1177,23): error TS2552: Cannot find name 'feedSuppliers'. Did you mean 'topFeedsSupplier'?
+scripts/seed.ts(1178,24): error TS2552: Cannot find name 'feedSuppliers'. Did you mean 'topFeedsSupplier'?
+exit_code=2

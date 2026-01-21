@@ -1,0 +1,31 @@
+
+
+===== TS errors =====
+
+[Test Mode] ./app/api/feed/inventory/route.ts:49:8
+Type error: Parameter 'item' implicitly has an 'any' type.
+
+[0m [90m 47 |[39m[0m
+[0m [90m 48 |[39m     [36mconst[39m lowStockItems [33m=[39m inventory[33m.[39mfilter((item[33m:[39m any) [33m=>[39m [0m
+[0m[31m[1m>[22m[39m[90m 49 |[39m       (item) [33m=>[39m [33mNumber[39m(item[33m.[39mcurrentStockBags) [33m<=[39m [33mNumber[39m(item[33m.[39mreorderLevel)[0m
+[0m [90m    |[39m        [31m[1m^[22m[39m[0m
+[0m [90m 50 |[39m     )[33m;[39m[0m
+[0m [90m 51 |[39m[0m
+[0m [90m 52 |[39m     [36mreturn[39m [33mNextResponse[39m[33m.[39mjson({[0m
+
+===== TS errors =====
+
+
+Failed to compile.
+
+./app/api/feed/inventory/route.ts:49:8
+Type error: Parameter 'item' implicitly has an 'any' type.
+
+[0m [90m 47 |[39m[0m
+[0m [90m 48 |[39m     [36mconst[39m lowStockItems [33m=[39m inventory[33m.[39mfilter((item[33m:[39m any) [33m=>[39m [0m
+[0m[31m[1m>[22m[39m[90m 49 |[39m       (item) [33m=>[39m [33mNumber[39m(item[33m.[39mcurrentStockBags) [33m<=[39m [33mNumber[39m(item[33m.[39mreorderLevel)[0m
+[0m [90m    |[39m        [31m[1m^[22m[39m[0m
+[0m [90m 50 |[39m     )[33m;[39m[0m
+[0m [90m 51 |[39m[0m
+[0m [90m 52 |[39m     [36mreturn[39m [33mNextResponse[39m[33m.[39mjson({[0m
+Next.js build worker exited with code: 1 and signal: null

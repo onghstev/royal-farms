@@ -1,0 +1,95 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 2.8s (847 modules)
+ GET / 200 in 3311ms
+ ✓ Compiled in 509ms (305 modules)
+ GET / 200 in 56ms
+ GET / 200 in 52ms
+ ✓ Compiled /login in 173ms (539 modules)
+ ✓ Compiled in 332ms (309 modules)
+ GET /api/auth/session 200 in 971ms
+ GET /api/auth/session 200 in 46ms
+ GET / 200 in 77ms
+ GET / 200 in 41ms
+ GET / 200 in 40ms
+ GET / 200 in 42ms
+ GET / 200 in 37ms
+ GET /api/auth/session 200 in 62ms
+ GET /api/auth/session 200 in 51ms
+ GET / 200 in 40ms
+ GET / 200 in 41ms
+ GET / 200 in 40ms
+ GET /api/auth/session 200 in 59ms
+ GET /api/auth/session 200 in 53ms
+ GET / 200 in 42ms
+ GET / 200 in 40ms
+ GET / 200 in 71ms
+ GET / 200 in 53ms
+ GET / 200 in 38ms
+ GET / 200 in 40ms
+ GET / 200 in 44ms
+ GET / 200 in 73ms
+ GET / 200 in 53ms
+ GET /api/auth/session 200 in 80ms
+ GET /api/auth/session 200 in 71ms
+ GET / 200 in 65ms
+ GET / 200 in 37ms
+ GET / 200 in 51ms
+ GET / 200 in 42ms
+ GET / 200 in 39ms
+ GET / 200 in 45ms
+ GET / 200 in 57ms
+ GET / 200 in 39ms
+ GET / 200 in 48ms
+ GET / 200 in 44ms
+ GET / 200 in 72ms
+ GET / 200 in 73ms
+ GET / 200 in 35ms
+ GET / 200 in 73ms
+ GET / 200 in 76ms
+ GET / 200 in 45ms
+ GET / 200 in 43ms
+ GET /api/auth/session 200 in 103ms
+ GET /api/auth/session 200 in 62ms
+ GET / 200 in 124ms
+ GET / 200 in 123ms
+ GET / 200 in 73ms
+ GET / 200 in 56ms
+ GET / 200 in 63ms
+ GET / 200 in 50ms
+ GET / 200 in 77ms
+ GET / 200 in 46ms
+ GET / 200 in 48ms
+ GET / 200 in 50ms
+ GET /api/auth/session 200 in 81ms
+ GET /api/auth/session 200 in 177ms
+ GET / 200 in 52ms
+ GET / 200 in 48ms
+ GET / 200 in 51ms
+ GET / 200 in 39ms
+ GET / 200 in 63ms
+ GET / 200 in 50ms
+ GET / 200 in 42ms
+ GET / 200 in 59ms
+ GET / 200 in 43ms
+ GET / 200 in 40ms
+ GET / 200 in 45ms
+ GET / 200 in 43ms
+ GET / 200 in 40ms
+ GET / 200 in 42ms
+ GET / 200 in 42ms
+ GET / 200 in 46ms
+ GET / 200 in 47ms
+ GET / 200 in 37ms
+ GET / 200 in 43ms
+ GET / 200 in 36ms
+ GET / 200 in 36ms
+ GET / 200 in 34ms
+[?25h
