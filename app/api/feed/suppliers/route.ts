@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/db';
 
-// GET - Fetch all feed suppliers
+/* ======================================================
+   GET – Fetch all feed suppliers
+====================================================== */
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,9 +18,7 @@ export async function GET(request: NextRequest) {
 
     const suppliers = await prisma.feedSupplier.findMany({
       where: includeInactive ? {} : { isActive: true },
-      orderBy: {
-        supplierName: 'asc',
-      },
+      orderBy: { supplierName: 'asc' },
       include: {
         _count: {
           select: {
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ suppliers });
+    return NextResponse.json({ suppliers }, { status: 200 });
   } catch (error) {
     console.error('Error fetching suppliers:', error);
     return NextResponse.json(
@@ -39,7 +39,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new feed supplier
+/* ======================================================
+   POST – Create new feed supplier
+====================================================== */
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -47,17 +49,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { supplierName, contactPerson, phone, email, address, notes } = body;
+    const {
+      supplierName,
+      contactPerson,
+      phone,
+      email,
+      address,
+      notes,
+    } = await request.json();
 
-    if (!supplierName) {
+    if (!supplierName || typeof supplierName !== 'string') {
       return NextResponse.json(
         { error: 'Supplier name is required' },
         { status: 400 }
       );
     }
 
-    // Check if supplier name already exists
     const existing = await prisma.feedSupplier.findUnique({
       where: { supplierName },
     });
@@ -72,11 +79,11 @@ export async function POST(request: NextRequest) {
     const supplier = await prisma.feedSupplier.create({
       data: {
         supplierName,
-        contactPerson: contactPerson || null,
-        phone: phone || null,
-        email: email || null,
-        address: address || null,
-        notes: notes || null,
+        contactPerson: contactPerson ?? null,
+        phone: phone ?? null,
+        email: email ?? null,
+        address: address ?? null,
+        notes: notes ?? null,
         isActive: true,
       },
     });
@@ -94,7 +101,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT - Update feed supplier
+/* ======================================================
+   PUT – Update feed supplier
+====================================================== */
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -102,10 +111,18 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { id, supplierName, contactPerson, phone, email, address, isActive, notes } = body;
+    const {
+      id,
+      supplierName,
+      contactPerson,
+      phone,
+      email,
+      address,
+      isActive,
+      notes,
+    } = await request.json();
 
-    if (!id) {
+    if (!id || typeof id !== 'string') {
       return NextResponse.json(
         { error: 'Supplier ID is required' },
         { status: 400 }
@@ -115,13 +132,13 @@ export async function PUT(request: NextRequest) {
     const supplier = await prisma.feedSupplier.update({
       where: { id },
       data: {
-        supplierName,
-        contactPerson: contactPerson || null,
-        phone: phone || null,
-        email: email || null,
-        address: address || null,
-        isActive,
-        notes: notes || null,
+        ...(supplierName && { supplierName }),
+        contactPerson: contactPerson ?? null,
+        phone: phone ?? null,
+        email: email ?? null,
+        address: address ?? null,
+        isActive: typeof isActive === 'boolean' ? isActive : undefined,
+        notes: notes ?? null,
       },
     });
 
@@ -138,7 +155,9 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete feed supplier
+/* ======================================================
+   DELETE – Delete feed supplier
+====================================================== */
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -156,7 +175,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Check if supplier has associated purchases or inventory
     const supplier = await prisma.feedSupplier.findUnique({
       where: { id },
       include: {
@@ -169,16 +187,21 @@ export async function DELETE(request: NextRequest) {
       },
     });
 
-    if (supplier && (supplier._count.purchases > 0 || supplier._count.inventory > 0)) {
+    if (
+      supplier &&
+      (supplier._count.purchases > 0 ||
+        supplier._count.inventory > 0)
+    ) {
       return NextResponse.json(
-        { error: 'Cannot delete supplier with associated purchases or inventory. Please deactivate instead.' },
+        {
+          error:
+            'Cannot delete supplier with associated purchases or inventory. Please deactivate instead.',
+        },
         { status: 400 }
       );
     }
 
-    await prisma.feedSupplier.delete({
-      where: { id },
-    });
+    await prisma.feedSupplier.delete({ where: { id } });
 
     return NextResponse.json(
       { message: 'Supplier deleted successfully' },
