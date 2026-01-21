@@ -160,7 +160,7 @@ async function getDashboardData() {
   });
 
   // Convert Decimal to number
-  const recentEggCollections = recentEggCollectionsRaw.map(collection => ({
+  const recentEggCollections = recentEggCollectionsRaw.map((collection: any) => ({
     ...collection,
     productionPercentage: collection.productionPercentage ? Number(collection.productionPercentage) : null,
   }));
@@ -177,7 +177,7 @@ async function getDashboardData() {
   });
 
   // Convert Decimal to number
-  const recentMortality = recentMortalityRaw.map(record => ({
+  const recentMortality = recentMortalityRaw.map((record: any) => ({
     ...record,
     mortalityRate: record.mortalityRate ? Number(record.mortalityRate) : null,
   }));

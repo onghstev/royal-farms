@@ -163,11 +163,11 @@ export default function FCRDashboard() {
     if (!fcrData || fcrData.fcrTrend.length === 0) return null;
 
     return {
-      labels: fcrData.fcrTrend.map(t => `Day ${t.ageInDays}`),
+      labels: fcrData.fcrTrend.map((t: any) => `Day ${t.ageInDays}`),
       datasets: [
         {
           label: 'FCR (Feed Conversion Ratio)',
-          data: fcrData.fcrTrend.map(t => t.fcr),
+          data: fcrData.fcrTrend.map((t: any) => t.fcr),
           borderColor: 'rgb(59, 130, 246)',
           backgroundColor: 'rgba(59, 130, 246, 0.1)',
           tension: 0.4,
@@ -208,11 +208,11 @@ export default function FCRDashboard() {
     if (!fcrData || fcrData.fcrTrend.length === 0) return null;
 
     return {
-      labels: fcrData.fcrTrend.map(t => `Day ${t.ageInDays}`),
+      labels: fcrData.fcrTrend.map((t: any) => `Day ${t.ageInDays}`),
       datasets: [
         {
           label: 'Average Weight (kg)',
-          data: fcrData.fcrTrend.map(t => t.averageWeight),
+          data: fcrData.fcrTrend.map((t: any) => t.averageWeight),
           backgroundColor: 'rgba(139, 92, 246, 0.7)',
           borderColor: 'rgb(139, 92, 246)',
           borderWidth: 1,

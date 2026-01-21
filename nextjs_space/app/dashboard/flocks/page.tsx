@@ -27,7 +27,7 @@ async function getFlocks() {
   });
 
   // Convert Decimal to number
-  const flocks = flocksRaw.map(flock => ({
+  const flocks = flocksRaw.map((flock: any) => ({
     ...flock,
     costPerBird: flock.costPerBird ? Number(flock.costPerBird) : null,
   }));
