@@ -1,0 +1,3 @@
+{
+  "buildCommand": "cp next.config.vercel.js next.config.js && prisma generate && next build"
+}
