@@ -18,8 +18,3 @@ out
 .deploy
 .logs
 *.tsbuildinfo
-
-# Environment files
-.env
-.env.local
-.env.production
