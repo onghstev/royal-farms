@@ -236,7 +236,7 @@ export default function NewFlockPage() {
                 <NumberInput
                   id="openingStock"
                   value={formData.openingStock}
-                  onChange={(value) => setFormData({ ...formData, openingStock: value })}
+                  onChange={(value) => setFormData({ ...formData, openingStock: value.toString() })}
                   required
                   placeholder="e.g., 5,000"
                   allowDecimals={false}
@@ -258,7 +258,7 @@ export default function NewFlockPage() {
                 <NumberInput
                   id="costPerBird"
                   value={formData.costPerBird}
-                  onChange={(value) => setFormData({ ...formData, costPerBird: value })}
+                  onChange={(value) => setFormData({ ...formData, costPerBird: value.toString() })}
                   placeholder="e.g., 450.00"
                   allowDecimals={true}
                   maxDecimals={2}
