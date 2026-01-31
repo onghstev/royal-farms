@@ -63,6 +63,14 @@ export default function ExpenseManagementPage() {
     }
   }, [status, categoryFilter, paymentStatusFilter]);
 
+  // Auto-calculate total amount when quantity or unitCost changes
+  useEffect(() => {
+    if (formData.quantity && formData.unitCost) {
+      const calculatedAmount = (parseFloat(formData.quantity) || 0) * (parseFloat(formData.unitCost) || 0);
+      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount.toFixed(2) }));
+    }
+  }, [formData.quantity, formData.unitCost]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -512,7 +520,9 @@ export default function ExpenseManagementPage() {
                   step="0.01"
                   placeholder="e.g., 50000"
                   value={formData.amount || ''}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  readOnly
+                  disabled
+                  className="bg-muted cursor-not-allowed"
                 />
               </div>
             </div>

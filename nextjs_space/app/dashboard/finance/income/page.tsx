@@ -65,6 +65,14 @@ export default function IncomeManagementPage() {
     }
   }, [status, categoryFilter, paymentStatusFilter]);
 
+  // Auto-calculate total amount when quantity or unitPrice changes
+  useEffect(() => {
+    if (formData.quantity && formData.unitPrice) {
+      const calculatedAmount = (parseFloat(formData.quantity) || 0) * (parseFloat(formData.unitPrice) || 0);
+      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount.toFixed(2) }));
+    }
+  }, [formData.quantity, formData.unitPrice]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -501,7 +509,9 @@ export default function IncomeManagementPage() {
                   step="0.01"
                   placeholder="e.g., 50000"
                   value={formData.amount || ''}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  readOnly
+                  disabled
+                  className="bg-muted cursor-not-allowed"
                 />
               </div>
             </div>

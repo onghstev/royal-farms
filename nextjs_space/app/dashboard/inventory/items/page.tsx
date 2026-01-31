@@ -164,10 +164,12 @@ export default function InventoryItemsPage() {
       });
     } else {
       setSelectedItem(null);
+      // Ensure we have a valid categoryId when creating new item
+      const defaultCategoryId = categories.length > 0 ? categories[0].id : '';
       setFormData({
         itemName: '',
         itemCode: '',
-        categoryId: categories[0]?.id || '',
+        categoryId: defaultCategoryId,
         description: '',
         unit: 'pieces',
         currentStock: 0,
@@ -192,6 +194,17 @@ export default function InventoryItemsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.categoryId) {
+      toast.error('Please select a category');
+      return;
+    }
+    
+    if (!formData.itemName || !formData.unit) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
     
     try {
       const url = '/api/inventory/items';
@@ -466,14 +479,19 @@ export default function InventoryItemsPage() {
                   <Select
                     value={formData.categoryId}
                     onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
+                    required
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(cat => (
-                        <SelectItem key={cat.id} value={cat.id}>{cat.categoryName}</SelectItem>
-                      ))}
+                      {categories.length === 0 ? (
+                        <SelectItem value="" disabled>No categories available</SelectItem>
+                      ) : (
+                        categories.map(cat => (
+                          <SelectItem key={cat.id} value={cat.id}>{cat.categoryName}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
