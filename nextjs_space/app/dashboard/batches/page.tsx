@@ -14,6 +14,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Plus, Bird, Edit, Eye } from 'lucide-react';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 interface Site {
   id: string;

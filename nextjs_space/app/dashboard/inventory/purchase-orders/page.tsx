@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from '@/components/ui/badge';
 import { Plus, FileText, Eye, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 interface PurchaseOrder {
   id: string;
@@ -419,31 +421,30 @@ export default function PurchaseOrdersPage() {
                     </div>
                     <div className="col-span-2">
                       <Label>Quantity *</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
+                      <NumberInput
                         value={item.quantity}
-                        onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)}
+                        onChange={(value) => handleItemChange(index, 'quantity', value)}
+                        allowDecimals={true}
+                        maxDecimals={2}
                       />
                     </div>
                     <div className="col-span-2">
                       <Label>Unit Price (₦) *</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
+                      <NumberInput
                         value={item.unitPrice}
-                        onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                        onChange={(value) => handleItemChange(index, 'unitPrice', value)}
+                        allowDecimals={true}
+                        maxDecimals={2}
                       />
                     </div>
                     <div className="col-span-3">
                       <Label>Total Price (₦)</Label>
                       <Input
-                        type="number"
-                        value={item.totalPrice.toFixed(2)}
+                        type="text"
+                        value={formatCurrency(item.totalPrice, '₦', 2)}
                         disabled
-                        className="bg-muted"
+                        readOnly
+                        className="bg-muted cursor-not-allowed"
                       />
                     </div>
                     <div className="col-span-1">
@@ -463,7 +464,7 @@ export default function PurchaseOrdersPage() {
                 <div className="flex justify-end pt-2">
                   <div className="text-right">
                     <Label className="text-muted-foreground">Total Amount</Label>
-                    <div className="text-2xl font-bold">₦{calculateTotal().toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{formatCurrency(calculateTotal(), '₦', 2)}</div>
                   </div>
                 </div>
               </div>

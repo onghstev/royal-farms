@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ArrowLeft, Bird } from 'lucide-react';
 import Link from 'next/link';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 interface Site {
   id: string;
@@ -231,14 +233,13 @@ export default function NewFlockPage() {
 
               <div>
                 <Label htmlFor="openingStock">Opening Stock (Birds) *</Label>
-                <Input
+                <NumberInput
                   id="openingStock"
-                  type="number"
-                  min="1"
                   value={formData.openingStock}
-                  onChange={(e) => setFormData({ ...formData, openingStock: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, openingStock: value })}
                   required
-                  placeholder="e.g., 5000"
+                  placeholder="e.g., 5,000"
+                  allowDecimals={false}
                 />
               </div>
 
@@ -254,14 +255,13 @@ export default function NewFlockPage() {
 
               <div>
                 <Label htmlFor="costPerBird">Cost Per Bird (₦)</Label>
-                <Input
+                <NumberInput
                   id="costPerBird"
-                  type="number"
-                  step="0.01"
-                  min="0"
                   value={formData.costPerBird}
-                  onChange={(e) => setFormData({ ...formData, costPerBird: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, costPerBird: value })}
                   placeholder="e.g., 450.00"
+                  allowDecimals={true}
+                  maxDecimals={2}
                 />
               </div>
 

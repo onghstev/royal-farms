@@ -13,6 +13,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2, Plus, Egg } from 'lucide-react';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 interface Flock {
   id: string;

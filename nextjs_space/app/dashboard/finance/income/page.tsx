@@ -13,9 +13,11 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { NumberInput } from '@/components/ui/number-input';
 import { Plus, Edit2, Trash2, Search, DollarSign, TrendingUp, FileText, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { formatCurrency, formatNumber } from '@/lib/utils';
 
 interface IncomeTransaction {
   id: string;
@@ -68,8 +70,10 @@ export default function IncomeManagementPage() {
   // Auto-calculate total amount when quantity or unitPrice changes
   useEffect(() => {
     if (formData.quantity && formData.unitPrice) {
-      const calculatedAmount = (parseFloat(formData.quantity) || 0) * (parseFloat(formData.unitPrice) || 0);
-      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount.toFixed(2) }));
+      const qty = typeof formData.quantity === 'number' ? formData.quantity : parseFloat(formData.quantity) || 0;
+      const price = typeof formData.unitPrice === 'number' ? formData.unitPrice : parseFloat(formData.unitPrice) || 0;
+      const calculatedAmount = qty * price;
+      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount }));
     }
   }, [formData.quantity, formData.unitPrice]);
 
@@ -190,14 +194,6 @@ export default function IncomeManagementPage() {
     t.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
   if (status === 'loading' || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -230,7 +226,7 @@ export default function IncomeManagementPage() {
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{formatCurrency(summary.total || 0)}</div>
+            <div className="text-2xl font-bold text-green-600">{formatCurrency(summary.total || 0, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -240,7 +236,7 @@ export default function IncomeManagementPage() {
             <CheckCircle className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.paid || 0)}</div>
+            <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.paid || 0, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -250,7 +246,7 @@ export default function IncomeManagementPage() {
             <TrendingUp className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{formatCurrency(summary.pending || 0)}</div>
+            <div className="text-2xl font-bold text-orange-600">{formatCurrency(summary.pending || 0, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -358,7 +354,7 @@ export default function IncomeManagementPage() {
                         {transaction.flock && <div className="text-xs text-gray-500">{transaction.flock.flockName}</div>}
                         {transaction.batch && <div className="text-xs text-gray-500">{transaction.batch.batchName}</div>}
                       </TableCell>
-                      <TableCell className="font-medium">{formatCurrency(transaction.amount)}</TableCell>
+                      <TableCell className="font-medium">{formatCurrency(transaction.amount, '₦', 0)}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
@@ -484,31 +480,30 @@ export default function IncomeManagementPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Quantity</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="e.g., 1000 eggs"
+                <NumberInput
+                  placeholder="e.g., 1000"
                   value={formData.quantity || ''}
-                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, quantity: value })}
+                  allowDecimals={true}
+                  maxDecimals={2}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Unit Price (₦)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
+                <NumberInput
                   placeholder="e.g., 50"
                   value={formData.unitPrice || ''}
-                  onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, unitPrice: value })}
+                  allowDecimals={true}
+                  maxDecimals={2}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Total Amount (₦) *</Label>
                 <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="e.g., 50000"
-                  value={formData.amount || ''}
+                  type="text"
+                  placeholder="Auto-calculated"
+                  value={formatCurrency(formData.amount || 0, '₦', 2)}
                   readOnly
                   disabled
                   className="bg-muted cursor-not-allowed"

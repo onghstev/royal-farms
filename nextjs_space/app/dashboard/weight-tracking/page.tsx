@@ -19,6 +19,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Scale, TrendingUp, Plus, Loader2 } from 'lucide-react';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Dialog,
   DialogContent,

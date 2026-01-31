@@ -13,9 +13,11 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { NumberInput } from '@/components/ui/number-input';
 import { Plus, Edit2, Trash2, Search, TrendingDown, FileText, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { formatCurrency, formatNumber } from '@/lib/utils';
 
 interface ExpenseTransaction {
   id: string;
@@ -66,8 +68,10 @@ export default function ExpenseManagementPage() {
   // Auto-calculate total amount when quantity or unitCost changes
   useEffect(() => {
     if (formData.quantity && formData.unitCost) {
-      const calculatedAmount = (parseFloat(formData.quantity) || 0) * (parseFloat(formData.unitCost) || 0);
-      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount.toFixed(2) }));
+      const qty = typeof formData.quantity === 'number' ? formData.quantity : parseFloat(formData.quantity) || 0;
+      const cost = typeof formData.unitCost === 'number' ? formData.unitCost : parseFloat(formData.unitCost) || 0;
+      const calculatedAmount = qty * cost;
+      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount }));
     }
   }, [formData.quantity, formData.unitCost]);
 
@@ -177,14 +181,6 @@ export default function ExpenseManagementPage() {
     t.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
   if (status === 'loading' || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -217,7 +213,7 @@ export default function ExpenseManagementPage() {
             <TrendingDown className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{formatCurrency(summary.total || 0)}</div>
+            <div className="text-2xl font-bold text-red-600">{formatCurrency(summary.total || 0, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -227,7 +223,7 @@ export default function ExpenseManagementPage() {
             <TrendingDown className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.paid || 0)}</div>
+            <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.paid || 0, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -237,7 +233,7 @@ export default function ExpenseManagementPage() {
             <AlertTriangle className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{formatCurrency(summary.pending || 0)}</div>
+            <div className="text-2xl font-bold text-orange-600">{formatCurrency(summary.pending || 0, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -349,7 +345,7 @@ export default function ExpenseManagementPage() {
                           : transaction.vendorName || '-'}
                       </TableCell>
                       <TableCell className="max-w-xs truncate">{transaction.description}</TableCell>
-                      <TableCell className="font-medium text-red-600">{formatCurrency(transaction.amount)}</TableCell>
+                      <TableCell className="font-medium text-red-600">{formatCurrency(transaction.amount, '₦', 0)}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
@@ -495,31 +491,30 @@ export default function ExpenseManagementPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Quantity</Label>
-                <Input
-                  type="number"
-                  step="0.01"
+                <NumberInput
                   placeholder="e.g., 100"
                   value={formData.quantity || ''}
-                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, quantity: value })}
+                  allowDecimals={true}
+                  maxDecimals={2}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Unit Cost (₦)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
+                <NumberInput
                   placeholder="e.g., 500"
                   value={formData.unitCost || ''}
-                  onChange={(e) => setFormData({ ...formData, unitCost: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, unitCost: value })}
+                  allowDecimals={true}
+                  maxDecimals={2}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Total Amount (₦) *</Label>
                 <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="e.g., 50000"
-                  value={formData.amount || ''}
+                  type="text"
+                  placeholder="Auto-calculated"
+                  value={formatCurrency(formData.amount || 0, '₦', 2)}
                   readOnly
                   disabled
                   className="bg-muted cursor-not-allowed"

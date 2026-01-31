@@ -17,6 +17,8 @@ import { Label } from '@/components/ui/label';
 import { Download, FileText, TrendingUp, AlertTriangle, Package, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 type ReportType = 'production' | 'mortality' | 'inventory' | 'weight';
 
@@ -144,9 +146,9 @@ export default function ReportsPage() {
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{summary.totalEggs?.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{formatNumber(summary.totalEggs || 0)}</div>
                 <p className="text-xs text-muted-foreground">
-                  {summary.totalGoodEggs?.toLocaleString()} good
+                  {formatNumber(summary.totalGoodEggs || 0)} good
                 </p>
               </CardContent>
             </Card>
@@ -168,7 +170,7 @@ export default function ReportsPage() {
                 <AlertTriangle className="h-4 w-4 text-yellow-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{summary.totalBrokenEggs?.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{formatNumber(summary.totalBrokenEggs || 0)}</div>
                 <p className="text-xs text-muted-foreground">
                   {summary.totalEggs > 0 ? ((summary.totalBrokenEggs / summary.totalEggs) * 100).toFixed(1) : 0}% of total
                 </p>
@@ -186,7 +188,7 @@ export default function ReportsPage() {
                 <AlertTriangle className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{summary.totalDeaths?.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{formatNumber(summary.totalDeaths || 0)}</div>
                 <p className="text-xs text-muted-foreground">
                   {summary.totalRecords} records
                 </p>
@@ -214,7 +216,7 @@ export default function ReportsPage() {
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{summary.totalBirds?.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{formatNumber(summary.totalBirds || 0)}</div>
                 <p className="text-xs text-muted-foreground">Active inventory</p>
               </CardContent>
             </Card>
@@ -224,7 +226,7 @@ export default function ReportsPage() {
                 <Package className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{summary.totalLayers?.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{formatNumber(summary.totalLayers || 0)}</div>
                 <p className="text-xs text-muted-foreground">
                   {summary.activeFlocks} active flocks
                 </p>
@@ -236,7 +238,7 @@ export default function ReportsPage() {
                 <Package className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{summary.totalBroilers?.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{formatNumber(summary.totalBroilers || 0)}</div>
                 <p className="text-xs text-muted-foreground">
                   {summary.activeBatches} active batches
                 </p>
@@ -307,9 +309,9 @@ export default function ReportsPage() {
                     <td className="p-3">{format(new Date(row.date), 'MMM dd, yyyy')}</td>
                     <td className="p-3">{row.flockName}</td>
                     <td className="p-3">{row.siteName}</td>
-                    <td className="p-3 text-right">{row.goodEggs.toLocaleString()}</td>
-                    <td className="p-3 text-right">{row.brokenEggs.toLocaleString()}</td>
-                    <td className="p-3 text-right font-medium">{row.totalEggs.toLocaleString()}</td>
+                    <td className="p-3 text-right">{formatNumber(row.goodEggs)}</td>
+                    <td className="p-3 text-right">{formatNumber(row.brokenEggs)}</td>
+                    <td className="p-3 text-right font-medium">{formatNumber(row.totalEggs)}</td>
                     <td className="p-3 text-right">
                       <Badge variant={row.productionPercentage >= 80 ? 'default' : row.productionPercentage >= 60 ? 'secondary' : 'destructive'}>
                         {row.productionPercentage}%

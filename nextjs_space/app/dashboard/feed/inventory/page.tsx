@@ -13,6 +13,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Plus, Edit2, Trash2, Search, AlertTriangle, Package } from 'lucide-react';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 interface FeedInventory {
   id: string;

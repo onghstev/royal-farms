@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Plus, Edit2, Trash2, Search, Package, AlertTriangle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 interface InventoryItem {
   id: string;
@@ -318,7 +320,7 @@ export default function InventoryItemsPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦{totalValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{formatCurrency(totalValue, '₦', 0)}</div>
           </CardContent>
         </Card>
 
@@ -404,8 +406,8 @@ export default function InventoryItemsPage() {
                           Reorder: {Number(item.reorderLevel)}
                         </div>
                       </td>
-                      <td className="px-4 py-3">₦{Number(item.unitCost).toLocaleString()}</td>
-                      <td className="px-4 py-3">₦{itemValue.toLocaleString()}</td>
+                      <td className="px-4 py-3">{formatCurrency(Number(item.unitCost), '₦', 0)}</td>
+                      <td className="px-4 py-3">{formatCurrency(itemValue, '₦', 0)}</td>
                       <td className="px-4 py-3">
                         {isLowStock ? (
                           <Badge variant="destructive">Low Stock</Badge>
@@ -535,24 +537,23 @@ export default function InventoryItemsPage() {
                 </div>
                 <div>
                   <Label htmlFor="currentStock">Current Stock *</Label>
-                  <Input
+                  <NumberInput
                     id="currentStock"
-                    type="number"
-                    step="0.01"
                     value={formData.currentStock}
-                    onChange={(e) => setFormData({ ...formData, currentStock: parseFloat(e.target.value) || 0 })}
+                    onChange={(value) => setFormData({ ...formData, currentStock: value })}
                     required
+                    allowDecimals={true}
+                    maxDecimals={2}
                   />
                 </div>
                 <div>
                   <Label htmlFor="reorderLevel">Reorder Level *</Label>
-                  <Input
+                  <NumberInput
                     id="reorderLevel"
-                    type="number"
-                    step="0.01"
                     value={formData.reorderLevel}
-                    onChange={(e) => setFormData({ ...formData, reorderLevel: parseFloat(e.target.value) || 0 })}
+                    onChange={(value) => setFormData({ ...formData, reorderLevel: value })}
                     required
+                    allowDecimals={false}
                   />
                 </div>
               </div>
@@ -560,13 +561,13 @@ export default function InventoryItemsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="unitCost">Unit Cost (₦) *</Label>
-                  <Input
+                  <NumberInput
                     id="unitCost"
-                    type="number"
-                    step="0.01"
                     value={formData.unitCost}
-                    onChange={(e) => setFormData({ ...formData, unitCost: parseFloat(e.target.value) || 0 })}
+                    onChange={(value) => setFormData({ ...formData, unitCost: value })}
                     required
+                    allowDecimals={true}
+                    maxDecimals={2}
                   />
                 </div>
                 <div>

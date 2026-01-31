@@ -1,4 +1,5 @@
 'use client';
+import { formatNumber } from '@/lib/utils';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Egg, TrendingUp, TrendingDown, Bird, Activity, Sparkles, BarChart3 } from 'lucide-react';
@@ -21,7 +22,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
   const cards = [
     {
       title: 'Today\'s Eggs',
-      value: kpis?.todayEggs?.toLocaleString() || '0',
+      value: formatNumber(kpis?.todayEggs || 0) || '0',
       subtitle: 'Fresh collections',
       icon: Egg,
       gradient: 'from-blue-500 via-blue-600 to-indigo-600',
@@ -33,7 +34,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
     },
     {
       title: 'This Week',
-      value: kpis?.weekEggs?.toLocaleString() || '0',
+      value: formatNumber(kpis?.weekEggs || 0) || '0',
       subtitle: 'Weekly production',
       icon: BarChart3,
       gradient: 'from-emerald-500 via-emerald-600 to-green-600',
@@ -45,7 +46,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
     },
     {
       title: 'This Month',
-      value: kpis?.monthEggs?.toLocaleString() || '0',
+      value: formatNumber(kpis?.monthEggs || 0) || '0',
       subtitle: 'Monthly total',
       icon: Sparkles,
       gradient: 'from-purple-500 via-purple-600 to-pink-600',
@@ -57,7 +58,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
     },
     {
       title: 'Avg Production',
-      value: `${kpis?.avgProduction?.toFixed(1) || '0'}%`,
+      value: `${formatNumber(kpis?.avgProduction || 0, 1) || '0'}%`,
       subtitle: '30-day average',
       icon: TrendingUp,
       gradient: 'from-teal-500 via-teal-600 to-cyan-600',
@@ -69,7 +70,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
     },
     {
       title: 'Week Mortality',
-      value: kpis?.weekMortality?.toLocaleString() || '0',
+      value: formatNumber(kpis?.weekMortality || 0) || '0',
       subtitle: 'Last 7 days',
       icon: TrendingDown,
       gradient: 'from-rose-500 via-rose-600 to-red-600',
@@ -81,7 +82,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
     },
     {
       title: 'Mortality Rate',
-      value: `${kpis?.mortalityRate?.toFixed(2) || '0'}%`,
+      value: `${formatNumber(kpis?.mortalityRate || 0, 2) || '0'}%`,
       subtitle: 'Overall rate',
       icon: Activity,
       gradient: 'from-orange-500 via-orange-600 to-amber-600',
@@ -113,7 +114,7 @@ export function DashboardKPIs({ kpis }: KPIsProps) {
     },
     {
       title: 'Total Birds',
-      value: kpis?.totalBirds?.toLocaleString() || '0',
+      value: formatNumber(kpis?.totalBirds || 0) || '0',
       subtitle: 'Current stock',
       icon: Bird,
       gradient: 'from-fuchsia-500 via-fuchsia-600 to-pink-600',

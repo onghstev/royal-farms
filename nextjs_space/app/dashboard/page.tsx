@@ -9,6 +9,8 @@ import { EggProductionChart } from '@/components/dashboard/egg-production-chart'
 import { MortalityChart } from '@/components/dashboard/mortality-chart';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { AlertsList } from '@/components/dashboard/alerts-list';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { NumberInput } from '@/components/ui/number-input';
 
 async function getDashboardData() {
   const today = new Date();
