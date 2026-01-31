@@ -165,9 +165,15 @@ export default function InventoryItemsPage() {
         notes: item.notes || ''
       });
     } else {
+      // Check if categories exist before allowing item creation
+      if (categories.length === 0) {
+        toast.error('Please create at least one category before adding items');
+        return;
+      }
+      
       setSelectedItem(null);
       // Ensure we have a valid categoryId when creating new item
-      const defaultCategoryId = categories.length > 0 ? categories[0].id : '';
+      const defaultCategoryId = categories[0].id;
       setFormData({
         itemName: '',
         itemCode: '',
@@ -488,7 +494,7 @@ export default function InventoryItemsPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {categories.length === 0 ? (
-                        <SelectItem value="" disabled>No categories available</SelectItem>
+                        <SelectItem value="no-category" disabled>No categories available</SelectItem>
                       ) : (
                         categories.map(cat => (
                           <SelectItem key={cat.id} value={cat.id}>{cat.categoryName}</SelectItem>
