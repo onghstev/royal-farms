@@ -35,6 +35,7 @@ model User {
   managedBatches         Batch[]                @relation("BatchManager")
   eggCollections         DailyEggCollection[]   @relation("EggCollectionRecorder")
   mortalityRecords       MortalityRecord[]      @relation("MortalityRecorder")
+  birthRecords           BirthRecord[]          @relation("BirthRecorder")
   feedConsumptions       DailyFeedConsumption[] @relation("FeedRecorder")
   feedPurchases          FeedPurchase[]         @relation("FeedReceiver")
   weightRecords          WeightRecord[]         @relation("WeightRecorder")
@@ -162,6 +163,7 @@ model Flock {
   // Relations
   eggCollections     DailyEggCollection[]
   mortalityRecords   MortalityRecord[]
+  birthRecords       BirthRecord[]
   feedConsumptions   DailyFeedConsumption[]
   alerts             ProductionAlert[]
   vaccinationRecords VaccinationRecord[]
@@ -228,6 +230,7 @@ model Batch {
 
   // Relations
   mortalityRecords   MortalityRecord[]
+  birthRecords       BirthRecord[]
   feedConsumptions   DailyFeedConsumption[]
   weightRecords      WeightRecord[]
   alerts             ProductionAlert[]
@@ -271,6 +274,37 @@ model MortalityRecord {
   @@index([mortalityDate])
   @@index([recordType])
   @@map("mortality_records")
+}
+
+// ============================================
+// BIRTH TRACKING (Livestock - Pigs, Cattle, Goats, Sheep)
+// ============================================
+
+model BirthRecord {
+  id             String   @id @default(cuid())
+  recordType     String   @map("record_type") // flock, batch
+  flockId        String?  @map("flock_id")
+  flock          Flock?   @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  batchId        String?  @map("batch_id")
+  batch          Batch?   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  birthDate      DateTime @map("birth_date") @db.Date
+  birthCount     Int      @map("birth_count")
+  maleCount      Int      @default(0) @map("male_count")
+  femaleCount    Int      @default(0) @map("female_count")
+  motherDetails  String?  @map("mother_details") // e.g., "Sow #15", "Nanny Goat #3"
+  fatherDetails  String?  @map("father_details") // e.g., "Boar #2"
+  healthStatus   String   @default("healthy") @map("health_status") // healthy, weak, stillborn
+  recordedBy     String   @map("recorded_by")
+  recorder       User     @relation("BirthRecorder", fields: [recordedBy], references: [id])
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([flockId])
+  @@index([batchId])
+  @@index([birthDate])
+  @@index([recordType])
+  @@map("birth_records")
 }
 
 // ============================================

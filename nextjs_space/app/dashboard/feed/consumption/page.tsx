@@ -52,13 +52,13 @@ interface FeedInventory {
 interface Flock {
   id: string;
   flockName: string;
-  currentBirdCount: number;
+  currentStock: number;
 }
 
 interface Batch {
   id: string;
   batchName: string;
-  currentBirdCount: number;
+  currentStock: number;
 }
 
 export default function FeedConsumptionPage() {
@@ -77,12 +77,13 @@ export default function FeedConsumptionPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedConsumption, setSelectedConsumption] = useState<FeedConsumption | null>(null);
   const [formData, setFormData] = useState({
-    consumptionType: 'Flock',
+    consumptionType: 'flock',
     flockId: '',
     batchId: '',
     inventoryId: '',
     consumptionDate: new Date().toISOString().split('T')[0],
     feedQuantityBags: 0,
+    feedPricePerBag: 0,
     notes: ''
   });
 
@@ -140,7 +141,10 @@ export default function FeedConsumptionPage() {
       const response = await fetch('/api/flocks');
       if (!response.ok) throw new Error('Failed to fetch flocks');
       const data = await response.json();
-      setFlocks(data.flocks || []);
+      // API returns array directly, filter for active flocks
+      const flocksArray = Array.isArray(data) ? data : (data.flocks || []);
+      const activeFlocks = flocksArray.filter((f: any) => f.status === 'active');
+      setFlocks(activeFlocks);
     } catch (error) {
       console.error('Error fetching flocks:', error);
     }
@@ -151,7 +155,10 @@ export default function FeedConsumptionPage() {
       const response = await fetch('/api/batches');
       if (!response.ok) throw new Error('Failed to fetch batches');
       const data = await response.json();
-      setBatches(data.batches || []);
+      // API returns array directly, filter for active batches
+      const batchesArray = Array.isArray(data) ? data : (data.batches || []);
+      const activeBatches = batchesArray.filter((b: any) => ['active', 'growing', 'ready'].includes(b.status));
+      setBatches(activeBatches);
     } catch (error) {
       console.error('Error fetching batches:', error);
     }
@@ -187,10 +194,17 @@ export default function FeedConsumptionPage() {
 
   const handleCreateConsumption = async () => {
     try {
+      // Get the price from the selected inventory item
+      const selectedInventory = inventoryItems.find(item => item.id === formData.inventoryId);
+      const feedPricePerBag = selectedInventory?.unitCostPerBag || 0;
+      
       const response = await fetch('/api/feed/consumption', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          feedPricePerBag
+        })
       });
 
       if (!response.ok) {
@@ -267,6 +281,7 @@ export default function FeedConsumptionPage() {
       inventoryId: consumption.inventoryId,
       consumptionDate: new Date(consumption.consumptionDate).toISOString().split('T')[0],
       feedQuantityBags: consumption.feedQuantityBags,
+      feedPricePerBag: consumption.inventory?.unitCostPerBag || 0,
       notes: consumption.notes || ''
     });
     setIsEditDialogOpen(true);
@@ -279,12 +294,13 @@ export default function FeedConsumptionPage() {
 
   const resetForm = () => {
     setFormData({
-      consumptionType: 'Flock',
+      consumptionType: 'flock',
       flockId: '',
       batchId: '',
       inventoryId: '',
       consumptionDate: new Date().toISOString().split('T')[0],
       feedQuantityBags: 0,
+      feedPricePerBag: 0,
       notes: ''
     });
     setSelectedConsumption(null);
@@ -361,8 +377,8 @@ export default function FeedConsumptionPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Flock">Flock (Layers)</SelectItem>
-                <SelectItem value="Batch">Batch (Broilers)</SelectItem>
+                <SelectItem value="flock">Flock (Layers)</SelectItem>
+                <SelectItem value="batch">Batch (Broilers)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -400,8 +416,8 @@ export default function FeedConsumptionPage() {
                     <tr key={consumption.id} className="border-b hover:bg-gray-50">
                       <td className="p-4">{new Date(consumption.consumptionDate).toLocaleDateString()}</td>
                       <td className="p-4">
-                        <Badge variant={consumption.consumptionType === 'Flock' ? 'default' : 'secondary'}>
-                          {consumption.consumptionType}
+                        <Badge variant={consumption.consumptionType === 'flock' ? 'default' : 'secondary'}>
+                          {consumption.consumptionType === 'flock' ? 'Flock' : 'Batch'}
                         </Badge>
                       </td>
                       <td className="p-4 font-medium">
@@ -449,12 +465,12 @@ export default function FeedConsumptionPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Flock">Flock (Layers)</SelectItem>
-                  <SelectItem value="Batch">Batch (Broilers)</SelectItem>
+                  <SelectItem value="flock">Flock (Layers)</SelectItem>
+                  <SelectItem value="batch">Batch (Broilers)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {formData.consumptionType === 'Flock' ? (
+            {formData.consumptionType === 'flock' ? (
               <div className="grid gap-2">
                 <Label htmlFor="flockId">Flock *</Label>
                 <Select value={formData.flockId} onValueChange={(value) => setFormData({ ...formData, flockId: value })}>
@@ -464,7 +480,7 @@ export default function FeedConsumptionPage() {
                   <SelectContent>
                     {flocks.map((flock) => (
                       <SelectItem key={flock.id} value={flock.id}>
-                        {flock.flockName} ({flock.currentBirdCount} birds)
+                        {flock.flockName} ({flock.currentStock} birds)
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -480,7 +496,7 @@ export default function FeedConsumptionPage() {
                   <SelectContent>
                     {batches.map((batch) => (
                       <SelectItem key={batch.id} value={batch.id}>
-                        {batch.batchName} ({batch.currentBirdCount} birds)
+                        {batch.batchName} ({batch.currentStock} birds)
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -540,12 +556,12 @@ export default function FeedConsumptionPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Flock">Flock (Layers)</SelectItem>
-                  <SelectItem value="Batch">Batch (Broilers)</SelectItem>
+                  <SelectItem value="flock">Flock (Layers)</SelectItem>
+                  <SelectItem value="batch">Batch (Broilers)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {formData.consumptionType === 'Flock' ? (
+            {formData.consumptionType === 'flock' ? (
               <div className="grid gap-2">
                 <Label>Flock</Label>
                 <Select value={formData.flockId} onValueChange={(value) => setFormData({ ...formData, flockId: value })}>

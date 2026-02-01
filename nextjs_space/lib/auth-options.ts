@@ -79,6 +79,7 @@ export function getAuthOptions(): NextAuthOptions {
     callbacks: {
       async jwt({ token, user }) {
         if (user) {
+          token.id = (user as any).id;
           token.role = (user as any).role;
           token.roleId = (user as any).roleId;
         }
@@ -86,6 +87,7 @@ export function getAuthOptions(): NextAuthOptions {
       },
       async session({ session, token }) {
         if (session.user) {
+          (session.user as any).id = token.id;
           (session.user as any).role = token.role;
           (session.user as any).roleId = token.roleId;
         }
