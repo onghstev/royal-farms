@@ -160,3 +160,116 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// PUT - Update an egg collection
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const {
+      id,
+      flockId,
+      collectionDate,
+      goodEggsCount,
+      brokenEggsCount,
+      collectionTime,
+      notes,
+    } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
+    }
+
+    // Check if record exists
+    const existingRecord = await prisma.dailyEggCollection.findUnique({
+      where: { id },
+    });
+
+    if (!existingRecord) {
+      return NextResponse.json({ error: 'Record not found' }, { status: 404 });
+    }
+
+    // Get flock to recalculate production percentage
+    const flock = await prisma.flock.findUnique({
+      where: { id: flockId || existingRecord.flockId },
+    });
+
+    if (!flock) {
+      return NextResponse.json({ error: 'Flock not found' }, { status: 404 });
+    }
+
+    const newGoodEggs = goodEggsCount !== undefined ? parseInt(goodEggsCount) : existingRecord.goodEggsCount;
+    const newBrokenEggs = brokenEggsCount !== undefined ? parseInt(brokenEggsCount) : existingRecord.brokenEggsCount;
+    const totalEggsCount = newGoodEggs + newBrokenEggs;
+    const productionPercentage = flock.currentStock > 0 
+      ? (totalEggsCount / flock.currentStock) * 100 
+      : 0;
+
+    const updatedRecord = await prisma.dailyEggCollection.update({
+      where: { id },
+      data: {
+        flockId: flockId || existingRecord.flockId,
+        collectionDate: collectionDate ? new Date(collectionDate) : existingRecord.collectionDate,
+        goodEggsCount: newGoodEggs,
+        brokenEggsCount: newBrokenEggs,
+        totalEggsCount,
+        collectionTime: collectionTime !== undefined ? collectionTime : existingRecord.collectionTime,
+        productionPercentage,
+        notes: notes !== undefined ? notes : existingRecord.notes,
+      },
+      include: {
+        flock: { select: { flockName: true, currentStock: true } },
+        recorder: { select: { firstName: true, lastName: true } },
+      },
+    });
+
+    const serializedRecord = {
+      ...updatedRecord,
+      productionPercentage: updatedRecord.productionPercentage ? Number(updatedRecord.productionPercentage) : null,
+    };
+
+    return NextResponse.json(serializedRecord);
+  } catch (error: any) {
+    console.error('Error updating egg collection:', error);
+    return NextResponse.json({ error: 'Failed to update egg collection' }, { status: 500 });
+  }
+}
+
+// DELETE - Delete an egg collection
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
+    }
+
+    // Check if record exists
+    const existingRecord = await prisma.dailyEggCollection.findUnique({
+      where: { id },
+    });
+
+    if (!existingRecord) {
+      return NextResponse.json({ error: 'Record not found' }, { status: 404 });
+    }
+
+    await prisma.dailyEggCollection.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: 'Record deleted successfully' });
+  } catch (error: any) {
+    console.error('Error deleting egg collection:', error);
+    return NextResponse.json({ error: 'Failed to delete egg collection' }, { status: 500 });
+  }
+}

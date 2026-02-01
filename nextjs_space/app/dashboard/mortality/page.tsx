@@ -10,10 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, TrendingDown } from 'lucide-react';
+import { Loader2, Plus, TrendingDown, Edit2, Trash2 } from 'lucide-react';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { NumberInput } from '@/components/ui/number-input';
 
@@ -55,6 +56,9 @@ export default function MortalityPage() {
   const [flocks, setFlocks] = useState<Flock[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<MortalityRecord | null>(null);
 
   const [formData, setFormData] = useState({
     recordType: 'flock',
@@ -63,6 +67,14 @@ export default function MortalityPage() {
     mortalityDate: new Date().toISOString().split('T')[0],
     mortalityCount: '',
     cause: 'Unknown',
+    notes: '',
+  });
+
+  const [editFormData, setEditFormData] = useState({
+    id: '',
+    mortalityDate: '',
+    mortalityCount: '',
+    cause: '',
     notes: '',
   });
 
@@ -157,6 +169,72 @@ export default function MortalityPage() {
     } catch (error) {
       console.error('Error recording mortality:', error);
       toast.error('Failed to record mortality');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEdit = (record: MortalityRecord) => {
+    setSelectedRecord(record);
+    setEditFormData({
+      id: record.id,
+      mortalityDate: new Date(record.mortalityDate).toISOString().split('T')[0],
+      mortalityCount: record.mortalityCount.toString(),
+      cause: record.cause,
+      notes: '',
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/mortality', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editFormData),
+      });
+
+      if (response.ok) {
+        toast.success('Record updated successfully. Stock adjusted.');
+        setIsEditDialogOpen(false);
+        setSelectedRecord(null);
+        fetchRecords();
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Failed to update record');
+      }
+    } catch (error) {
+      console.error('Error updating record:', error);
+      toast.error('Failed to update record');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedRecord) return;
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`/api/mortality?id=${selectedRecord.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast.success('Record deleted. Stock has been restored.');
+        setIsDeleteDialogOpen(false);
+        setSelectedRecord(null);
+        fetchRecords();
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Failed to delete record');
+      }
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      toast.error('Failed to delete record');
     } finally {
       setIsSubmitting(false);
     }
@@ -381,6 +459,7 @@ export default function MortalityPage() {
                     <TableHead>Rate</TableHead>
                     <TableHead>Cause</TableHead>
                     <TableHead>Recorded By</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -409,6 +488,28 @@ export default function MortalityPage() {
                       <TableCell>
                         {record.recorder.firstName} {record.recorder.lastName}
                       </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(record)}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => {
+                              setSelectedRecord(record);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -417,6 +518,136 @@ export default function MortalityPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Mortality Record</DialogTitle>
+            <DialogDescription>
+              Update the mortality data. Note: Changing the count will adjust the stock.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4 mt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="editMortalityDate">Mortality Date *</Label>
+                <Input
+                  id="editMortalityDate"
+                  type="date"
+                  value={editFormData.mortalityDate}
+                  onChange={(e) => setEditFormData({ ...editFormData, mortalityDate: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="editMortalityCount">Mortality Count *</Label>
+                <Input
+                  id="editMortalityCount"
+                  type="number"
+                  min="1"
+                  value={editFormData.mortalityCount}
+                  onChange={(e) => setEditFormData({ ...editFormData, mortalityCount: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="editCause">Cause</Label>
+                <Select
+                  value={editFormData.cause}
+                  onValueChange={(value) => setEditFormData({ ...editFormData, cause: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Unknown">Unknown</SelectItem>
+                    <SelectItem value="Disease">Disease</SelectItem>
+                    <SelectItem value="Predator">Predator</SelectItem>
+                    <SelectItem value="Heat Stress">Heat Stress</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="editNotes">Notes</Label>
+                <Textarea
+                  id="editNotes"
+                  value={editFormData.notes}
+                  onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
+                  placeholder="Any additional details..."
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-gradient-to-r from-red-600 to-orange-600"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Record'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Mortality Record</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this mortality record? The stock count will be restored.
+              {selectedRecord && (
+                <div className="mt-2 p-3 bg-gray-100 rounded-md">
+                  <p><strong>Date:</strong> {new Date(selectedRecord.mortalityDate).toLocaleDateString('en-NG')}</p>
+                  <p><strong>Flock/Batch:</strong> {selectedRecord.flock?.flockName || selectedRecord.batch?.batchName}</p>
+                  <p><strong>Count:</strong> {selectedRecord.mortalityCount}</p>
+                  <p><strong>Cause:</strong> {selectedRecord.cause}</p>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isSubmitting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

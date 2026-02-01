@@ -204,3 +204,157 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// PUT - Update a mortality record
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const {
+      id,
+      mortalityDate,
+      mortalityCount,
+      cause,
+      notes,
+    } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
+    }
+
+    // Get existing record
+    const existingRecord = await prisma.mortalityRecord.findUnique({
+      where: { id },
+    });
+
+    if (!existingRecord) {
+      return NextResponse.json({ error: 'Record not found' }, { status: 404 });
+    }
+
+    const oldMortalityCount = existingRecord.mortalityCount;
+    const newMortalityCount = mortalityCount !== undefined ? parseInt(mortalityCount) : oldMortalityCount;
+    const countDifference = newMortalityCount - oldMortalityCount;
+
+    // Update stock if mortality count changed
+    if (countDifference !== 0) {
+      if (existingRecord.recordType === 'flock' && existingRecord.flockId) {
+        const flock = await prisma.flock.findUnique({
+          where: { id: existingRecord.flockId },
+        });
+        if (flock) {
+          await prisma.flock.update({
+            where: { id: existingRecord.flockId },
+            data: {
+              currentStock: Math.max(0, flock.currentStock - countDifference),
+            },
+          });
+        }
+      } else if (existingRecord.recordType === 'batch' && existingRecord.batchId) {
+        const batch = await prisma.batch.findUnique({
+          where: { id: existingRecord.batchId },
+        });
+        if (batch) {
+          await prisma.batch.update({
+            where: { id: existingRecord.batchId },
+            data: {
+              currentStock: Math.max(0, batch.currentStock - countDifference),
+            },
+          });
+        }
+      }
+    }
+
+    // Recalculate mortality rate
+    let currentStock = 0;
+    if (existingRecord.recordType === 'flock' && existingRecord.flockId) {
+      const flock = await prisma.flock.findUnique({ where: { id: existingRecord.flockId } });
+      currentStock = flock?.currentStock || 0;
+    } else if (existingRecord.recordType === 'batch' && existingRecord.batchId) {
+      const batch = await prisma.batch.findUnique({ where: { id: existingRecord.batchId } });
+      currentStock = batch?.currentStock || 0;
+    }
+    const mortalityRate = currentStock > 0 ? (newMortalityCount / (currentStock + newMortalityCount)) * 100 : 0;
+
+    const updatedRecord = await prisma.mortalityRecord.update({
+      where: { id },
+      data: {
+        mortalityDate: mortalityDate ? new Date(mortalityDate) : existingRecord.mortalityDate,
+        mortalityCount: newMortalityCount,
+        cause: cause || existingRecord.cause,
+        mortalityRate,
+        notes: notes !== undefined ? notes : existingRecord.notes,
+      },
+      include: {
+        flock: { select: { flockName: true } },
+        batch: { select: { batchName: true } },
+        recorder: { select: { firstName: true, lastName: true } },
+      },
+    });
+
+    const serializedRecord = {
+      ...updatedRecord,
+      mortalityRate: updatedRecord.mortalityRate ? Number(updatedRecord.mortalityRate) : null,
+    };
+
+    return NextResponse.json(serializedRecord);
+  } catch (error: any) {
+    console.error('Error updating mortality record:', error);
+    return NextResponse.json({ error: 'Failed to update mortality record' }, { status: 500 });
+  }
+}
+
+// DELETE - Delete a mortality record
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
+    }
+
+    // Get existing record to restore stock
+    const existingRecord = await prisma.mortalityRecord.findUnique({
+      where: { id },
+    });
+
+    if (!existingRecord) {
+      return NextResponse.json({ error: 'Record not found' }, { status: 404 });
+    }
+
+    // Restore the stock count
+    if (existingRecord.recordType === 'flock' && existingRecord.flockId) {
+      await prisma.flock.update({
+        where: { id: existingRecord.flockId },
+        data: {
+          currentStock: { increment: existingRecord.mortalityCount },
+        },
+      });
+    } else if (existingRecord.recordType === 'batch' && existingRecord.batchId) {
+      await prisma.batch.update({
+        where: { id: existingRecord.batchId },
+        data: {
+          currentStock: { increment: existingRecord.mortalityCount },
+        },
+      });
+    }
+
+    await prisma.mortalityRecord.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: 'Record deleted successfully. Stock has been restored.' });
+  } catch (error: any) {
+    console.error('Error deleting mortality record:', error);
+    return NextResponse.json({ error: 'Failed to delete mortality record' }, { status: 500 });
+  }
+}
