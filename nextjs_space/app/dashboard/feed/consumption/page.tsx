@@ -92,6 +92,11 @@ export default function FeedConsumptionPage() {
     totalCost: 0,
     totalRecords: 0
   });
+  const [apiStats, setApiStats] = useState({
+    totalFeedUsed: 0,
+    totalCost: 0,
+    totalRecords: 0
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -106,8 +111,12 @@ export default function FeedConsumptionPage() {
 
   useEffect(() => {
     filterConsumptions();
-    calculateStats();
   }, [consumptions, searchQuery, filterType]);
+
+  // Calculate stats separately after filteredConsumptions is updated
+  useEffect(() => {
+    calculateStats();
+  }, [filteredConsumptions, apiStats, searchQuery, filterType]);
 
   const fetchConsumptions = async () => {
     try {
@@ -116,7 +125,9 @@ export default function FeedConsumptionPage() {
       if (!response.ok) throw new Error('Failed to fetch consumption records');
       const data = await response.json();
       setConsumptions(data.consumptions || []);
-      setStats(data.summary || { totalFeedUsed: 0, totalCost: 0, totalRecords: 0 });
+      const summaryData = data.summary || { totalFeedUsed: 0, totalCost: 0, totalRecords: 0 };
+      setApiStats(summaryData);
+      setStats(summaryData);
     } catch (error) {
       console.error('Error fetching consumptions:', error);
       toast.error('Failed to load consumption records');
@@ -184,6 +195,12 @@ export default function FeedConsumptionPage() {
   };
 
   const calculateStats = () => {
+    // Use API stats when no filters are applied
+    if (!searchQuery && filterType === 'all') {
+      setStats(apiStats);
+      return;
+    }
+    
     const totalFeedUsed = filteredConsumptions.reduce((sum: number, consumption: any) => sum + consumption.feedQuantityBags, 0);
     const totalCost = filteredConsumptions.reduce((sum: number, consumption: any) => 
       sum + (consumption.feedQuantityBags * (consumption.inventory?.unitCostPerBag || 0)), 0

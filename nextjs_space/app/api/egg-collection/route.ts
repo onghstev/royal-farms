@@ -60,8 +60,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get current user from database by email
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!currentUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const body = await request.json();
@@ -109,7 +118,7 @@ export async function POST(request: NextRequest) {
         totalEggsCount,
         collectionTime,
         productionPercentage,
-        recordedBy: (session.user as any).id,
+        recordedBy: currentUser.id,
         notes,
       },
       include: {
