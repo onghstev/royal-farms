@@ -291,7 +291,7 @@ export default function MortalityPage() {
                   <Label htmlFor="recordType">Record Type *</Label>
                   <Select
                     value={formData.recordType}
-                    onValueChange={(value) => setFormData({ ...formData, recordType: value })}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, recordType: value }))}
                     required
                   >
                     <SelectTrigger>
@@ -309,7 +309,7 @@ export default function MortalityPage() {
                     <Label htmlFor="flockId">Flock *</Label>
                     <Select
                       value={formData.flockId}
-                      onValueChange={(value) => setFormData({ ...formData, flockId: value })}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, flockId: value }))}
                       required
                     >
                       <SelectTrigger>
@@ -329,7 +329,7 @@ export default function MortalityPage() {
                     <Label htmlFor="batchId">Batch *</Label>
                     <Select
                       value={formData.batchId}
-                      onValueChange={(value) => setFormData({ ...formData, batchId: value })}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, batchId: value }))}
                       required
                     >
                       <SelectTrigger>
