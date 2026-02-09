@@ -865,3 +865,29 @@ model CostAnalysis {
   @@index([batchId])
   @@map("cost_analysis")
 }
+
+// Daily Banking Records - Cash Sales and Bank Deposits
+model DailyBankingRecord {
+  id                String    @id @default(cuid())
+  recordDate        DateTime  @map("record_date") @db.Date
+  totalCashSales    Decimal   @map("total_cash_sales") @db.Decimal(12, 2)
+  totalBanked       Decimal   @map("total_banked") @db.Decimal(12, 2)
+  variance          Decimal   @default(0) @db.Decimal(12, 2) // totalCashSales - totalBanked
+  bankName          String?   @map("bank_name")
+  accountNumber     String?   @map("account_number")
+  depositSlipNumber String?   @map("deposit_slip_number")
+  depositedBy       String?   @map("deposited_by")
+  cashOnHand        Decimal?  @map("cash_on_hand") @db.Decimal(12, 2) // remaining cash not banked
+  status            String    @default("pending") // pending, banked, verified
+  notes             String?   @db.Text
+  recordedBy        String    @map("recorded_by")
+  verifiedBy        String?   @map("verified_by")
+  verifiedAt        DateTime? @map("verified_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@unique([recordDate])
+  @@index([recordDate])
+  @@index([status])
+  @@map("daily_banking_records")
+}

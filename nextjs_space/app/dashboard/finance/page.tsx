@@ -15,7 +15,9 @@ import {
   ArrowDownRight,
   Wallet,
   Receipt,
-  PieChart
+  PieChart,
+  Banknote,
+  Building2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -163,7 +165,7 @@ export default function FinanceDashboard() {
       </div>
 
       {/* Quick Action Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-green-500">
           <Link href="/dashboard/finance/income">
             <CardHeader>
@@ -281,6 +283,41 @@ export default function FinanceDashboard() {
               </div>
               <Button className="w-full mt-4" variant="outline">
                 View Reports <FileText className="ml-2 h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Link>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-purple-500">
+          <Link href="/dashboard/finance/banking">
+            <CardHeader>
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <Banknote className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Daily Banking</CardTitle>
+                  <CardDescription>Track cash sales & bank deposits</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm">
+                  <DollarSign className="h-4 w-4 mr-2 text-gray-500" />
+                  <span className="text-gray-600">Daily Cash Sales</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <Building2 className="h-4 w-4 mr-2 text-gray-500" />
+                  <span className="text-gray-600">Bank Deposits</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <Wallet className="h-4 w-4 mr-2 text-gray-500" />
+                  <span className="text-gray-600">Cash Reconciliation</span>
+                </div>
+              </div>
+              <Button className="w-full mt-4" variant="outline">
+                Manage Banking <Banknote className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
           </Link>
