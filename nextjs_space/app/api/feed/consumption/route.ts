@@ -132,15 +132,20 @@ export async function POST(request: NextRequest) {
     const totalFeedCost = Number(feedQuantityBags) * Number(feedPricePerBag);
 
     const result = await prisma.$transaction(async (tx: any) => {
+      let inventoryInfo = null;
+      
       if (inventoryId) {
         const inventory = await tx.feedInventory.findUnique({
           where: { id: inventoryId },
+          include: { supplier: true },
         });
 
         if (!inventory) throw new Error('Inventory not found');
         if (Number(inventory.currentStockBags) < feedQuantityBags) {
           throw new Error('Insufficient stock');
         }
+
+        inventoryInfo = inventory;
 
         await tx.feedInventory.update({
           where: { id: inventoryId },
@@ -150,7 +155,7 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      return tx.dailyFeedConsumption.create({
+      const consumption = await tx.dailyFeedConsumption.create({
         data: {
           consumptionType,
           flockId: consumptionType === 'flock' ? flockId : null,
@@ -165,6 +170,26 @@ export async function POST(request: NextRequest) {
           notes: notes || null,
         },
       });
+
+      // Create expense transaction for feed consumption
+      await tx.expenseTransaction.create({
+        data: {
+          transactionDate: new Date(consumptionDate),
+          category: 'feed',
+          amount: totalFeedCost,
+          quantity: feedQuantityBags,
+          unitCost: feedPricePerBag,
+          vendorName: inventoryInfo?.supplier?.supplierName || null,
+          vendorPhone: inventoryInfo?.supplier?.contactPhone || null,
+          paymentMethod: 'cash',
+          paymentStatus: 'paid',
+          description: `Feed consumption: ${feedQuantityBags} bags @ ₦${feedPricePerBag}/bag for ${consumptionType === 'flock' ? 'flock' : 'batch'}`,
+          notes: `Auto-generated from feed consumption record. ${notes || ''}`.trim(),
+          recordedBy: currentUser.id,
+        },
+      });
+
+      return consumption;
     });
 
     return NextResponse.json(
