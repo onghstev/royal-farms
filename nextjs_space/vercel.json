@@ -1,5 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "cp next.config.vercel.js next.config.js && prisma generate && next build",
+  "buildCommand": "prisma generate && next build",
   "outputDirectory": ".next"
 }
