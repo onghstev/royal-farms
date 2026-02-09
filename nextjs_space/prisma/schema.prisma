@@ -870,6 +870,8 @@ model CostAnalysis {
 model DailyBankingRecord {
   id                String    @id @default(cuid())
   recordDate        DateTime  @map("record_date") @db.Date
+  customerName      String?   @map("customer_name") // Name of the person making payment
+  description       String?   // Description of the transaction
   totalCashSales    Decimal   @map("total_cash_sales") @db.Decimal(12, 2)
   totalBanked       Decimal   @map("total_banked") @db.Decimal(12, 2)
   variance          Decimal   @default(0) @db.Decimal(12, 2) // totalCashSales - totalBanked
@@ -886,8 +888,8 @@ model DailyBankingRecord {
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
-  @@unique([recordDate])
   @@index([recordDate])
+  @@index([customerName])
   @@index([status])
   @@map("daily_banking_records")
 }

@@ -55,6 +55,8 @@ import { formatCurrency } from '@/lib/utils';
 interface BankingRecord {
   id: string;
   recordDate: string;
+  customerName: string | null;
+  description: string | null;
   totalCashSales: number;
   totalBanked: number;
   variance: number;
@@ -96,6 +98,8 @@ export default function BankingRecordsPage() {
 
   const [formData, setFormData] = useState({
     recordDate: new Date().toISOString().split('T')[0],
+    customerName: '',
+    description: '',
     totalCashSales: '',
     totalBanked: '',
     bankName: '',
@@ -179,6 +183,8 @@ export default function BankingRecordsPage() {
     setEditingRecord(record);
     setFormData({
       recordDate: record.recordDate.split('T')[0],
+      customerName: record.customerName || '',
+      description: record.description || '',
       totalCashSales: record.totalCashSales.toString(),
       totalBanked: record.totalBanked.toString(),
       bankName: record.bankName || '',
@@ -232,6 +238,8 @@ export default function BankingRecordsPage() {
     setEditingRecord(null);
     setFormData({
       recordDate: new Date().toISOString().split('T')[0],
+      customerName: '',
+      description: '',
       totalCashSales: '',
       totalBanked: '',
       bankName: '',
@@ -257,6 +265,8 @@ export default function BankingRecordsPage() {
 
   const filteredRecords = records.filter((record: any) => {
     const matchesSearch =
+      record.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      record.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.bankName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.depositSlipNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.depositedBy?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -402,12 +412,12 @@ export default function BankingRecordsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Date</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Description</TableHead>
                     <TableHead>Cash Sales</TableHead>
                     <TableHead>Amount Banked</TableHead>
                     <TableHead>Variance</TableHead>
                     <TableHead>Bank</TableHead>
-                    <TableHead>Deposit Slip</TableHead>
-                    <TableHead>Deposited By</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -417,6 +427,10 @@ export default function BankingRecordsPage() {
                     <TableRow key={record.id}>
                       <TableCell className="font-medium">
                         {new Date(record.recordDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>{record.customerName || '-'}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" title={record.description || ''}>
+                        {record.description || '-'}
                       </TableCell>
                       <TableCell className="text-green-700 font-semibold">
                         {formatCurrency(record.totalCashSales)}
@@ -430,8 +444,6 @@ export default function BankingRecordsPage() {
                         </span>
                       </TableCell>
                       <TableCell>{record.bankName || '-'}</TableCell>
-                      <TableCell>{record.depositSlipNumber || '-'}</TableCell>
-                      <TableCell>{record.depositedBy || '-'}</TableCell>
                       <TableCell>{getStatusBadge(record.status)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -497,7 +509,26 @@ export default function BankingRecordsPage() {
                   value={formData.recordDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, recordDate: e.target.value }))}
                   required
-                  disabled={!!editingRecord}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="customerName">Customer / Payer Name</Label>
+                <Input
+                  id="customerName"
+                  placeholder="e.g., John Doe"
+                  value={formData.customerName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, customerName: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  placeholder="e.g., Payment for 50 crates of eggs"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 />
               </div>
 

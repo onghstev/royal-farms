@@ -30,6 +30,8 @@ export async function GET(request: Request) {
     // Serialize Decimal to Number
     const records = bankingRecords.map((r: any) => ({
       ...r,
+      customerName: r.customerName || null,
+      description: r.description || null,
       totalCashSales: Number(r.totalCashSales),
       totalBanked: Number(r.totalBanked),
       variance: Number(r.variance),
@@ -75,6 +77,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const {
       recordDate,
+      customerName,
+      description,
       totalCashSales,
       totalBanked,
       bankName,
@@ -91,21 +95,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Record date, total cash sales, and total banked are required' }, { status: 400 });
     }
 
-    // Check for existing record on same date
-    const existingRecord = await prisma.dailyBankingRecord.findUnique({
-      where: { recordDate: new Date(recordDate) },
-    });
-
-    if (existingRecord) {
-      return NextResponse.json({ error: 'A banking record already exists for this date. Please edit the existing record.' }, { status: 400 });
-    }
-
     // Calculate variance
     const variance = parseFloat(totalCashSales) - parseFloat(totalBanked);
 
     const newRecord = await prisma.dailyBankingRecord.create({
       data: {
         recordDate: new Date(recordDate),
+        customerName: customerName || null,
+        description: description || null,
         totalCashSales: parseFloat(totalCashSales),
         totalBanked: parseFloat(totalBanked),
         variance,
@@ -142,6 +139,8 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const {
       id,
+      customerName,
+      description,
       totalCashSales,
       totalBanked,
       bankName,
@@ -171,6 +170,8 @@ export async function PUT(request: Request) {
     const variance = newTotalCashSales - newTotalBanked;
 
     const updateData: any = {
+      customerName: customerName !== undefined ? customerName : existingRecord.customerName,
+      description: description !== undefined ? description : existingRecord.description,
       totalCashSales: newTotalCashSales,
       totalBanked: newTotalBanked,
       variance,
