@@ -9,14 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -32,6 +24,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { DataTable, Column } from '@/components/ui/data-table';
+import { StatCard } from '@/components/ui/stat-card';
 import {
   Banknote,
   Building2,
@@ -40,14 +34,14 @@ import {
   Trash2,
   CheckCircle,
   Clock,
-  AlertTriangle,
   DollarSign,
   ArrowDownToLine,
   Wallet,
   TrendingUp,
   TrendingDown,
-  Search,
-  Filter,
+  User,
+  FileText,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils';
@@ -92,7 +86,6 @@ export default function BankingRecordsPage() {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingRecord, setEditingRecord] = useState<BankingRecord | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [submitting, setSubmitting] = useState(false);
 
@@ -255,414 +248,547 @@ export default function BankingRecordsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Verified</Badge>;
+        return (
+          <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0">
+            <CheckCircle className="h-3 w-3 mr-1" />Verified
+          </Badge>
+        );
       case 'banked':
-        return <Badge className="bg-blue-100 text-blue-800"><Building2 className="h-3 w-3 mr-1" />Banked</Badge>;
+        return (
+          <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0">
+            <Building2 className="h-3 w-3 mr-1" />Banked
+          </Badge>
+        );
       default:
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return (
+          <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-0">
+            <Clock className="h-3 w-3 mr-1" />Pending
+          </Badge>
+        );
     }
   };
-
-  const filteredRecords = records.filter((record: any) => {
-    const matchesSearch =
-      record.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.bankName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.depositSlipNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.depositedBy?.toLowerCase().includes(searchTerm.toLowerCase());
-    return searchTerm ? matchesSearch : true;
-  });
 
   // Calculate variance automatically when amounts change
   const calculatedVariance = (parseFloat(formData.totalCashSales) || 0) - (parseFloat(formData.totalBanked) || 0);
 
+  // Table columns
+  const columns: Column<BankingRecord>[] = [
+    {
+      key: 'recordDate',
+      header: 'Date',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-medium text-foreground">
+          {new Date(row.recordDate).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}
+        </span>
+      ),
+    },
+    {
+      key: 'customerName',
+      header: 'Customer',
+      sortable: true,
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <User className="h-4 w-4 text-primary" />
+          </div>
+          <span className="font-medium">{row.customerName || '-'}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'description',
+      header: 'Description',
+      cell: (row) => (
+        <span className="text-muted-foreground max-w-[200px] truncate block" title={row.description || ''}>
+          {row.description || '-'}
+        </span>
+      ),
+    },
+    {
+      key: 'totalCashSales',
+      header: 'Cash Sales',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+          {formatCurrency(row.totalCashSales)}
+        </span>
+      ),
+    },
+    {
+      key: 'totalBanked',
+      header: 'Banked',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-semibold text-blue-600 dark:text-blue-400">
+          {formatCurrency(row.totalBanked)}
+        </span>
+      ),
+    },
+    {
+      key: 'variance',
+      header: 'Variance',
+      sortable: true,
+      cell: (row) => (
+        <span className={`font-semibold ${row.variance >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`}>
+          {row.variance >= 0 ? '+' : ''}{formatCurrency(row.variance)}
+        </span>
+      ),
+    },
+    {
+      key: 'bankName',
+      header: 'Bank',
+      cell: (row) => row.bankName || '-',
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (row) => getStatusBadge(row.status),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <div className="flex justify-end gap-1">
+          {row.status !== 'verified' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleVerify(row)}
+              title="Verify"
+              className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+            >
+              <CheckCircle className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEdit(row)}
+            title="Edit"
+            className="h-8 w-8 p-0 hover:bg-blue-50 text-blue-600"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDelete(row.id)}
+            title="Delete"
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   if (status === 'loading' || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading Banking Records...</p>
+          <div className="relative">
+            <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto" />
+            <Banknote className="h-6 w-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <p className="mt-4 text-muted-foreground font-medium">Loading Banking Records...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 p-1">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Daily Banking Records</h1>
-          <p className="text-gray-600 mt-1">Track cash sales and bank deposits</p>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+            Daily Banking Records
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Track cash sales, bank deposits, and variances
+          </p>
         </div>
-        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="bg-green-600 hover:bg-green-700">
-          <Plus className="h-4 w-4 mr-2" /> New Record
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={fetchRecords}
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+          <Button
+            onClick={() => { resetForm(); setShowDialog(true); }}
+            className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg shadow-emerald-500/25 gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            New Record
+          </Button>
+        </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-green-600" /> Total Cash Sales
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-green-700">{formatCurrency(summary?.totalCashSales || 0)}</p>
-            <p className="text-xs text-gray-500 mt-1">{summary?.recordCount || 0} records</p>
-          </CardContent>
-        </Card>
+      {summary && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            title="Total Cash Sales"
+            value={formatCurrency(summary.totalCashSales)}
+            subtitle={`${summary.recordCount} records`}
+            icon={DollarSign}
+            variant="success"
+          />
+          <StatCard
+            title="Total Banked"
+            value={formatCurrency(summary.totalBanked)}
+            subtitle={`${summary.bankedCount + summary.verifiedCount} deposited`}
+            icon={Building2}
+            variant="info"
+          />
+          <StatCard
+            title="Total Variance"
+            value={formatCurrency(summary.totalVariance)}
+            subtitle={summary.totalVariance >= 0 ? 'Cash on hand' : 'Over-banked'}
+            icon={summary.totalVariance >= 0 ? TrendingUp : TrendingDown}
+            variant={summary.totalVariance >= 0 ? 'warning' : 'danger'}
+          />
+          <StatCard
+            title="Pending Verification"
+            value={summary.pendingCount}
+            subtitle={`${summary.verifiedCount} verified`}
+            icon={Clock}
+            variant="purple"
+          />
+        </div>
+      )}
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <ArrowDownToLine className="h-4 w-4 text-blue-600" /> Total Banked
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-blue-700">{formatCurrency(summary?.totalBanked || 0)}</p>
-            <p className="text-xs text-gray-500 mt-1">{summary?.bankedCount || 0} banked, {summary?.verifiedCount || 0} verified</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              {(summary?.totalVariance || 0) >= 0 ? (
-                <TrendingUp className="h-4 w-4 text-orange-600" />
-              ) : (
-                <TrendingDown className="h-4 w-4 text-red-600" />
-              )}
-              Total Variance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={`text-2xl font-bold ${(summary?.totalVariance || 0) >= 0 ? 'text-orange-700' : 'text-red-700'}`}>
-              {formatCurrency(summary?.totalVariance || 0)}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Cash sales - Banked</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Wallet className="h-4 w-4 text-purple-600" /> Cash on Hand
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-purple-700">{formatCurrency(summary?.totalCashOnHand || 0)}</p>
-            <p className="text-xs text-gray-500 mt-1">{summary?.pendingCount || 0} pending deposits</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search by bank, deposit slip, or person..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="w-full md:w-48">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="banked">Banked</SelectItem>
-                  <SelectItem value="verified">Verified</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      {/* Filter Controls */}
+      <Card className="border-border/50">
+        <CardContent className="py-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <Label className="text-sm font-medium whitespace-nowrap">Filter by Status:</Label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Records</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="banked">Banked</SelectItem>
+                <SelectItem value="verified">Verified</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Records Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Banking Records</CardTitle>
-          <CardDescription>Daily cash sales and bank deposit tracking</CardDescription>
+      {/* Data Table */}
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="border-b border-border/50 bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center">
+              <Banknote className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle>Banking Records</CardTitle>
+              <CardDescription>View and manage all daily banking transactions</CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          {filteredRecords.length === 0 ? (
-            <div className="text-center py-12">
-              <Banknote className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No banking records found</p>
-              <Button onClick={() => { resetForm(); setShowDialog(true); }} className="mt-4" variant="outline">
-                <Plus className="h-4 w-4 mr-2" /> Create First Record
+        <CardContent className="p-6">
+          {records.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="mx-auto h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <Banknote className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">No Banking Records Found</h3>
+              <p className="text-muted-foreground mb-6">
+                Start tracking your daily cash sales and bank deposits
+              </p>
+              <Button
+                onClick={() => { resetForm(); setShowDialog(true); }}
+                className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white gap-2"
+              >
+                <Plus className="h-4 w-4" /> Create First Record
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Cash Sales</TableHead>
-                    <TableHead>Amount Banked</TableHead>
-                    <TableHead>Variance</TableHead>
-                    <TableHead>Bank</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredRecords.map((record: any) => (
-                    <TableRow key={record.id}>
-                      <TableCell className="font-medium">
-                        {new Date(record.recordDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{record.customerName || '-'}</TableCell>
-                      <TableCell className="max-w-[200px] truncate" title={record.description || ''}>
-                        {record.description || '-'}
-                      </TableCell>
-                      <TableCell className="text-green-700 font-semibold">
-                        {formatCurrency(record.totalCashSales)}
-                      </TableCell>
-                      <TableCell className="text-blue-700 font-semibold">
-                        {formatCurrency(record.totalBanked)}
-                      </TableCell>
-                      <TableCell>
-                        <span className={`font-semibold ${record.variance >= 0 ? 'text-orange-600' : 'text-red-600'}`}>
-                          {formatCurrency(record.variance)}
-                        </span>
-                      </TableCell>
-                      <TableCell>{record.bankName || '-'}</TableCell>
-                      <TableCell>{getStatusBadge(record.status)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {record.status !== 'verified' && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleVerify(record)}
-                              title="Verify"
-                              className="text-green-600 hover:text-green-700"
-                            >
-                              <CheckCircle className="h-4 w-4" />
-                            </Button>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(record)}
-                            title="Edit"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(record.id)}
-                            className="text-red-600 hover:text-red-700"
-                            title="Delete"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <DataTable
+              data={records}
+              columns={columns}
+              searchPlaceholder="Search by customer, description, bank..."
+              searchKeys={['customerName', 'description', 'bankName', 'depositSlipNumber', 'depositedBy']}
+              pageSize={10}
+              emptyMessage="No records match your search."
+            />
           )}
         </CardContent>
       </Card>
 
       {/* Create/Edit Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Banknote className="h-5 w-5" />
-              {editingRecord ? 'Edit Banking Record' : 'New Banking Record'}
-            </DialogTitle>
-            <DialogDescription>
-              {editingRecord ? 'Update the banking record details below.' : 'Enter the daily cash sales and banking details.'}
-            </DialogDescription>
+        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center">
+                <Banknote className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl">
+                  {editingRecord ? 'Edit Banking Record' : 'New Banking Record'}
+                </DialogTitle>
+                <DialogDescription>
+                  {editingRecord ? 'Update the banking record details below.' : 'Enter the cash sales and banking details.'}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="recordDate">Record Date *</Label>
-                <Input
-                  id="recordDate"
-                  type="date"
-                  value={formData.recordDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recordDate: e.target.value }))}
-                  required
-                />
+          <form onSubmit={handleSubmit} className="space-y-6 py-4">
+            {/* Basic Info Section */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Basic Information</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="recordDate">Record Date *</Label>
+                  <Input
+                    id="recordDate"
+                    type="date"
+                    value={formData.recordDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, recordDate: e.target.value }))}
+                    required
+                    className="bg-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="customerName">Customer / Payer Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="customerName"
+                      placeholder="e.g., John Doe"
+                      value={formData.customerName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, customerName: e.target.value }))}
+                      className="pl-10 bg-background"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="description">Description</Label>
+                  <div className="relative">
+                    <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="description"
+                      placeholder="e.g., Payment for 50 crates of eggs"
+                      value={formData.description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      className="pl-10 bg-background"
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="customerName">Customer / Payer Name</Label>
-                <Input
-                  id="customerName"
-                  placeholder="e.g., John Doe"
-                  value={formData.customerName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, customerName: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  placeholder="e.g., Payment for 50 crates of eggs"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="banked">Banked</SelectItem>
-                    <SelectItem value="verified">Verified</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="totalCashSales">Total Cash Sales (₦) *</Label>
-                <Input
-                  id="totalCashSales"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={formData.totalCashSales}
-                  onChange={(e) => setFormData(prev => ({ ...prev, totalCashSales: e.target.value }))}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="totalBanked">Total Amount Banked (₦) *</Label>
-                <Input
-                  id="totalBanked"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={formData.totalBanked}
-                  onChange={(e) => setFormData(prev => ({ ...prev, totalBanked: e.target.value }))}
-                  required
-                />
+            {/* Financial Details Section */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Financial Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="totalCashSales">Total Cash Sales (₦) *</Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-600" />
+                    <Input
+                      id="totalCashSales"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      value={formData.totalCashSales}
+                      onChange={(e) => setFormData(prev => ({ ...prev, totalCashSales: e.target.value }))}
+                      required
+                      className="pl-10 bg-background"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="totalBanked">Total Amount Banked (₦) *</Label>
+                  <div className="relative">
+                    <ArrowDownToLine className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-600" />
+                    <Input
+                      id="totalBanked"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      value={formData.totalBanked}
+                      onChange={(e) => setFormData(prev => ({ ...prev, totalBanked: e.target.value }))}
+                      required
+                      className="pl-10 bg-background"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Variance Display */}
-              <div className="md:col-span-2 p-4 rounded-lg bg-gray-50">
+              <div className={`p-4 rounded-lg border-2 ${calculatedVariance >= 0 ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'}`}>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">Calculated Variance:</span>
-                  <span className={`text-lg font-bold ${calculatedVariance >= 0 ? 'text-orange-600' : 'text-red-600'}`}>
-                    {formatCurrency(calculatedVariance)}
+                  <div className="flex items-center gap-2">
+                    <Wallet className={`h-5 w-5 ${calculatedVariance >= 0 ? 'text-amber-600' : 'text-red-600'}`} />
+                    <span className="text-sm font-medium">Calculated Variance:</span>
+                  </div>
+                  <span className={`text-xl font-bold ${calculatedVariance >= 0 ? 'text-amber-600' : 'text-red-600'}`}>
+                    {calculatedVariance >= 0 ? '+' : ''}{formatCurrency(calculatedVariance)}
                   </span>
                 </div>
                 {calculatedVariance !== 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {calculatedVariance > 0 ? 'Cash not yet banked' : 'More banked than cash sales (check figures)'}
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {calculatedVariance > 0 ? '💵 Cash not yet deposited to bank' : '⚠️ More banked than cash sales (please verify figures)'}
                   </p>
                 )}
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="bankName">Bank Name</Label>
-                <Input
-                  id="bankName"
-                  placeholder="e.g., First Bank"
-                  value={formData.bankName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bankName: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="accountNumber">Account Number</Label>
-                <Input
-                  id="accountNumber"
-                  placeholder="Account number"
-                  value={formData.accountNumber}
-                  onChange={(e) => setFormData(prev => ({ ...prev, accountNumber: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="depositSlipNumber">Deposit Slip Number</Label>
-                <Input
-                  id="depositSlipNumber"
-                  placeholder="Deposit slip/teller no."
-                  value={formData.depositSlipNumber}
-                  onChange={(e) => setFormData(prev => ({ ...prev, depositSlipNumber: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="depositedBy">Deposited By</Label>
-                <Input
-                  id="depositedBy"
-                  placeholder="Name of depositor"
-                  value={formData.depositedBy}
-                  onChange={(e) => setFormData(prev => ({ ...prev, depositedBy: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cashOnHand">Cash on Hand (₦)</Label>
-                <Input
-                  id="cashOnHand"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="Remaining cash"
-                  value={formData.cashOnHand}
-                  onChange={(e) => setFormData(prev => ({ ...prev, cashOnHand: e.target.value }))}
-                />
+            {/* Banking Details Section */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Banking Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="bankName">Bank Name</Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="bankName"
+                      placeholder="e.g., First Bank"
+                      value={formData.bankName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, bankName: e.target.value }))}
+                      className="pl-10 bg-background"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="accountNumber">Account Number</Label>
+                  <Input
+                    id="accountNumber"
+                    placeholder="e.g., 0123456789"
+                    value={formData.accountNumber}
+                    onChange={(e) => setFormData(prev => ({ ...prev, accountNumber: e.target.value }))}
+                    className="bg-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="depositSlipNumber">Deposit Slip Number</Label>
+                  <Input
+                    id="depositSlipNumber"
+                    placeholder="e.g., DEP-001"
+                    value={formData.depositSlipNumber}
+                    onChange={(e) => setFormData(prev => ({ ...prev, depositSlipNumber: e.target.value }))}
+                    className="bg-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="depositedBy">Deposited By</Label>
+                  <Input
+                    id="depositedBy"
+                    placeholder="e.g., Jane Smith"
+                    value={formData.depositedBy}
+                    onChange={(e) => setFormData(prev => ({ ...prev, depositedBy: e.target.value }))}
+                    className="bg-background"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                placeholder="Any additional notes or remarks..."
-                value={formData.notes}
-                onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                rows={3}
-              />
+            {/* Status & Notes Section */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Status & Notes</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-amber-500" />
+                          Pending
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="banked">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-blue-500" />
+                          Banked
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="verified">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-emerald-500" />
+                          Verified
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cashOnHand">Cash On Hand (₦)</Label>
+                  <Input
+                    id="cashOnHand"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    value={formData.cashOnHand}
+                    onChange={(e) => setFormData(prev => ({ ...prev, cashOnHand: e.target.value }))}
+                    className="bg-background"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="notes">Notes</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder="Add any additional notes..."
+                    value={formData.notes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                    rows={3}
+                    className="bg-background resize-none"
+                  />
+                </div>
+              </div>
             </div>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
+            <DialogFooter className="pt-4 border-t border-border/50">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowDialog(false)}
+                disabled={submitting}
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="bg-green-600 hover:bg-green-700">
-                {submitting ? 'Saving...' : editingRecord ? 'Update Record' : 'Create Record'}
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white min-w-[120px]"
+              >
+                {submitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Saving...
+                  </div>
+                ) : (
+                  editingRecord ? 'Update Record' : 'Create Record'
+                )}
               </Button>
             </DialogFooter>
           </form>
