@@ -10,24 +10,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, TrendingDown, Edit2, Trash2 } from 'lucide-react';
-import { formatCurrency, formatNumber } from '@/lib/utils';
-import { NumberInput } from '@/components/ui/number-input';
+import { DataTable, Column } from '@/components/ui/data-table';
+import { StatCard } from '@/components/ui/stat-card';
+import { Plus, TrendingDown, Edit2, Trash2, Skull, AlertTriangle, Calendar, RefreshCw, Activity, Heart } from 'lucide-react';
+import { formatNumber } from '@/lib/utils';
+import { format } from 'date-fns';
 
-interface Flock {
-  id: string;
-  flockName: string;
-}
-
-interface Batch {
-  id: string;
-  batchName: string;
-}
-
+interface Flock { id: string; flockName: string; }
+interface Batch { id: string; batchName: string; }
 interface MortalityRecord {
   id: string;
   recordType: string;
@@ -35,17 +28,20 @@ interface MortalityRecord {
   mortalityCount: number;
   cause: string;
   mortalityRate: number | null;
-  flock: {
-    flockName: string;
-  } | null;
-  batch: {
-    batchName: string;
-  } | null;
-  recorder: {
-    firstName: string;
-    lastName: string;
-  };
+  flock: { flockName: string } | null;
+  batch: { batchName: string } | null;
+  recorder: { firstName: string; lastName: string };
 }
+
+const causeColors: Record<string, string> = {
+  Disease: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  Predator: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+  Heat_Stress: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  Cold_Stress: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  Injury: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  Culling: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400',
+  Unknown: 'bg-slate-100 text-slate-700 dark:bg-slate-900/30 dark:text-slate-400'
+};
 
 export default function MortalityPage() {
   const { data: session, status } = useSession() || {};
@@ -79,9 +75,7 @@ export default function MortalityPage() {
   });
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-    }
+    if (status === 'unauthenticated') router.push('/login');
   }, [status, router]);
 
   useEffect(() => {
@@ -94,12 +88,8 @@ export default function MortalityPage() {
     setIsLoading(true);
     try {
       const response = await fetch('/api/mortality');
-      if (response.ok) {
-        const data = await response.json();
-        setRecords(data);
-      }
+      if (response.ok) setRecords(await response.json());
     } catch (error) {
-      console.error('Error fetching mortality records:', error);
       toast.error('Failed to fetch records');
     } finally {
       setIsLoading(false);
@@ -127,7 +117,7 @@ export default function MortalityPage() {
       const response = await fetch('/api/batches');
       if (response.ok) {
         const data = await response.json();
-        const activeBatches = data.filter((b: any) => ['active', 'growing', 'ready'].includes(b.status));
+        const activeBatches = (data.batches || []).filter((b: any) => b.status === 'active');
         setBatches(activeBatches);
         if (activeBatches.length > 0 && !formData.batchId) {
           setFormData(prev => ({ ...prev, batchId: activeBatches[0].id }));
@@ -138,67 +128,56 @@ export default function MortalityPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (!formData.mortalityCount || parseInt(formData.mortalityCount) <= 0) {
+      toast.error('Please enter a valid mortality count');
+      return;
+    }
+    if (formData.recordType === 'flock' && !formData.flockId) {
+      toast.error('Please select a flock');
+      return;
+    }
+    if (formData.recordType === 'batch' && !formData.batchId) {
+      toast.error('Please select a batch');
+      return;
+    }
     setIsSubmitting(true);
-
     try {
       const response = await fetch('/api/mortality', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       if (response.ok) {
-        toast.success('Mortality recorded successfully');
+        toast.success('Mortality record added successfully');
         setIsDialogOpen(false);
+        setFormData({ recordType: 'flock', flockId: flocks[0]?.id || '', batchId: batches[0]?.id || '', mortalityDate: new Date().toISOString().split('T')[0], mortalityCount: '', cause: 'Unknown', notes: '' });
         fetchRecords();
-        setFormData({
-          recordType: 'flock',
-          flockId: flocks[0]?.id || '',
-          batchId: batches[0]?.id || '',
-          mortalityDate: new Date().toISOString().split('T')[0],
-          mortalityCount: '',
-          cause: 'Unknown',
-          notes: '',
-        });
       } else {
         const error = await response.json();
-        toast.error(error.error || 'Failed to record mortality');
+        toast.error(error.error || 'Failed to add record');
       }
     } catch (error) {
-      console.error('Error recording mortality:', error);
-      toast.error('Failed to record mortality');
+      toast.error('Failed to add record');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleEdit = (record: MortalityRecord) => {
-    setSelectedRecord(record);
-    setEditFormData({
-      id: record.id,
-      mortalityDate: new Date(record.mortalityDate).toISOString().split('T')[0],
-      mortalityCount: record.mortalityCount.toString(),
-      cause: record.cause,
-      notes: '',
-    });
-    setIsEditDialogOpen(true);
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEdit = async () => {
+    if (!editFormData.mortalityCount || parseInt(editFormData.mortalityCount) <= 0) {
+      toast.error('Please enter a valid mortality count');
+      return;
+    }
     setIsSubmitting(true);
-
     try {
       const response = await fetch('/api/mortality', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editFormData),
       });
-
       if (response.ok) {
-        toast.success('Record updated successfully. Stock adjusted.');
+        toast.success('Mortality record updated successfully');
         setIsEditDialogOpen(false);
         setSelectedRecord(null);
         fetchRecords();
@@ -207,7 +186,6 @@ export default function MortalityPage() {
         toast.error(error.error || 'Failed to update record');
       }
     } catch (error) {
-      console.error('Error updating record:', error);
       toast.error('Failed to update record');
     } finally {
       setIsSubmitting(false);
@@ -216,435 +194,306 @@ export default function MortalityPage() {
 
   const handleDelete = async () => {
     if (!selectedRecord) return;
-    setIsSubmitting(true);
-
     try {
-      const response = await fetch(`/api/mortality?id=${selectedRecord.id}`, {
-        method: 'DELETE',
-      });
-
+      const response = await fetch(`/api/mortality?id=${selectedRecord.id}`, { method: 'DELETE' });
       if (response.ok) {
-        toast.success('Record deleted. Stock has been restored.');
+        toast.success('Mortality record deleted successfully');
         setIsDeleteDialogOpen(false);
         setSelectedRecord(null);
         fetchRecords();
       } else {
-        const error = await response.json();
-        toast.error(error.error || 'Failed to delete record');
+        toast.error('Failed to delete record');
       }
     } catch (error) {
-      console.error('Error deleting record:', error);
       toast.error('Failed to delete record');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  const getCauseColor = (cause: string) => {
-    switch (cause.toLowerCase()) {
-      case 'disease':
-        return 'bg-red-100 text-red-800';
-      case 'predator':
-        return 'bg-orange-100 text-orange-800';
-      case 'heat stress':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const openEditDialog = (record: MortalityRecord) => {
+    setSelectedRecord(record);
+    setEditFormData({
+      id: record.id,
+      mortalityDate: record.mortalityDate.split('T')[0],
+      mortalityCount: record.mortalityCount.toString(),
+      cause: record.cause,
+      notes: '',
+    });
+    setIsEditDialogOpen(true);
   };
 
-  if (status === 'loading') {
+  const totalMortality = records.reduce((sum: number, r: any) => sum + (r.mortalityCount || 0), 0);
+  const avgMortalityRate = records.length > 0 ? records.reduce((sum: number, r: any) => sum + (r.mortalityRate || 0), 0) / records.length : 0;
+  const thisMonthRecords = records.filter((r: any) => new Date(r.mortalityDate).getMonth() === new Date().getMonth());
+  const thisMonthMortality = thisMonthRecords.reduce((sum: number, r: any) => sum + (r.mortalityCount || 0), 0);
+
+  const columns: Column<MortalityRecord>[] = [
+    {
+      key: 'mortalityDate',
+      header: 'Date',
+      sortable: true,
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+            <Calendar className="h-4 w-4 text-red-600 dark:text-red-400" />
+          </div>
+          <span className="font-medium">{format(new Date(row.mortalityDate), 'dd MMM yyyy')}</span>
+        </div>
+      )
+    },
+    {
+      key: 'source',
+      header: 'Flock/Batch',
+      cell: (row) => (
+        <div>
+          <p className="font-medium">{row.flock?.flockName || row.batch?.batchName || '-'}</p>
+          <p className="text-xs text-muted-foreground capitalize">{row.recordType}</p>
+        </div>
+      )
+    },
+    {
+      key: 'mortalityCount',
+      header: 'Count',
+      sortable: true,
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          <Skull className="h-4 w-4 text-red-500" />
+          <span className="font-bold text-red-600 dark:text-red-400">{formatNumber(row.mortalityCount)}</span>
+        </div>
+      )
+    },
+    {
+      key: 'cause',
+      header: 'Cause',
+      sortable: true,
+      cell: (row) => <Badge className={`${causeColors[row.cause] || causeColors.Unknown} border-0`}>{row.cause.replace('_', ' ')}</Badge>
+    },
+    {
+      key: 'mortalityRate',
+      header: 'Rate',
+      sortable: true,
+      cell: (row) => (
+        <span className={`font-medium ${(row.mortalityRate || 0) > 5 ? 'text-red-600' : 'text-amber-600'}`}>
+          {row.mortalityRate?.toFixed(2) || '0.00'}%
+        </span>
+      )
+    },
+    {
+      key: 'recorder',
+      header: 'Recorded By',
+      cell: (row) => <span className="text-muted-foreground">{row.recorder?.firstName} {row.recorder?.lastName}</span>
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <div className="flex justify-end gap-1">
+          <Button variant="ghost" size="sm" onClick={() => openEditDialog(row)} className="h-8 w-8 p-0 hover:bg-blue-50 text-blue-600"><Edit2 className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="sm" onClick={() => { setSelectedRecord(row); setIsDeleteDialogOpen(true); }} className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></Button>
+        </div>
+      )
+    }
+  ];
+
+  if (status === 'loading' || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="relative">
+            <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto" />
+            <Skull className="h-6 w-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <p className="mt-4 text-muted-foreground font-medium">Loading Mortality Records...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-1">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <TrendingDown className="w-8 h-8 text-red-600" />
-            Mortality Tracking
-          </h1>
-          <p className="text-gray-600 mt-1">Record and monitor bird mortality</p>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">Mortality Records</h1>
+          <p className="text-muted-foreground mt-1">Track and analyze bird mortality across flocks and batches</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-red-600 to-orange-600">
-              <Plus className="w-4 h-4 mr-2" />
-              Record Mortality
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Record Mortality</DialogTitle>
-              <DialogDescription>
-                Enter mortality data for flocks or batches
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="recordType">Record Type *</Label>
-                  <Select
-                    value={formData.recordType}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, recordType: value }))}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="flock">Flock (Layers)</SelectItem>
-                      <SelectItem value="batch">Batch (Broilers)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {formData.recordType === 'flock' ? (
-                  <div>
-                    <Label htmlFor="flockId">Flock *</Label>
-                    <Select
-                      value={formData.flockId}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, flockId: value }))}
-                      required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select flock" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {flocks.map((flock) => (
-                          <SelectItem key={flock.id} value={flock.id}>
-                            {flock.flockName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ) : (
-                  <div>
-                    <Label htmlFor="batchId">Batch *</Label>
-                    <Select
-                      value={formData.batchId}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, batchId: value }))}
-                      required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select batch" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {batches.map((batch) => (
-                          <SelectItem key={batch.id} value={batch.id}>
-                            {batch.batchName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                <div>
-                  <Label htmlFor="mortalityDate">Mortality Date *</Label>
-                  <Input
-                    id="mortalityDate"
-                    type="date"
-                    value={formData.mortalityDate}
-                    onChange={(e) => setFormData({ ...formData, mortalityDate: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="mortalityCount">Mortality Count *</Label>
-                  <Input
-                    id="mortalityCount"
-                    type="number"
-                    min="1"
-                    value={formData.mortalityCount}
-                    onChange={(e) => setFormData({ ...formData, mortalityCount: e.target.value })}
-                    required
-                    placeholder="e.g., 5"
-                  />
-                </div>
-
-                <div className="col-span-2">
-                  <Label htmlFor="cause">Cause</Label>
-                  <Select
-                    value={formData.cause}
-                    onValueChange={(value) => setFormData({ ...formData, cause: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Unknown">Unknown</SelectItem>
-                      <SelectItem value="Disease">Disease</SelectItem>
-                      <SelectItem value="Predator">Predator</SelectItem>
-                      <SelectItem value="Heat Stress">Heat Stress</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="col-span-2">
-                  <Label htmlFor="notes">Notes</Label>
-                  <Textarea
-                    id="notes"
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder="Any additional details..."
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 justify-end pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-gradient-to-r from-red-600 to-orange-600"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Recording...
-                    </>
-                  ) : (
-                    'Record Mortality'
-                  )}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={fetchRecords} className="gap-2"><RefreshCw className="h-4 w-4" />Refresh</Button>
+          <Button onClick={() => setIsDialogOpen(true)} className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-lg shadow-red-500/25 gap-2">
+            <Plus className="h-4 w-4" />Record Mortality
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Mortality Records</CardTitle>
-          <CardDescription>
-            {records.length} record(s) found
-          </CardDescription>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard title="Total Mortality" value={formatNumber(totalMortality)} subtitle={`${records.length} records`} icon={Skull} variant="danger" />
+        <StatCard title="This Month" value={formatNumber(thisMonthMortality)} subtitle={`${thisMonthRecords.length} records`} icon={Calendar} variant="warning" />
+        <StatCard title="Avg Mortality Rate" value={`${avgMortalityRate.toFixed(2)}%`} subtitle="Across all records" icon={Activity} variant="info" />
+        <StatCard title="Health Status" value={avgMortalityRate < 3 ? 'Good' : avgMortalityRate < 5 ? 'Monitor' : 'Critical'} subtitle={avgMortalityRate < 3 ? 'Within normal range' : 'Needs attention'} icon={Heart} variant={avgMortalityRate < 3 ? 'success' : avgMortalityRate < 5 ? 'warning' : 'danger'} />
+      </div>
+
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="border-b border-border/50 bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
+              <Skull className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle>Mortality Records</CardTitle>
+              <CardDescription>View and manage all mortality entries</CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-            </div>
-          ) : records.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <TrendingDown className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p>No mortality records yet</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Flock/Batch</TableHead>
-                    <TableHead>Count</TableHead>
-                    <TableHead>Rate</TableHead>
-                    <TableHead>Cause</TableHead>
-                    <TableHead>Recorded By</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {records.map((record) => (
-                    <TableRow key={record.id}>
-                      <TableCell>
-                        {new Date(record.mortalityDate).toLocaleDateString('en-NG')}
-                      </TableCell>
-                      <TableCell className="capitalize">{record.recordType}</TableCell>
-                      <TableCell className="font-medium">
-                        {record.flock?.flockName || record.batch?.batchName}
-                      </TableCell>
-                      <TableCell className="font-semibold text-red-600">
-                        {record.mortalityCount}
-                      </TableCell>
-                      <TableCell>
-                        {record.mortalityRate 
-                          ? `${record.mortalityRate.toFixed(2)}%`
-                          : '-'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getCauseColor(record.cause)}>
-                          {record.cause}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {record.recorder.firstName} {record.recorder.lastName}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(record)}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => {
-                              setSelectedRecord(record);
-                              setIsDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+        <CardContent className="p-6">
+          <DataTable data={records} columns={columns} searchPlaceholder="Search by flock, batch, cause..." searchKeys={['cause']} pageSize={10} emptyMessage="No mortality records found." />
         </CardContent>
       </Card>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Mortality Record</DialogTitle>
-            <DialogDescription>
-              Update the mortality data. Note: Changing the count will adjust the stock.
-            </DialogDescription>
+      {/* Create Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader className="pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
+                <Skull className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl">Record Mortality</DialogTitle>
+                <DialogDescription>Enter mortality details for tracking</DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
-          <form onSubmit={handleUpdate} className="space-y-4 mt-4">
+          <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="editMortalityDate">Mortality Date *</Label>
-                <Input
-                  id="editMortalityDate"
-                  type="date"
-                  value={editFormData.mortalityDate}
-                  onChange={(e) => setEditFormData({ ...editFormData, mortalityDate: e.target.value })}
-                  required
-                />
+              <div className="space-y-2">
+                <Label>Record Type</Label>
+                <Select value={formData.recordType} onValueChange={(v) => setFormData(prev => ({ ...prev, recordType: v }))}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent><SelectItem value="flock">Flock</SelectItem><SelectItem value="batch">Batch</SelectItem></SelectContent>
+                </Select>
               </div>
-
-              <div>
-                <Label htmlFor="editMortalityCount">Mortality Count *</Label>
-                <Input
-                  id="editMortalityCount"
-                  type="number"
-                  min="1"
-                  value={editFormData.mortalityCount}
-                  onChange={(e) => setEditFormData({ ...editFormData, mortalityCount: e.target.value })}
-                  required
-                />
+              <div className="space-y-2">
+                <Label>Date *</Label>
+                <Input type="date" value={formData.mortalityDate} onChange={(e) => setFormData(prev => ({ ...prev, mortalityDate: e.target.value }))} className="bg-background" />
               </div>
-
-              <div className="col-span-2">
-                <Label htmlFor="editCause">Cause</Label>
-                <Select
-                  value={editFormData.cause}
-                  onValueChange={(value) => setEditFormData({ ...editFormData, cause: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+            </div>
+            {formData.recordType === 'flock' && (
+              <div className="space-y-2">
+                <Label>Select Flock *</Label>
+                <Select value={formData.flockId} onValueChange={(v) => setFormData(prev => ({ ...prev, flockId: v }))}>
+                  <SelectTrigger className="bg-background"><SelectValue placeholder="Select flock" /></SelectTrigger>
+                  <SelectContent>{flocks.map(f => <SelectItem key={f.id} value={f.id}>{f.flockName}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            )}
+            {formData.recordType === 'batch' && (
+              <div className="space-y-2">
+                <Label>Select Batch *</Label>
+                <Select value={formData.batchId} onValueChange={(v) => setFormData(prev => ({ ...prev, batchId: v }))}>
+                  <SelectTrigger className="bg-background"><SelectValue placeholder="Select batch" /></SelectTrigger>
+                  <SelectContent>{batches.map(b => <SelectItem key={b.id} value={b.id}>{b.batchName}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Mortality Count *</Label>
+                <Input type="number" min="1" placeholder="Enter count" value={formData.mortalityCount} onChange={(e) => setFormData(prev => ({ ...prev, mortalityCount: e.target.value }))} className="bg-background" />
+              </div>
+              <div className="space-y-2">
+                <Label>Cause</Label>
+                <Select value={formData.cause} onValueChange={(v) => setFormData(prev => ({ ...prev, cause: v }))}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Unknown">Unknown</SelectItem>
                     <SelectItem value="Disease">Disease</SelectItem>
-                    <SelectItem value="Predator">Predator</SelectItem>
-                    <SelectItem value="Heat Stress">Heat Stress</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Predator">Predator Attack</SelectItem>
+                    <SelectItem value="Heat_Stress">Heat Stress</SelectItem>
+                    <SelectItem value="Cold_Stress">Cold Stress</SelectItem>
+                    <SelectItem value="Injury">Injury</SelectItem>
+                    <SelectItem value="Culling">Culling</SelectItem>
+                    <SelectItem value="Unknown">Unknown</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="col-span-2">
-                <Label htmlFor="editNotes">Notes</Label>
-                <Textarea
-                  id="editNotes"
-                  value={editFormData.notes}
-                  onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
-                  placeholder="Any additional details..."
-                  rows={3}
-                />
-              </div>
             </div>
-
-            <DialogFooter className="pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsEditDialogOpen(false)}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-gradient-to-r from-red-600 to-orange-600"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  'Update Record'
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea placeholder="Additional notes..." value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))} rows={3} className="bg-background resize-none" />
+            </div>
+          </div>
+          <DialogFooter className="pt-4 border-t border-border/50">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSubmitting}>Cancel</Button>
+            <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-gradient-to-r from-red-600 to-rose-600 text-white min-w-[120px]">
+              {isSubmitting ? <div className="flex items-center gap-2"><div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Saving...</div> : 'Save Record'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader className="pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <Edit2 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl">Edit Mortality Record</DialogTitle>
+                <DialogDescription>Update the mortality details</DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Date *</Label>
+                <Input type="date" value={editFormData.mortalityDate} onChange={(e) => setEditFormData(prev => ({ ...prev, mortalityDate: e.target.value }))} className="bg-background" />
+              </div>
+              <div className="space-y-2">
+                <Label>Count *</Label>
+                <Input type="number" min="1" value={editFormData.mortalityCount} onChange={(e) => setEditFormData(prev => ({ ...prev, mortalityCount: e.target.value }))} className="bg-background" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Cause</Label>
+              <Select value={editFormData.cause} onValueChange={(v) => setEditFormData(prev => ({ ...prev, cause: v }))}>
+                <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Disease">Disease</SelectItem>
+                  <SelectItem value="Predator">Predator Attack</SelectItem>
+                  <SelectItem value="Heat_Stress">Heat Stress</SelectItem>
+                  <SelectItem value="Cold_Stress">Cold Stress</SelectItem>
+                  <SelectItem value="Injury">Injury</SelectItem>
+                  <SelectItem value="Culling">Culling</SelectItem>
+                  <SelectItem value="Unknown">Unknown</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea placeholder="Additional notes..." value={editFormData.notes} onChange={(e) => setEditFormData(prev => ({ ...prev, notes: e.target.value }))} rows={3} className="bg-background resize-none" />
+            </div>
+          </div>
+          <DialogFooter className="pt-4 border-t border-border/50">
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} disabled={isSubmitting}>Cancel</Button>
+            <Button onClick={handleEdit} disabled={isSubmitting} className="bg-gradient-to-r from-blue-600 to-blue-700 text-white min-w-[120px]">
+              {isSubmitting ? <div className="flex items-center gap-2"><div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Saving...</div> : 'Update'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Mortality Record</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this mortality record? The stock count will be restored.
-              {selectedRecord && (
-                <div className="mt-2 p-3 bg-gray-100 rounded-md">
-                  <p><strong>Date:</strong> {new Date(selectedRecord.mortalityDate).toLocaleDateString('en-NG')}</p>
-                  <p><strong>Flock/Batch:</strong> {selectedRecord.flock?.flockName || selectedRecord.batch?.batchName}</p>
-                  <p><strong>Count:</strong> {selectedRecord.mortalityCount}</p>
-                  <p><strong>Cause:</strong> {selectedRecord.cause}</p>
-                </div>
-              )}
-            </AlertDialogDescription>
+            <AlertDialogTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-red-500" />Delete Record</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to delete this mortality record? This action cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isSubmitting}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                'Delete'
-              )}
-            </AlertDialogAction>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

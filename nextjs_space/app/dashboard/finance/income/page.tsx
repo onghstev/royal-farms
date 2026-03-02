@@ -12,12 +12,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { NumberInput } from '@/components/ui/number-input';
-import { Plus, Edit2, Trash2, Search, DollarSign, TrendingUp, FileText, CheckCircle } from 'lucide-react';
+import { DataTable, Column } from '@/components/ui/data-table';
+import { StatCard } from '@/components/ui/stat-card';
+import { Plus, Edit2, Trash2, DollarSign, TrendingUp, FileText, CheckCircle, Clock, AlertTriangle, RefreshCw, User, Phone, Receipt } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { formatCurrency, formatNumber } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 
 interface IncomeTransaction {
   id: string;
@@ -39,6 +39,22 @@ interface IncomeTransaction {
   batch?: { id: string; batchName: string };
 }
 
+const categoryLabels: Record<string, string> = {
+  egg_sales: 'Egg Sales',
+  bird_sales: 'Bird Sales',
+  manure_sales: 'Manure Sales',
+  feed_sales: 'Feed Sales',
+  other: 'Other'
+};
+
+const categoryColors: Record<string, string> = {
+  egg_sales: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  bird_sales: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  manure_sales: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  feed_sales: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  other: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+};
+
 export default function IncomeManagementPage() {
   const { data: session, status } = useSession() || {};
   const router = useRouter();
@@ -46,7 +62,6 @@ export default function IncomeManagementPage() {
   const [flocks, setFlocks] = useState<any[]>([]);
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -54,26 +69,21 @@ export default function IncomeManagementPage() {
   const [selectedTransaction, setSelectedTransaction] = useState<IncomeTransaction | null>(null);
   const [formData, setFormData] = useState<any>({});
   const [summary, setSummary] = useState<any>({});
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-    }
+    if (status === 'unauthenticated') router.push('/login');
   }, [status, router]);
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchData();
-    }
+    if (status === 'authenticated') fetchData();
   }, [status, categoryFilter, paymentStatusFilter]);
 
-  // Auto-calculate total amount when quantity or unitPrice changes
   useEffect(() => {
     if (formData.quantity && formData.unitPrice) {
       const qty = typeof formData.quantity === 'number' ? formData.quantity : parseFloat(formData.quantity) || 0;
       const price = typeof formData.unitPrice === 'number' ? formData.unitPrice : parseFloat(formData.unitPrice) || 0;
-      const calculatedAmount = qty * price;
-      setFormData((prev: any) => ({ ...prev, amount: calculatedAmount }));
+      setFormData((prev: any) => ({ ...prev, amount: qty * price }));
     }
   }, [formData.quantity, formData.unitPrice]);
 
@@ -85,24 +95,13 @@ export default function IncomeManagementPage() {
         fetch('/api/flocks'),
         fetch('/api/batches')
       ]);
-
       if (!incomeRes.ok) throw new Error('Failed to fetch income');
-
       const incomeData = await incomeRes.json();
       setTransactions(incomeData.transactions || []);
       setSummary(incomeData.summary || {});
-
-      if (flocksRes.ok) {
-        const flocksData = await flocksRes.json();
-        setFlocks(flocksData.flocks || []);
-      }
-
-      if (batchesRes.ok) {
-        const batchesData = await batchesRes.json();
-        setBatches(batchesData.batches || []);
-      }
+      if (flocksRes.ok) setFlocks((await flocksRes.json()).flocks || []);
+      if (batchesRes.ok) setBatches((await batchesRes.json()).batches || []);
     } catch (error: any) {
-      console.error('Error fetching data:', error);
       toast.error('Failed to load income data');
     } finally {
       setLoading(false);
@@ -111,48 +110,38 @@ export default function IncomeManagementPage() {
 
   const handleCreateOrUpdate = async () => {
     try {
+      setSubmitting(true);
       const method = selectedTransaction ? 'PUT' : 'POST';
       const body = selectedTransaction ? { id: selectedTransaction.id, ...formData } : formData;
-
       const response = await fetch('/api/finance/income', {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Operation failed');
-      }
-
+      if (!response.ok) throw new Error((await response.json()).error || 'Operation failed');
       toast.success(selectedTransaction ? 'Income updated successfully' : 'Income recorded successfully');
       setIsDialogOpen(false);
       setSelectedTransaction(null);
       setFormData({});
       fetchData();
     } catch (error: any) {
-      console.error('Error:', error);
       toast.error(error.message || 'Operation failed');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
     if (!selectedTransaction) return;
-
     try {
-      const response = await fetch(`/api/finance/income?id=${selectedTransaction.id}`, {
-        method: 'DELETE'
-      });
-
+      const response = await fetch(`/api/finance/income?id=${selectedTransaction.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete');
-
-      toast.success('Income transaction deleted successfully');
+      toast.success('Income deleted successfully');
       setIsDeleteDialogOpen(false);
       setSelectedTransaction(null);
       fetchData();
     } catch (error: any) {
-      console.error('Error:', error);
-      toast.error('Failed to delete income transaction');
+      toast.error('Failed to delete income');
     }
   };
 
@@ -162,7 +151,7 @@ export default function IncomeManagementPage() {
       transactionDate: new Date().toISOString().split('T')[0],
       category: 'egg_sales',
       paymentMethod: 'cash',
-      paymentStatus: 'paid'
+      paymentStatus: 'received'
     });
     setIsDialogOpen(true);
   };
@@ -170,7 +159,7 @@ export default function IncomeManagementPage() {
   const openEditDialog = (transaction: IncomeTransaction) => {
     setSelectedTransaction(transaction);
     setFormData({
-      transactionDate: transaction.transactionDate,
+      transactionDate: transaction.transactionDate?.split('T')[0] || '',
       category: transaction.category,
       amount: transaction.amount,
       quantity: transaction.quantity || '',
@@ -188,124 +177,121 @@ export default function IncomeManagementPage() {
     setIsDialogOpen(true);
   };
 
-  const filteredTransactions = transactions.filter((t: any) =>
-    t.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getStatusBadge = (status: string) => {
+    if (status === 'received') return <Badge className="bg-emerald-100 text-emerald-700 border-0"><CheckCircle className="h-3 w-3 mr-1" />Received</Badge>;
+    return <Badge className="bg-amber-100 text-amber-700 border-0"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+  };
+
+  const columns: Column<IncomeTransaction>[] = [
+    {
+      key: 'transactionDate',
+      header: 'Date',
+      sortable: true,
+      cell: (row) => <span className="font-medium">{row.transactionDate ? format(new Date(row.transactionDate), 'dd MMM yyyy') : '-'}</span>
+    },
+    {
+      key: 'category',
+      header: 'Category',
+      sortable: true,
+      cell: (row) => <Badge className={`${categoryColors[row.category] || categoryColors.other} border-0`}>{categoryLabels[row.category] || row.category}</Badge>
+    },
+    {
+      key: 'description',
+      header: 'Description',
+      cell: (row) => (
+        <div className="max-w-[200px]">
+          <p className="truncate font-medium">{row.description || '-'}</p>
+          {row.customerName && <p className="text-xs text-muted-foreground truncate">{row.customerName}</p>}
+        </div>
+      )
+    },
+    {
+      key: 'amount',
+      header: 'Amount',
+      sortable: true,
+      cell: (row) => <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(row.amount)}</span>
+    },
+    {
+      key: 'paymentMethod',
+      header: 'Payment',
+      cell: (row) => <span className="capitalize">{row.paymentMethod?.replace('_', ' ')}</span>
+    },
+    {
+      key: 'paymentStatus',
+      header: 'Status',
+      cell: (row) => getStatusBadge(row.paymentStatus)
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <div className="flex justify-end gap-1">
+          <Button variant="ghost" size="sm" onClick={() => openEditDialog(row)} className="h-8 w-8 p-0 hover:bg-blue-50 text-blue-600"><Edit2 className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="sm" onClick={() => { setSelectedTransaction(row); setIsDeleteDialogOpen(true); }} className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></Button>
+        </div>
+      )
+    }
+  ];
 
   if (status === 'loading' || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading income data...</p>
+          <div className="relative">
+            <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto" />
+            <TrendingUp className="h-6 w-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <p className="mt-4 text-muted-foreground font-medium">Loading Income...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-1">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Income Management</h1>
-          <p className="text-gray-600 mt-1">Record and track all farm income</p>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Income Management</h1>
+          <p className="text-muted-foreground mt-1">Track and manage all farm revenue</p>
         </div>
-        <Button onClick={openCreateDialog}>
-          <Plus className="mr-2 h-4 w-4" /> Record Income
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={fetchData} className="gap-2"><RefreshCw className="h-4 w-4" />Refresh</Button>
+          <Button onClick={openCreateDialog} className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg shadow-emerald-500/25 gap-2">
+            <Plus className="h-4 w-4" />New Income
+          </Button>
+        </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-6 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{formatCurrency(summary.total || 0, '₦', 0)}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Paid</CardTitle>
-            <CheckCircle className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.paid || 0, '₦', 0)}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
-            <TrendingUp className="h-4 w-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{formatCurrency(summary.pending || 0, '₦', 0)}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Transactions</CardTitle>
-            <FileText className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{summary.transactionCount || 0}</div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard title="Total Income" value={formatCurrency(summary.totalIncome || 0)} subtitle={`${transactions.length} transactions`} icon={TrendingUp} variant="success" />
+        <StatCard title="Received" value={formatCurrency(summary.receivedTotal || 0)} subtitle={`${summary.receivedCount || 0} transactions`} icon={CheckCircle} variant="info" />
+        <StatCard title="Pending" value={formatCurrency(summary.pendingTotal || 0)} subtitle={`${summary.pendingCount || 0} transactions`} icon={Clock} variant="warning" />
+        <StatCard title="This Month" value={formatCurrency(summary.thisMonthTotal || summary.totalIncome || 0)} subtitle="Current period" icon={FileText} variant="purple" />
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filter Transactions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label>Search</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search by customer, invoice..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Category</Label>
+      <Card className="border-border/50">
+        <CardContent className="py-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Label className="text-sm font-medium whitespace-nowrap">Category:</Label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[180px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="egg_sales">Egg Sales</SelectItem>
-                  <SelectItem value="bird_sales">Bird Sales</SelectItem>
-                  <SelectItem value="manure_sales">Manure Sales</SelectItem>
-                  <SelectItem value="other">Other Income</SelectItem>
+                  {Object.entries(categoryLabels).map(([key, label]) => (<SelectItem key={key} value={key}>{label}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Payment Status</Label>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Label className="text-sm font-medium whitespace-nowrap">Status:</Label>
               <Select value={paymentStatusFilter} onValueChange={setPaymentStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[150px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="received">Received</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="partial">Partial</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -313,312 +299,94 @@ export default function IncomeManagementPage() {
         </CardContent>
       </Card>
 
-      {/* Transactions Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Income Transactions</CardTitle>
-          <CardDescription>{filteredTransactions.length} transactions found</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Payment Status</TableHead>
-                  <TableHead>Invoice#</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTransactions.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                      No income transactions found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>{format(new Date(transaction.transactionDate), 'dd MMM yyyy')}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {transaction.category.replace(/_/g, ' ').toUpperCase()}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {transaction.customerName || '-'}
-                        {transaction.flock && <div className="text-xs text-gray-500">{transaction.flock.flockName}</div>}
-                        {transaction.batch && <div className="text-xs text-gray-500">{transaction.batch.batchName}</div>}
-                      </TableCell>
-                      <TableCell className="font-medium">{formatCurrency(transaction.amount, '₦', 0)}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            transaction.paymentStatus === 'paid'
-                              ? 'default'
-                              : transaction.paymentStatus === 'pending'
-                              ? 'destructive'
-                              : 'secondary'
-                          }
-                        >
-                          {transaction.paymentStatus.toUpperCase()}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{transaction.invoiceNumber || '-'}</TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditDialog(transaction)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedTransaction(transaction);
-                            setIsDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="border-b border-border/50 bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle>Income Transactions</CardTitle>
+              <CardDescription>View and manage all income records</CardDescription>
+            </div>
           </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <DataTable data={transactions} columns={columns} searchPlaceholder="Search by customer, invoice, description..." searchKeys={['customerName', 'invoiceNumber', 'description', 'category']} pageSize={10} emptyMessage="No income transactions found." />
         </CardContent>
       </Card>
 
-      {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{selectedTransaction ? 'Edit' : 'Record'} Income</DialogTitle>
-            <DialogDescription>
-              {selectedTransaction ? 'Update' : 'Add'} income transaction details
-            </DialogDescription>
+        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl">{selectedTransaction ? 'Edit Income' : 'New Income'}</DialogTitle>
+                <DialogDescription>Enter the income transaction details</DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Transaction Date *</Label>
-                <Input
-                  type="date"
-                  value={formData.transactionDate || ''}
-                  onChange={(e) => setFormData({ ...formData, transactionDate: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Category *</Label>
-                <Select
-                  value={formData.category || ''}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="egg_sales">Egg Sales</SelectItem>
-                    <SelectItem value="bird_sales">Bird Sales</SelectItem>
-                    <SelectItem value="manure_sales">Manure Sales</SelectItem>
-                    <SelectItem value="other">Other Income</SelectItem>
-                  </SelectContent>
-                </Select>
+
+          <div className="space-y-6 py-4">
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Basic Information</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2"><Label>Date *</Label><Input type="date" value={formData.transactionDate || ''} onChange={(e) => setFormData({ ...formData, transactionDate: e.target.value })} className="bg-background" /></div>
+                <div className="space-y-2"><Label>Category *</Label><Select value={formData.category || ''} onValueChange={(v) => setFormData({ ...formData, category: v })}><SelectTrigger className="bg-background"><SelectValue placeholder="Select category" /></SelectTrigger><SelectContent>{Object.entries(categoryLabels).map(([key, label]) => (<SelectItem key={key} value={key}>{label}</SelectItem>))}</SelectContent></Select></div>
+                <div className="space-y-2 md:col-span-2"><Label>Description</Label><Input placeholder="Brief description" value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="bg-background" /></div>
               </div>
             </div>
 
-            {formData.category === 'egg_sales' && (
-              <div className="space-y-2">
-                <Label>Select Flock</Label>
-                <Select
-                  value={formData.flockId || ''}
-                  onValueChange={(value) => setFormData({ ...formData, flockId: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select flock" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {flocks.map((flock) => (
-                      <SelectItem key={flock.id} value={flock.id}>
-                        {flock.flockName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {formData.category === 'bird_sales' && (
-              <div className="space-y-2">
-                <Label>Select Batch</Label>
-                <Select
-                  value={formData.batchId || ''}
-                  onValueChange={(value) => setFormData({ ...formData, batchId: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select batch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {batches.map((batch) => (
-                      <SelectItem key={batch.id} value={batch.id}>
-                        {batch.batchName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Quantity</Label>
-                <NumberInput
-                  placeholder="e.g., 1000"
-                  value={formData.quantity || ''}
-                  onChange={(value) => setFormData({ ...formData, quantity: value })}
-                  allowDecimals={true}
-                  maxDecimals={2}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Unit Price (₦)</Label>
-                <NumberInput
-                  placeholder="e.g., 50"
-                  value={formData.unitPrice || ''}
-                  onChange={(value) => setFormData({ ...formData, unitPrice: value })}
-                  allowDecimals={true}
-                  maxDecimals={2}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Total Amount (₦) *</Label>
-                <Input
-                  type="text"
-                  placeholder="Auto-calculated"
-                  value={formatCurrency(formData.amount || 0, '₦', 2)}
-                  readOnly
-                  disabled
-                  className="bg-muted cursor-not-allowed"
-                />
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Financial Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2"><Label>Quantity</Label><Input type="number" placeholder="0" value={formData.quantity || ''} onChange={(e) => setFormData({ ...formData, quantity: e.target.value })} className="bg-background" /></div>
+                <div className="space-y-2"><Label>Unit Price (₦)</Label><Input type="number" step="0.01" placeholder="0.00" value={formData.unitPrice || ''} onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value })} className="bg-background" /></div>
+                <div className="space-y-2"><Label>Total Amount (₦) *</Label><div className="relative"><DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-600" /><Input type="number" step="0.01" placeholder="0.00" value={formData.amount || ''} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} className="pl-10 bg-background font-semibold" /></div></div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Customer Name</Label>
-                <Input
-                  placeholder="e.g., ABC Stores"
-                  value={formData.customerName || ''}
-                  onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Customer Phone</Label>
-                <Input
-                  placeholder="e.g., 08012345678"
-                  value={formData.customerPhone || ''}
-                  onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                />
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Customer Information</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2"><Label>Customer Name</Label><div className="relative"><User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Customer name" value={formData.customerName || ''} onChange={(e) => setFormData({ ...formData, customerName: e.target.value })} className="pl-10 bg-background" /></div></div>
+                <div className="space-y-2"><Label>Customer Phone</Label><div className="relative"><Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Phone number" value={formData.customerPhone || ''} onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })} className="pl-10 bg-background" /></div></div>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Payment Method *</Label>
-                <Select
-                  value={formData.paymentMethod || ''}
-                  onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cash">Cash</SelectItem>
-                    <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                    <SelectItem value="cheque">Cheque</SelectItem>
-                    <SelectItem value="mobile_money">Mobile Money</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Payment Status *</Label>
-                <Select
-                  value={formData.paymentStatus || ''}
-                  onValueChange={(value) => setFormData({ ...formData, paymentStatus: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="paid">Paid</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="partial">Partial</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Invoice Number</Label>
-                <Input
-                  placeholder="e.g., INV-001"
-                  value={formData.invoiceNumber || ''}
-                  onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })}
-                />
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Payment Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2"><Label>Payment Method</Label><Select value={formData.paymentMethod || ''} onValueChange={(v) => setFormData({ ...formData, paymentMethod: v })}><SelectTrigger className="bg-background"><SelectValue placeholder="Select" /></SelectTrigger><SelectContent><SelectItem value="cash">Cash</SelectItem><SelectItem value="bank_transfer">Bank Transfer</SelectItem><SelectItem value="cheque">Cheque</SelectItem><SelectItem value="mobile_money">Mobile Money</SelectItem></SelectContent></Select></div>
+                <div className="space-y-2"><Label>Payment Status</Label><Select value={formData.paymentStatus || ''} onValueChange={(v) => setFormData({ ...formData, paymentStatus: v })}><SelectTrigger className="bg-background"><SelectValue placeholder="Select" /></SelectTrigger><SelectContent><SelectItem value="received">Received</SelectItem><SelectItem value="pending">Pending</SelectItem></SelectContent></Select></div>
+                <div className="space-y-2"><Label>Invoice Number</Label><div className="relative"><Receipt className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Invoice #" value={formData.invoiceNumber || ''} onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })} className="pl-10 bg-background" /></div></div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea
-                placeholder="Brief description..."
-                value={formData.description || ''}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={2}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Notes</Label>
-              <Textarea
-                placeholder="Additional notes..."
-                value={formData.notes || ''}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                rows={2}
-              />
-            </div>
+            <div className="space-y-2"><Label>Notes</Label><Textarea placeholder="Additional notes..." value={formData.notes || ''} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} rows={3} className="bg-background resize-none" /></div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleCreateOrUpdate}>
-              {selectedTransaction ? 'Update' : 'Record'} Income
+
+          <DialogFooter className="pt-4 border-t border-border/50">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={submitting}>Cancel</Button>
+            <Button onClick={handleCreateOrUpdate} disabled={submitting} className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white min-w-[120px]">
+              {submitting ? <div className="flex items-center gap-2"><div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Saving...</div> : (selectedTransaction ? 'Update' : 'Create')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this income transaction? This action cannot be undone.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-red-500" />Delete Income</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to delete this income transaction? This action cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
-              Delete
-            </AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
