@@ -12,10 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Loader2, Plus, Egg, Edit2, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Plus, Egg, Edit2, Trash2, TrendingUp, AlertTriangle, BarChart3 } from 'lucide-react';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { NumberInput } from '@/components/ui/number-input';
+import { DataTable, Column } from '@/components/ui/data-table';
+import { StatCard } from '@/components/ui/stat-card';
 
 interface Flock {
   id: string;
@@ -37,6 +39,9 @@ interface EggCollection {
     firstName: string;
     lastName: string;
   };
+  // Flattened fields for search
+  flockName?: string;
+  recorderName?: string;
 }
 
 export default function EggCollectionPage() {
@@ -87,7 +92,13 @@ export default function EggCollectionPage() {
       const response = await fetch('/api/egg-collection');
       if (response.ok) {
         const data = await response.json();
-        setCollections(data);
+        // Flatten nested fields for search
+        const flattenedData = data.map((item: any) => ({
+          ...item,
+          flockName: item.flock?.flockName || '',
+          recorderName: `${item.recorder?.firstName || ''} ${item.recorder?.lastName || ''}`.trim(),
+        }));
+        setCollections(flattenedData);
       }
     } catch (error) {
       console.error('Error fetching collections:', error);
@@ -224,19 +235,121 @@ export default function EggCollectionPage() {
     );
   }
 
+  // Calculate summary statistics
+  const totalEggs = collections.reduce((sum: number, c: any) => sum + (c.totalEggsCount || 0), 0);
+  const totalGoodEggs = collections.reduce((sum: number, c: any) => sum + (c.goodEggsCount || 0), 0);
+  const totalBrokenEggs = collections.reduce((sum: number, c: any) => sum + (c.brokenEggsCount || 0), 0);
+  const avgProduction = collections.length > 0 
+    ? collections.reduce((sum: number, c: any) => sum + (c.productionPercentage || 0), 0) / collections.filter((c: any) => c.productionPercentage).length 
+    : 0;
+
+  // DataTable columns
+  const columns: Column<EggCollection>[] = [
+    {
+      key: 'collectionDate',
+      header: 'Date',
+      sortable: true,
+      cell: (row) => new Date(row.collectionDate).toLocaleDateString('en-NG'),
+    },
+    {
+      key: 'flockName',
+      header: 'Flock',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-medium text-emerald-700">{row.flock?.flockName || '-'}</span>
+      ),
+    },
+    {
+      key: 'goodEggsCount',
+      header: 'Good Eggs',
+      sortable: true,
+      cell: (row) => (
+        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          {row.goodEggsCount.toLocaleString()}
+        </Badge>
+      ),
+    },
+    {
+      key: 'brokenEggsCount',
+      header: 'Broken',
+      sortable: true,
+      cell: (row) => (
+        <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">
+          {row.brokenEggsCount.toLocaleString()}
+        </Badge>
+      ),
+    },
+    {
+      key: 'totalEggsCount',
+      header: 'Total',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-semibold">{row.totalEggsCount.toLocaleString()}</span>
+      ),
+    },
+    {
+      key: 'productionPercentage',
+      header: 'Production %',
+      sortable: true,
+      cell: (row) => {
+        const pct = row.productionPercentage;
+        if (!pct) return <span className="text-muted-foreground">-</span>;
+        const colorClass = pct >= 80 ? 'text-green-600' : pct >= 60 ? 'text-amber-600' : 'text-red-600';
+        return <span className={`font-medium ${colorClass}`}>{pct.toFixed(1)}%</span>;
+      },
+    },
+    {
+      key: 'recorderName',
+      header: 'Recorded By',
+      sortable: true,
+      cell: (row) => row.recorder ? `${row.recorder.firstName} ${row.recorder.lastName}` : '-',
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleEdit(row)}
+          >
+            <Edit2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={() => {
+              setSelectedRecord(row);
+              setIsDeleteDialogOpen(true);
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Egg className="w-8 h-8 text-green-600" />
+            <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
+              <Egg className="w-7 h-7 text-white" />
+            </div>
             Daily Egg Collection
           </h1>
           <p className="text-gray-600 mt-1">Record and track daily egg production</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-green-600 to-emerald-600">
+            <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
               <Plus className="w-4 h-4 mr-2" />
               Record Collection
             </Button>
@@ -357,83 +470,59 @@ export default function EggCollectionPage() {
         </Dialog>
       </div>
 
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard
+          title="Total Eggs"
+          value={totalEggs.toLocaleString()}
+          icon={Egg}
+          variant="success"
+        />
+        <StatCard
+          title="Good Eggs"
+          value={totalGoodEggs.toLocaleString()}
+          icon={TrendingUp}
+          variant="success"
+        />
+        <StatCard
+          title="Broken Eggs"
+          value={totalBrokenEggs.toLocaleString()}
+          icon={AlertTriangle}
+          variant="danger"
+        />
+        <StatCard
+          title="Avg. Production %"
+          value={avgProduction ? `${avgProduction.toFixed(1)}%` : '-'}
+          icon={BarChart3}
+          variant="info"
+        />
+      </div>
+
+      {/* Data Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Collection Records</CardTitle>
+        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
+          <CardTitle className="flex items-center gap-2">
+            <Egg className="w-5 h-5 text-green-600" />
+            Collection Records
+          </CardTitle>
           <CardDescription>
             {collections.length} collection(s) recorded
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-green-600" />
             </div>
-          ) : collections.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Egg className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p>No collections recorded yet</p>
-            </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Flock</TableHead>
-                    <TableHead>Good Eggs</TableHead>
-                    <TableHead>Broken Eggs</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Production %</TableHead>
-                    <TableHead>Recorded By</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {collections.map((collection) => (
-                    <TableRow key={collection.id}>
-                      <TableCell>
-                        {new Date(collection.collectionDate).toLocaleDateString('en-NG')}
-                      </TableCell>
-                      <TableCell className="font-medium">{collection.flock.flockName}</TableCell>
-                      <TableCell>{collection.goodEggsCount.toLocaleString()}</TableCell>
-                      <TableCell>{collection.brokenEggsCount.toLocaleString()}</TableCell>
-                      <TableCell className="font-semibold">{collection.totalEggsCount.toLocaleString()}</TableCell>
-                      <TableCell>
-                        {collection.productionPercentage 
-                          ? `${collection.productionPercentage.toFixed(1)}%`
-                          : '-'}
-                      </TableCell>
-                      <TableCell>
-                        {collection.recorder.firstName} {collection.recorder.lastName}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(collection)}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => {
-                              setSelectedRecord(collection);
-                              setIsDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <DataTable
+              data={collections}
+              columns={columns}
+              searchPlaceholder="Search by flock, recorder..."
+              searchKeys={['flockName', 'recorderName']}
+              pageSize={10}
+              emptyMessage="No egg collections recorded yet."
+            />
           )}
         </CardContent>
       </Card>

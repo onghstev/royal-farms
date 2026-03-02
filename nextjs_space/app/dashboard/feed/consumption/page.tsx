@@ -13,7 +13,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit2, Trash2, Search, TrendingDown, Package, AlertTriangle } from 'lucide-react';
+import { Plus, Edit2, Trash2, TrendingDown, Package, FileText, Wheat } from 'lucide-react';
+import { DataTable, Column } from '@/components/ui/data-table';
+import { StatCard } from '@/components/ui/stat-card';
 
 interface FeedConsumption {
   id: string;
@@ -39,6 +41,12 @@ interface FeedConsumption {
     fullName: string;
   };
   createdAt: string;
+  // Flattened fields for search
+  groupName?: string;
+  feedBrand?: string;
+  feedType?: string;
+  recorderName?: string;
+  totalCost?: number;
 }
 
 interface FeedInventory {
@@ -65,13 +73,10 @@ export default function FeedConsumptionPage() {
   const { data: session, status } = useSession() || {};
   const router = useRouter();
   const [consumptions, setConsumptions] = useState<FeedConsumption[]>([]);
-  const [filteredConsumptions, setFilteredConsumptions] = useState<FeedConsumption[]>([]);
   const [inventoryItems, setInventoryItems] = useState<FeedInventory[]>([]);
   const [flocks, setFlocks] = useState<Flock[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -92,11 +97,6 @@ export default function FeedConsumptionPage() {
     totalCost: 0,
     totalRecords: 0
   });
-  const [apiStats, setApiStats] = useState({
-    totalFeedUsed: 0,
-    totalCost: 0,
-    totalRecords: 0
-  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -109,24 +109,23 @@ export default function FeedConsumptionPage() {
     }
   }, [status, router]);
 
-  useEffect(() => {
-    filterConsumptions();
-  }, [consumptions, searchQuery, filterType]);
-
-  // Calculate stats separately after filteredConsumptions is updated
-  useEffect(() => {
-    calculateStats();
-  }, [filteredConsumptions, apiStats, searchQuery, filterType]);
-
   const fetchConsumptions = async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/feed/consumption');
       if (!response.ok) throw new Error('Failed to fetch consumption records');
       const data = await response.json();
-      setConsumptions(data.consumptions || []);
+      // Flatten nested fields for search and display
+      const flattenedData = (data.consumptions || []).map((item: any) => ({
+        ...item,
+        groupName: item.flock?.flockName || item.batch?.batchName || '',
+        feedBrand: item.inventory?.feedBrand || '',
+        feedType: item.inventory?.feedType || '',
+        recorderName: item.recorder?.fullName || '',
+        totalCost: item.feedQuantityBags * (item.inventory?.unitCostPerBag || 0),
+      }));
+      setConsumptions(flattenedData);
       const summaryData = data.summary || { totalFeedUsed: 0, totalCost: 0, totalRecords: 0 };
-      setApiStats(summaryData);
       setStats(summaryData);
     } catch (error) {
       console.error('Error fetching consumptions:', error);
@@ -173,40 +172,6 @@ export default function FeedConsumptionPage() {
     } catch (error) {
       console.error('Error fetching batches:', error);
     }
-  };
-
-  const filterConsumptions = () => {
-    let filtered = consumptions;
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter((consumption: any) =>
-        consumption.inventory?.feedBrand?.toLowerCase().includes(query) ||
-        consumption.flock?.flockName?.toLowerCase().includes(query) ||
-        consumption.batch?.batchName?.toLowerCase().includes(query)
-      );
-    }
-
-    if (filterType !== 'all') {
-      filtered = filtered.filter((consumption: any) => consumption.consumptionType === filterType);
-    }
-
-    setFilteredConsumptions(filtered);
-  };
-
-  const calculateStats = () => {
-    // Use API stats when no filters are applied
-    if (!searchQuery && filterType === 'all') {
-      setStats(apiStats);
-      return;
-    }
-    
-    const totalFeedUsed = filteredConsumptions.reduce((sum: number, consumption: any) => sum + consumption.feedQuantityBags, 0);
-    const totalCost = filteredConsumptions.reduce((sum: number, consumption: any) => 
-      sum + (consumption.feedQuantityBags * (consumption.inventory?.unitCostPerBag || 0)), 0
-    );
-    const totalRecords = filteredConsumptions.length;
-    setStats({ totalFeedUsed, totalCost, totalRecords });
   };
 
   const handleCreateConsumption = async () => {
@@ -334,136 +299,160 @@ export default function FeedConsumptionPage() {
     );
   }
 
+  // DataTable columns
+  const columns: Column<FeedConsumption>[] = [
+    {
+      key: 'consumptionDate',
+      header: 'Date',
+      sortable: true,
+      cell: (row) => new Date(row.consumptionDate).toLocaleDateString('en-NG'),
+    },
+    {
+      key: 'consumptionType',
+      header: 'Type',
+      sortable: true,
+      cell: (row) => (
+        <Badge variant={row.consumptionType === 'flock' ? 'default' : 'secondary'} className={row.consumptionType === 'flock' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-purple-100 text-purple-700 border-purple-200'}>
+          {row.consumptionType === 'flock' ? 'Flock' : 'Batch'}
+        </Badge>
+      ),
+    },
+    {
+      key: 'groupName',
+      header: 'Group',
+      sortable: true,
+      cell: (row) => (
+        <span className="font-medium text-gray-900">
+          {row.flock?.flockName || row.batch?.batchName || '-'}
+        </span>
+      ),
+    },
+    {
+      key: 'feedBrand',
+      header: 'Feed Brand',
+      sortable: true,
+      cell: (row) => row.inventory?.feedBrand || '-',
+    },
+    {
+      key: 'feedType',
+      header: 'Feed Type',
+      sortable: true,
+      cell: (row) => (
+        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+          {row.inventory?.feedType || 'N/A'}
+        </Badge>
+      ),
+    },
+    {
+      key: 'feedQuantityBags',
+      header: 'Quantity',
+      sortable: true,
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <span className="font-medium">{row.feedQuantityBags} bags</span>
+      ),
+    },
+    {
+      key: 'totalCost',
+      header: 'Cost',
+      sortable: true,
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <span className="font-semibold text-green-700">
+          ₦{(row.feedQuantityBags * (row.inventory?.unitCostPerBag || 0)).toLocaleString()}
+        </span>
+      ),
+    },
+    {
+      key: 'recorderName',
+      header: 'Recorded By',
+      sortable: true,
+      cell: (row) => row.recorder?.fullName || '-',
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      headerClassName: 'text-right',
+      className: 'text-right',
+      cell: (row) => (
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" size="sm" onClick={() => openEditDialog(row)}>
+            <Edit2 className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openDeleteDialog(row)}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="p-8 space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Feed Consumption</h1>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+              <Wheat className="w-7 h-7 text-white" />
+            </div>
+            Feed Consumption
+          </h1>
           <p className="text-gray-500 mt-1">Track daily feed usage for flocks and batches</p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
+        <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700">
+          <Plus className="h-4 w-4 mr-2" />
           Record Consumption
         </Button>
       </div>
 
+      {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Feed Used</CardTitle>
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalFeedUsed} bags</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₦{stats.totalCost.toLocaleString()}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Records</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalRecords}</div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Feed Used"
+          value={`${stats.totalFeedUsed} bags`}
+          icon={TrendingDown}
+          variant="warning"
+        />
+        <StatCard
+          title="Total Cost"
+          value={`₦${stats.totalCost.toLocaleString()}`}
+          icon={Package}
+          variant="warning"
+        />
+        <StatCard
+          title="Total Records"
+          value={stats.totalRecords.toString()}
+          icon={FileText}
+          variant="info"
+        />
       </div>
 
+      {/* Data Table */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search by feed brand, flock, or batch..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="flock">Flock (Layers)</SelectItem>
-                <SelectItem value="batch">Batch (Broilers)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Consumption History</CardTitle>
+        <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b">
+          <CardTitle className="flex items-center gap-2">
+            <Wheat className="w-5 h-5 text-amber-600" />
+            Consumption History
+          </CardTitle>
           <CardDescription>View and manage all feed consumption records</CardDescription>
         </CardHeader>
-        <CardContent>
-          {filteredConsumptions.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No consumption records found</p>
+        <CardContent className="pt-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4 font-medium">Date</th>
-                    <th className="text-left p-4 font-medium">Type</th>
-                    <th className="text-left p-4 font-medium">Group</th>
-                    <th className="text-left p-4 font-medium">Feed Brand</th>
-                    <th className="text-left p-4 font-medium">Feed Type</th>
-                    <th className="text-right p-4 font-medium">Quantity</th>
-                    <th className="text-right p-4 font-medium">Cost</th>
-                    <th className="text-left p-4 font-medium">Recorded By</th>
-                    <th className="text-right p-4 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredConsumptions.map((consumption) => (
-                    <tr key={consumption.id} className="border-b hover:bg-gray-50">
-                      <td className="p-4">{new Date(consumption.consumptionDate).toLocaleDateString()}</td>
-                      <td className="p-4">
-                        <Badge variant={consumption.consumptionType === 'flock' ? 'default' : 'secondary'}>
-                          {consumption.consumptionType === 'flock' ? 'Flock' : 'Batch'}
-                        </Badge>
-                      </td>
-                      <td className="p-4 font-medium">
-                        {consumption.flock?.flockName || consumption.batch?.batchName || '-'}
-                      </td>
-                      <td className="p-4">{consumption.inventory?.feedBrand || '-'}</td>
-                      <td className="p-4">
-                        <Badge variant="outline">{consumption.inventory?.feedType || 'N/A'}</Badge>
-                      </td>
-                      <td className="p-4 text-right">{consumption.feedQuantityBags} bags</td>
-                      <td className="p-4 text-right">
-                        ₦{(consumption.feedQuantityBags * (consumption.inventory?.unitCostPerBag || 0)).toLocaleString()}
-                      </td>
-                      <td className="p-4">{consumption.recorder?.fullName || '-'}</td>
-                      <td className="p-4">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => openEditDialog(consumption)}>
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => openDeleteDialog(consumption)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable
+              data={consumptions}
+              columns={columns}
+              searchPlaceholder="Search by group, feed brand, type..."
+              searchKeys={['groupName', 'feedBrand', 'feedType', 'recorderName', 'consumptionType']}
+              pageSize={10}
+              emptyMessage="No feed consumption records found."
+            />
           )}
         </CardContent>
       </Card>
