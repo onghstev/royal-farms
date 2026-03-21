@@ -9,7 +9,7 @@
     "postinstall": "prisma generate"
   },
   "prisma": {
-    "seed": "tsx --require dotenv/config scripts/seed.ts"
+    "seed": "tsx --require dotenv/config scripts/safe-seed.ts"
   },
   "devDependencies": {
     "@next/swc-wasm-nodejs": "14.2.33",

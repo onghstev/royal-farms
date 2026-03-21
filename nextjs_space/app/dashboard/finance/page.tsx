@@ -42,14 +42,8 @@ export default function FinanceDashboard() {
   const fetchFinancialSummary = async () => {
     try {
       setLoading(true);
-      // Get current month data
-      const now = new Date();
-      const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-      const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-
-      const response = await fetch(
-        `/api/finance/reports?type=summary&startDate=${startDate}&endDate=${endDate}`
-      );
+      // Fetch all-time summary (no date filter) to match Expense/Income Management pages
+      const response = await fetch(`/api/finance/reports?type=summary`);
 
       if (!response.ok) throw new Error('Failed to fetch financial summary');
 
@@ -110,7 +104,7 @@ export default function FinanceDashboard() {
             <div className="text-2xl font-bold text-green-600">
               {formatCurrency(summary.totalIncome)}
             </div>
-            <p className="text-xs text-gray-600 mt-1">This month</p>
+            <p className="text-xs text-gray-600 mt-1">All time</p>
           </CardContent>
         </Card>
 
@@ -123,7 +117,7 @@ export default function FinanceDashboard() {
             <div className="text-2xl font-bold text-red-600">
               {formatCurrency(summary.totalExpense)}
             </div>
-            <p className="text-xs text-gray-600 mt-1">This month</p>
+            <p className="text-xs text-gray-600 mt-1">All time</p>
           </CardContent>
         </Card>
 
@@ -140,7 +134,7 @@ export default function FinanceDashboard() {
             >
               {formatCurrency(summary.netProfit)}
             </div>
-            <p className="text-xs text-gray-600 mt-1">This month</p>
+            <p className="text-xs text-gray-600 mt-1">All time</p>
           </CardContent>
         </Card>
 
@@ -159,7 +153,7 @@ export default function FinanceDashboard() {
             >
               {summary.profitMargin}%
             </div>
-            <p className="text-xs text-gray-600 mt-1">This month</p>
+            <p className="text-xs text-gray-600 mt-1">All time</p>
           </CardContent>
         </Card>
       </div>

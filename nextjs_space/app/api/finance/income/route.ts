@@ -76,12 +76,32 @@ export async function GET(request: Request) {
       return acc;
     }, {} as Record<string, CategorySummary>);
 
+    // Calculate this month totals
+    const now = new Date();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thisMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    const thisMonthTotal = transactions
+      .filter((t: any) => {
+        const d = new Date(t.transactionDate);
+        return d >= thisMonthStart && d <= thisMonthEnd;
+      })
+      .reduce((sum: number, t: any) => sum + t.amount, 0);
+
+    const receivedCount = transactions.filter((t: any) => t.paymentStatus === 'paid').length;
+    const pendingCount = transactions.filter((t: any) => t.paymentStatus === 'pending').length;
+
     return NextResponse.json({
       transactions,
       summary: {
         total: totalIncome,
+        totalIncome,
         paid: paidIncome,
+        receivedTotal: paidIncome,
+        receivedCount,
         pending: pendingIncome,
+        pendingTotal: pendingIncome,
+        pendingCount,
+        thisMonthTotal,
         transactionCount: transactions.length,
         byCategory,
       },
