@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   DollarSign,
   TrendingUp,
@@ -17,15 +18,39 @@ import {
   Receipt,
   PieChart,
   Banknote,
-  Building2
+  Building2,
+  CalendarDays,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+type PeriodOption = 'all_time' | string; // string for "YYYY-MM" month keys
+
+function getMonthOptions(): { value: string; label: string }[] {
+  const options: { value: string; label: string }[] = [];
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const label = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    options.push({ value, label });
+  }
+  return options;
+}
+
+function getPeriodLabel(period: PeriodOption): string {
+  if (period === 'all_time') return 'All time';
+  const [year, month] = period.split('-');
+  const d = new Date(Number(year), Number(month) - 1, 1);
+  return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+}
 
 export default function FinanceDashboard() {
   const { data: session, status } = useSession() || {};
   const router = useRouter();
   const [financialSummary, setFinancialSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<PeriodOption>('all_time');
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -33,18 +58,19 @@ export default function FinanceDashboard() {
     }
   }, [status, router]);
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      fetchFinancialSummary();
-    }
-  }, [status]);
-
-  const fetchFinancialSummary = async () => {
+  const fetchFinancialSummary = useCallback(async (selectedPeriod: PeriodOption) => {
     try {
       setLoading(true);
-      // Fetch all-time summary (no date filter) to match Expense/Income Management pages
-      const response = await fetch(`/api/finance/reports?type=summary`);
+      let url = '/api/finance/reports?type=summary';
 
+      if (selectedPeriod !== 'all_time') {
+        const [year, month] = selectedPeriod.split('-');
+        const startDate = new Date(Number(year), Number(month) - 1, 1).toISOString().split('T')[0];
+        const endDate = new Date(Number(year), Number(month), 0).toISOString().split('T')[0];
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch financial summary');
 
       const data = await response.json();
@@ -55,18 +81,13 @@ export default function FinanceDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  if (status === 'loading' || loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading Financial Dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchFinancialSummary(period);
+    }
+  }, [status, period, fetchFinancialSummary]);
 
   const summary = financialSummary?.summary || {
     totalIncome: 0,
@@ -83,45 +104,89 @@ export default function FinanceDashboard() {
     }).format(amount);
   };
 
+  const periodLabel = getPeriodLabel(period);
+  const monthOptions = getMonthOptions();
+
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading Financial Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header with Period Filter */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Financial Management</h1>
           <p className="text-gray-600 mt-1">Track income, expenses, and profitability</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm">
+            <CalendarDays className="h-4 w-4 text-gray-500" />
+            <Select value={period} onValueChange={(v) => setPeriod(v as PeriodOption)}>
+              <SelectTrigger className="border-0 shadow-none bg-transparent p-0 h-auto min-w-[180px] focus:ring-0">
+                <SelectValue placeholder="Select period" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all_time">
+                  <span className="font-medium">All Time</span>
+                </SelectItem>
+                {monthOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchFinancialSummary(period)}
+            disabled={loading}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
       </div>
 
       {/* Financial Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-l-4 border-l-green-500">
+        <Card className={`border-l-4 border-l-green-500 transition-opacity ${loading ? 'opacity-60' : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Income</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(summary.totalIncome)}
+              {loading ? '...' : formatCurrency(summary.totalIncome)}
             </div>
-            <p className="text-xs text-gray-600 mt-1">All time</p>
+            <p className="text-xs text-gray-600 mt-1">{periodLabel}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-red-500">
+        <Card className={`border-l-4 border-l-red-500 transition-opacity ${loading ? 'opacity-60' : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
             <TrendingDown className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(summary.totalExpense)}
+              {loading ? '...' : formatCurrency(summary.totalExpense)}
             </div>
-            <p className="text-xs text-gray-600 mt-1">All time</p>
+            <p className="text-xs text-gray-600 mt-1">{periodLabel}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-blue-500">
+        <Card className={`border-l-4 border-l-blue-500 transition-opacity ${loading ? 'opacity-60' : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
             <DollarSign className="h-4 w-4 text-blue-600" />
@@ -132,13 +197,13 @@ export default function FinanceDashboard() {
                 summary.netProfit >= 0 ? 'text-blue-600' : 'text-red-600'
               }`}
             >
-              {formatCurrency(summary.netProfit)}
+              {loading ? '...' : formatCurrency(summary.netProfit)}
             </div>
-            <p className="text-xs text-gray-600 mt-1">All time</p>
+            <p className="text-xs text-gray-600 mt-1">{periodLabel}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-500">
+        <Card className={`border-l-4 border-l-purple-500 transition-opacity ${loading ? 'opacity-60' : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Profit Margin</CardTitle>
             <PieChart className="h-4 w-4 text-purple-600" />
@@ -151,9 +216,9 @@ export default function FinanceDashboard() {
                   : 'text-red-600'
               }`}
             >
-              {summary.profitMargin}%
+              {loading ? '...' : `${summary.profitMargin}%`}
             </div>
-            <p className="text-xs text-gray-600 mt-1">All time</p>
+            <p className="text-xs text-gray-600 mt-1">{periodLabel}</p>
           </CardContent>
         </Card>
       </div>
