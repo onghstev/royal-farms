@@ -1,11 +1,34 @@
 # ============================================
 # Royal Farms Poultry Management System
-# Docker Compose for Hostinger VPS Deployment
+# Docker Compose - Full Stack (App + Database)
+# For Hostinger VPS Deployment
 # ============================================
 
 version: '3.8'
 
 services:
+  # ---- PostgreSQL Database ----
+  db:
+    image: postgres:17-alpine
+    container_name: royal-farms-db
+    restart: always
+    environment:
+      POSTGRES_DB: royalfarms
+      POSTGRES_USER: royalfarms_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-RoyalFarmsDB2026!}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database_backup.sql:/docker-entrypoint-initdb.d/01-restore.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U royalfarms_admin -d royalfarms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ---- Next.js Application ----
   web:
     build:
       context: .
@@ -16,14 +39,19 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql://royalfarms_admin:${DB_PASSWORD:-RoyalFarmsDB2026!}@db:5432/royalfarms?schema=public
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
-    env_file:
-      - .env.production
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s
+
+volumes:
+  postgres_data:
+    driver: local

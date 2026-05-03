@@ -41,6 +41,9 @@ docker-compose*.yml
 *.md
 !README.md
 
+# Database backup (needed by docker-compose, not by Dockerfile)
+# Note: database_backup.sql is mounted as a volume, not copied into the image
+
 # Vercel
 .vercel
 vercel.json
