@@ -4,7 +4,7 @@
 # ============================================
 
 # Stage 1: Install dependencies
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN yarn install --frozen-lockfile --production=false
 RUN npx prisma generate
 
 # Stage 2: Build the application
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
@@ -43,7 +43,7 @@ ENV NEXT_OUTPUT_MODE=standalone
 RUN npx prisma generate && yarn build
 
 # Stage 3: Production runner
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 RUN apk add --no-cache libc6-compat openssl curl
 WORKDIR /app
 
