@@ -32,8 +32,7 @@ export default function LoginPage() {
         toast.error(result.error);
       } else if (result?.ok) {
         toast.success('Login successful!');
-        router.push('/dashboard');
-        router.refresh();
+        window.location.href = '/dashboard';
       }
     } catch (error) {
       toast.error('An error occurred during login');
