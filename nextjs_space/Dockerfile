@@ -8,15 +8,15 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock ./
+# Copy package files (yarn.lock may be a symlink in repo, so we skip it)
+COPY package.json ./
 COPY prisma ./prisma/
 
 # Remove hardcoded Prisma output path (environment-specific)
 RUN sed -i '/output = /d' prisma/schema.prisma
 
-# Install dependencies
-RUN yarn install --frozen-lockfile --production=false
+# Install dependencies (without frozen lockfile since yarn.lock is a symlink in repo)
+RUN yarn install --production=false
 
 # Generate Prisma client
 RUN npx prisma generate
