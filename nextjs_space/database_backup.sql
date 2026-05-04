@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict gKE1TxuFKl4f8Y8nqw1kUzUYmFX9RTqxNzydt2wdMT7LqVuc1qVawIDe3xXlF8B
+\restrict V9CY1caJSvxEhReaeOCUQOXmtZaWB3iTufuXbX2mFRq43nd6f6jhlzu1pbZkSA1
 
 -- Dumped from database version 17.8 (92d3c18)
 -- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg12+1)
@@ -2407,6 +2407,7 @@ cmn90gfgv0008pc0800slui0n	2026-03-27	100000.00	100000.00	0.00	Monipoint 	8237048
 cmn90hdby0009pc0810gp47l7	2026-03-27	300000.00	300000.00	0.00	Monipoint 	8237048997	Transfer	Julie 	\N	banked	\N	precious@gmail.com	\N	\N	2026-03-27 14:43:29.724	2026-03-27 14:43:29.724	Julie	Eggs
 cmn90i0js000apc0884ps4tns	2026-03-27	850000.00	850000.00	0.00	Monipoint 	8237048997	Transfer	Sandra	\N	banked	\N	precious@gmail.com	\N	\N	2026-03-27 14:43:59.814	2026-03-27 14:43:59.814	Sandra 	Live birds
 cmn90ivb4000bpc08lwed4arn	2026-03-27	31500.00	31500.00	0.00	Monipoint 	8237048997	Transfer	Elvis	\N	banked	\N	precious@gmail.com	\N	\N	2026-03-27 14:44:39.678	2026-03-27 14:44:39.678	Elvis	Debt payment 
+cmor54kei002omv08xrefsqod	2026-05-04	2000.00	2000.00	0.00	\N	\N	Cash	Chineye	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:53:03.947	2026-05-04 11:53:03.947	Chineye 	Damage
 cmn90jo12000cpc08u5vrvcqd	2026-03-27	17000.00	17000.00	0.00			Cash	Julie 	\N	verified		precious@gmail.com	precious@gmail.com	2026-03-27 14:45:33.55	2026-03-27 14:45:16.9	2026-03-27 14:45:33.551	Julie	Eggs
 cmn90kqre000dpc0896mwp57k	2026-03-27	190000.00	190000.00	0.00	Monipoint 	8237048997	Transfer	Mrs madu 	\N	banked	\N	precious@gmail.com	\N	\N	2026-03-27 14:46:07.096	2026-03-27 14:46:07.096	Mrs madu 	Eggs
 cmn90lhdn000epc08gufosiu7	2026-03-27	171600.00	171600.00	0.00	Monipoint 	8237048997	Transfer	Mrs madu 	\N	banked	\N	precious@gmail.com	\N	\N	2026-03-27 14:46:40.892	2026-03-27 14:46:40.892	Mrs madu 	Eggs
@@ -2635,6 +2636,7 @@ cmnj0vzgx0004pt0868g5aj57	2026-04-03	874200.00	874200.00	0.00	\N	\N	Cash	Dee-boy
 cmnj0x00y0005pt08rmful9pr	2026-04-03	34000.00	34000.00	0.00	\N	\N	Cash	Justina	\N	verified	\N	precious@gmail.com	\N	\N	2026-04-03 14:53:20.736	2026-04-03 14:53:20.736	Justina 	Live birds
 cmnj0yipm0006pt08ti68lx36	2026-04-03	50500.00	50500.00	0.00	\N	\N	Cash	Sarah 	\N	verified	\N	precious@gmail.com	\N	\N	2026-04-03 14:54:30.95	2026-04-03 14:54:30.95	Sarah 	Eggs
 cmnj0z9tx0007pt08g2k2cpz5	2026-04-03	519000.00	519000.00	0.00	Monipoint 	8237048997	Transfer	Sarah 	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-03 14:55:06.756	2026-04-03 14:55:06.756	Sarah 	Eggs
+cmor59fyp002pmv081orce7h8	2026-05-04	85000.00	85000.00	0.00	\N	\N	Cash	Clement 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:56:50.825	2026-05-04 11:56:50.825	Clement	Live birds
 cmnj10obg0008pt08r7gazxdn	2026-04-03	317000.00	317000.00	0.00			Cash	Mama Excel 	\N	verified		precious@gmail.com	precious@gmail.com	2026-04-03 14:57:27.899	2026-04-03 14:56:12.187	2026-04-03 14:57:27.9	Mama excel 	Eggs
 cmnj1nkg3000spt08o72ej2uq	2026-04-03	31800.00	31800.00	0.00	Monipoint 	8237048997	Transfer	Anita	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-03 15:14:00.259	2026-04-03 15:14:00.259	Anita	Eggs
 cmnj1oauj000tpt083k7l326q	2026-04-03	15000.00	15000.00	0.00	\N	\N	Cash	PR	\N	verified	\N	precious@gmail.com	\N	\N	2026-04-03 15:14:34.475	2026-04-03 15:14:34.475	PR	Frozen
@@ -3051,6 +3053,7 @@ cmnymnx7p0006qr08gx9rmjlo	2026-04-14	35600.00	35600.00	0.00	Monipoint 	823704899
 cmnymp0t10007qr080qqpvgq8	2026-04-14	200000.00	200000.00	0.00	Monipoint 	8237048997	Transfer	Elvis	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-14 12:59:32.693	2026-04-14 12:59:32.693	Elvis	Eggs
 cmnympgtc0008qr08q2b8udx3	2026-04-14	34000.00	34000.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-04-14 12:59:53.44	2026-04-14 12:59:53.44	Elvis	Eggs
 cmnymqmmv0009qr0892oknjef	2026-04-14	3145000.00	3145000.00	0.00	Monipoint 	8237048997	Transfer	Bright	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-14 13:00:47.639	2026-04-14 13:00:47.639	Bright	Debt payment 
+cmor5x3cn002qmv08r3rjxd1a	2026-05-04	9500.00	9500.00	0.00	\N	\N	Cash	Pastor 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 12:15:13.654	2026-05-04 12:15:13.654	Pastor	Live bird 
 cmnymtnm7000bqr08e8ab9on2	2026-04-14	7000.00	7000.00	0.00	\N	\N	Cash	Greatness 	\N	verified	\N	precious@gmail.com	\N	\N	2026-04-14 13:03:08.878	2026-04-14 13:03:08.878	Greatness	Crack
 cmnymur2f000cqr08gtvn3t4p	2026-04-14	436800.00	436800.00	0.00	Monipoint 	8237048997	Transfer	Emmanuel 	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-14 13:04:00.005	2026-04-14 13:04:00.005	Emmanuel 	Eggs
 cmnymwjre000dqr08id9zqjj9	2026-04-14	970000.00	970000.00	0.00	Monipoint 	8237048997	Transfer	Nkem	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-14 13:05:23.849	2026-04-14 13:05:23.849	Nkem 	Eggs and withdrawal 
@@ -3507,6 +3510,7 @@ cmoh66ufz000vo908whg9cluv	2026-04-27	3500.00	3500.00	0.00	\N	\N	Cash	Rose	\N	ver
 cmoh67l8y000wo908a1d8y7tu	2026-04-27	21000.00	21000.00	0.00	Monipoint 	8237048997	Transfer	Joy	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-27 12:25:42.866	2026-04-27 12:25:42.866	Joy 	Crack
 cmoh69che000xo908vmdgnk3q	2026-04-27	5000.00	5000.00	0.00	Monipoint 	8237048997	Transfer	Tobe	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-27 12:27:04.16	2026-04-27 12:27:04.16	Tobe	Debt payment and withdrawal 
 cmoh6a925000yo908u1fbv9p1	2026-04-27	5000.00	5000.00	0.00	Monipoint 	8237048997	Transfer	Tobe	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-27 12:27:47.037	2026-04-27 12:27:47.037	Tobe	Cash withdrawal 
+cmor5xtoz002rmv088103nsk6	2026-05-04	400000.00	400000.00	0.00	Monipoint 	8237048997	Transfer	Scoba	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 12:15:49.011	2026-05-04 12:15:49.011	Scoba	Cash withdrawal 
 cmoh6bygt000zo908n40z2pem	2026-04-27	7000.00	7000.00	0.00	\N	\N	Cash	Nick	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-27 12:29:06.615	2026-04-27 12:29:06.615	Nick	Debt payment 
 cmoilihbl0000mn0876pz53ob	2026-04-28	402800.00	402800.00	0.00	Monipoint 	8237048997	Transfer	Emmanuel 	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-28 12:21:51.408	2026-04-28 12:21:51.408	Emmanuel 	Eggs
 cmoilnhhw0001mn08egvecyh4	2026-04-28	163000.00	163000.00	0.00	Monipoint 	8237048997	Transfer	Elvis	\N	banked	\N	precious@gmail.com	\N	\N	2026-04-28 12:25:44.273	2026-04-28 12:25:44.273	Elvis	Eggs
@@ -3663,6 +3667,109 @@ cmon1lx6j0019qk086cx1jxjw	2026-05-01	200000.00	200000.00	0.00	Monipoint 	8237048
 cmon1miv2001aqk088kqnbfcn	2026-05-01	240000.00	240000.00	0.00	Monipoint 	8237048997	Transfer	Onyeka 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-01 15:03:58.589	2026-05-01 15:03:58.589	Onyeka	Live bird and withdrawal 
 cmon2o8q60000lm08zbtrhkxk	2026-05-01	53000.00	53000.00	0.00	Monipoint 	8237048997	Transfer	Giant Eagle 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-01 15:33:18.509	2026-05-01 15:33:18.509	Giant eagle 	Frozen
 cmon2pfd30001lm08bj0s5dpv	2026-05-01	24500.00	24500.00	0.00	\N	\N	Cash	Mama Mary 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-01 15:34:13.638	2026-05-01 15:34:13.638	Mama Mary 	Catfish 
+cmoqtassk0000mi08vagwthy1	2026-05-01	400000.00	400000.00	0.00	\N	\N	Cash	Nneka 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 06:21:59.362	2026-05-04 06:21:59.362	Nneka	Live birds
+cmoqtcxj00001mi08b323fibg	2026-05-02	100000.00	100000.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 06:23:38.811	2026-05-04 06:23:38.811	Nneka	Nneka 
+cmoqtgosr0003mi08bmyonbz5	2026-05-02	150000.00	150000.00	0.00	\N	\N	Cash	Patrick 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 06:26:33.393	2026-05-04 06:26:33.393	Patrick 	Eggs
+cmor09yyq0000mv081n7xn8bs	2026-05-02	56500.00	56500.00	0.00	\N	\N	Cash	Sarah 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:37:18.01	2026-05-04 09:37:18.01	Sarah 	Eggs
+cmor0atpz0001mv089sr5f679	2026-05-02	17000.00	17000.00	0.00	Monipoint 	8237048997	Transfer	Heriatha 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:37:57.877	2026-05-04 09:37:57.877	Heriatha 	Debt payment 
+cmor0bhgf0002mv089hdh1gdd	2026-05-02	125000.00	125000.00	0.00	Monipoint 	8237048997	Transfer	Heriatha 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:38:28.637	2026-05-04 09:38:28.637	Heriatha 	Debt payment 
+cmor0cdpd0003mv083l9yjl1d	2026-05-02	265000.00	265000.00	0.00	Monipoint 	8237048997	Transfer	Amaka	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:39:10.43	2026-05-04 09:39:10.43	Amaka	Eggs
+cmor0daaf0004mv08p7zvrai0	2026-05-02	3500.00	3500.00	0.00	\N	\N	Cash	Chidera	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:39:52.661	2026-05-04 09:39:52.661	Chidera	Crack
+cmor0ez2p0005mv081r6fcxyk	2026-05-02	50000.00	50000.00	0.00	Monipoint 	8237048997	Transfer	Justice	\N	banked		precious@gmail.com	\N	\N	2026-05-04 09:41:10.789	2026-05-04 09:42:01.43	Justice 	Eggs
+cmor0gstu0006mv084dho2rhz	2026-05-02	162000.00	162000.00	0.00	\N	\N	Cash	Justice	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:42:36.657	2026-05-04 09:42:36.657	Justice 	Eggs
+cmor0i0xe0007mv08azgfog8q	2026-05-02	258000.00	258000.00	0.00	Monipoint 	8237048997	Transfer	Mrs Stanley 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:43:33.81	2026-05-04 09:43:33.81	Mrs Stanley 	Eggs
+cmor0ivzg0008mv08o4q53lko	2026-05-02	31000.00	31000.00	0.00	Monipoint 	8237048997	Transfer	Mrs Stanley 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:44:14.06	2026-05-04 09:44:14.06	Mrs Stanley 	Eggs
+cmor0jkiq0009mv084axpwxpb	2026-05-02	400000.00	400000.00	0.00	\N	\N	Cash	Mrs Stanley 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:44:45.858	2026-05-04 09:44:45.858	Mrs Stanley 	Eggs
+cmor0klco000amv08jo0n02gf	2026-05-02	20000.00	20000.00	0.00	Monipoint 	8237048997	Transfer	Madu 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:45:33.592	2026-05-04 09:45:33.592	Madu	Cash withdrawal 
+cmor0lgcb000bmv08zskehvn0	2026-05-02	25000.00	25000.00	0.00	Monipoint 	8237048997	Transfer	Madu	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:46:13.084	2026-05-04 09:46:13.084	Madu	Cash withdrawal 
+cmor0n0la000cmv08qcrzdh85	2026-05-02	2000.00	2000.00	0.00	\N	\N	Cash	Success 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:47:26.652	2026-05-04 09:47:26.652	Success 	Damage
+cmor0u061000emv08vdmrpp0z	2026-05-02	901000.00	901000.00	0.00	Monipoint 	8237048997	Transfer	Judith 	\N	banked		precious@gmail.com	\N	\N	2026-05-04 09:52:52.033	2026-05-04 09:53:45.942	Judith	Eggs
+cmoqtepve0002mi08jw12w9z1	2026-05-03	521000.00	521000.00	0.00	Monipoint 	8237048997	Transfer	Patrick 	\N	banked		precious@gmail.com	\N	\N	2026-05-04 06:25:02.201	2026-05-04 09:48:40.13	Patrick 	Eggs
+cmor0pemo000dmv08iqxx8hha	2026-05-02	30500.00	30500.00	0.00	Monipoint 	8237048997	Transfer	Patrick 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:49:18.158	2026-05-04 09:49:18.158	Patrick 	Eggs
+cmor0un8i000fmv087zlxbp1z	2026-05-02	500000.00	500000.00	0.00	Monipoint 	8237048997	Transfer	Jane	\N	banked		precious@gmail.com	\N	\N	2026-05-04 09:53:22.593	2026-05-04 09:54:29.363	Jane	Eggs
+cmor0wsda000gmv08l0g4myfg	2026-05-02	83000.00	83000.00	0.00	\N	\N	Cash	Jane	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:55:02.557	2026-05-04 09:55:02.557	Jane	Eggs
+cmor0yiob000hmv08dph0jibd	2026-05-02	7000.00	7000.00	0.00	\N	\N	Cash	\N	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:56:23.306	2026-05-04 09:56:23.306	Sarah 	Crack
+cmor0zbti000imv08fop3dv5f	2026-05-02	26500.00	26500.00	0.00	\N	\N	\N	PR	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 09:57:01.077	2026-05-04 09:57:01.077	PR	Eggs
+cmor10ic5000jmv08b2qg0054	2026-05-02	6700.00	6700.00	0.00	Monipoint 	8237048997	Transfer	Mc classic 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:57:55.506	2026-05-04 09:57:55.506	Mc Classic 	Pullet and cracked 
+cmor11qse000kmv08m1wav01t	2026-05-02	3500.00	3500.00	0.00	Monipoint 	8237048997	Transfer	Rose	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:58:53.787	2026-05-04 09:58:53.787	Rose	Crack 
+cmor12d7b000lmv08y8dlw4cj	2026-05-02	2000.00	2000.00	0.00	Monipoint 	8237048997	Transfer	Rose	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 09:59:22.836	2026-05-04 09:59:22.836	Rose	Damage
+cmor137w9000mmv081hn7c7hz	2026-05-02	4000.00	4000.00	0.00	\N	\N	Cash	Halima	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:00:02.615	2026-05-04 10:00:02.615	Halima	Damage
+cmor142yy000nmv08d4lm64tz	2026-05-02	14000.00	14000.00	0.00	\N	\N	Cash	Mrs Stanley 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:00:42.887	2026-05-04 10:00:42.887	Mrs Stanley 	Crack
+cmor14zv1000omv08ngjeusv4	2026-05-02	2000.00	2000.00	0.00	\N	\N	Cash	Chidimma 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:01:25.514	2026-05-04 10:01:25.514	Chidimma 	Damage
+cmor1c2av000pmv08csrdbtb1	2026-05-02	300000.00	300000.00	0.00	Monipoint 	8237048997	Transfer	Chuks	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:06:54.067	2026-05-04 10:06:54.067	Chuks 	Eggs
+cmor1d1qu000qmv08g96kucfr	2026-05-02	900000.00	900000.00	0.00	Monipoint 	8237048997	Transfer	Chuks	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:07:41.205	2026-05-04 10:07:41.205	  Chuks 	Eggs
+cmor1dxt1000rmv08o4826ivh	2026-05-02	560000.00	560000.00	0.00	Monipoint 	8237048997	Transfer	 Chuks 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:08:22.756	2026-05-04 10:08:22.756	Chuks 	Eggs
+cmor1ennp000smv08fj5xrxwt	2026-05-02	754100.00	754100.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 10:08:56.26	2026-05-04 10:08:56.26	Chuks 	Eggs
+cmor1gfh1000tmv08cnr65713	2026-05-09	2000.00	2000.00	0.00	\N	\N	Cash	Blessing 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:10:18.965	2026-05-04 10:10:18.965	Blessing 	Damage
+cmor1j3b8000umv0855jksf82	2026-05-02	300000.00	300000.00	0.00	Monipoint 	8237048997	Transfer	Julian 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:12:22.513	2026-05-04 10:12:22.513	Julian 	Eggs
+cmor1v6sk000vmv08n6homt9z	2026-05-09	129300.00	129300.00	0.00	Monipoint 	8237048997	Transfer	Julian 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:21:46.35	2026-05-04 10:21:46.35	Julian 	Eggs
+cmor25mr1000wmv08rng9xbga	2026-05-02	12500.00	12500.00	0.00	Monipoint 	8237048997	Transfer	Anita	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:29:53.596	2026-05-04 10:29:53.596	Anita	Crack
+cmor26inc000xmv08nq4eyb89	2026-05-02	5500.00	5500.00	0.00	\N	\N	Cash	Chineye	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:30:36.136	2026-05-04 10:30:36.136	Chineye 	Crack and damage
+cmor27s7u000ymv08ivqi6qj6	2026-05-02	240000.00	240000.00	0.00	Monipoint 	8237048997	Transfer	Mama ogechi 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:31:35.194	2026-05-04 10:31:35.194	Mama ogechi 	Live bird 
+cmor28r46000zmv08inorm1ic	2026-05-02	18000.00	18000.00	0.00	\N	\N	Cash	Sarah 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:32:20.422	2026-05-04 10:32:20.422	Sarah 	Live birds
+cmor29n0q0010mv082e4kl1l6	2026-05-02	19000.00	19000.00	0.00	\N	\N	Cash	Jenifer	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:33:01.77	2026-05-04 10:33:01.77	Jenifer	Live birds
+cmor2af0v0011mv08k7o27bvc	2026-05-02	9500.00	9500.00	0.00	\N	\N	Cash	Stella 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:33:38.063	2026-05-04 10:33:38.063	Stella 	Live bird 
+cmor2bb2r0012mv085q494knq	2026-05-02	400000.00	400000.00	0.00	Monipoint 	8237048997	Transfer	Mama Godson 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:34:19.604	2026-05-04 10:34:19.604	Mama Godson 	Live birds
+cmor2c5770013mv08za9gm5pr	2026-05-02	10000.00	10000.00	0.00	\N	\N	Cash	Paul	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:34:57.986	2026-05-04 10:34:57.986	Paul	Live birds
+cmor2cxn00014mv08qfjwae8i	2026-05-04	160000.00	160000.00	0.00	Monipoint 	8237048997	Transfer	Hapiness 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:35:35.499	2026-05-04 10:35:35.499	Hapiness 	Live birds
+cmor2dbzo0015mv08xmpdyrcg	2026-05-02	80000.00	80000.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 10:35:54.1	2026-05-04 10:35:54.1	Hapiness 	Live birds
+cmor2edaa0016mv08cbjtvcz1	2026-05-02	16000.00	16000.00	0.00	Monipoint 	8237048997	Transfer	Tobe	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:36:42.434	2026-05-04 10:36:42.434	Tobe	Live bird 
+cmor2hh8a0017mv084op2v1qi	2026-05-02	11500.00	11500.00	0.00	Monipoint 	8237048997	Transfer	Tobe	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:39:07.514	2026-05-04 10:39:07.514	Tobe	Cash withdrawal 
+cmor2i7800018mv085nl9yg45	2026-05-02	11500.00	11500.00	0.00	Monipoint 	8237048997	Transfer	Tobe	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:39:41.2	2026-05-04 10:39:41.2	Tobe	Cash withdrawal 
+cmor2iysn0019mv08ay5o6plc	2026-05-02	11500.00	11500.00	0.00	Monipoint 	8237048997	Transfer	Tobe	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:40:16.278	2026-05-04 10:40:16.278	Tobe	Cash withdrawal 
+cmor2kuni001amv0858zc9qc2	2026-05-03	3180000.00	3180000.00	0.00	Monipoint 	8237048997	Transfer	Pascal 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:41:44.877	2026-05-04 10:41:44.877	Pascal 	Eggs and withdrawal 
+cmor2mnhk001bmv081piebwov	2026-05-03	352700.00	352700.00	0.00	Monipoint 	8237048997	Transfer	Felix	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:43:08.903	2026-05-04 10:43:08.903	Felix 	Eggs
+cmor2nrr4001cmv08ofpbdwz7	2026-05-03	397500.00	397500.00	0.00	Monipoint 	8237048997	Transfer	Martins 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:44:01.088	2026-05-04 10:44:01.088	Martins 	Eggs
+cmor2oihy001dmv08zvgp4sls	2026-05-03	260000.00	260000.00	0.00	Monipoint 	8237048997	Transfer	Juliet	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:44:35.75	2026-05-04 10:44:35.75	Juliet 	Eggs
+cmor2par0001emv08zs6d4wei	2026-05-03	5000.00	5000.00	0.00	\N	\N	Cash	Juliet	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:45:12.364	2026-05-04 10:45:12.364	Juliet 	Eggs
+cmor2swn6001fmv0860uyybqu	2026-05-03	283800.00	283800.00	0.00	Monipoint 	8237048997	Transfer	IG	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:48:00.043	2026-05-04 10:48:00.043	IG	Eggs
+cmor2v7dg001gmv085qzomm5m	2026-05-03	10500.00	10500.00	0.00	Monipoint 	8237048997	Transfer	Mama Gabriel 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 10:49:47.923	2026-05-04 10:49:47.923	Mama Gabriel 	Crack
+cmor2yimh001hmv08lzn9jbj5	2026-05-03	190000.00	190000.00	0.00	\N	\N	Cash	Nk	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 10:52:22.471	2026-05-04 10:52:22.471	Nk	Eggs
+cmor39v6t001imv08c3xe3ebd	2026-05-03	30800.00	30800.00	0.00	Monipoint 	8237048997	Transfer	Nk	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:01:10.717	2026-05-04 11:01:10.717	Nk	Eggs
+cmor3cciv001jmv08poqm34u5	2026-05-03	3500.00	3500.00	0.00	\N	\N	Cash	Mr Chuks	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:03:07.751	2026-05-04 11:03:07.751	Mr Chuks	Crack
+cmor3d6jb001kmv08yeod3oe8	2026-05-03	9000.00	9000.00	0.00	Monipoint 	8237048997	Transfer	Nk	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:03:46.646	2026-05-04 11:03:46.646	Nk	Crack and damage
+cmor3e9h9001lmv084e4i6gnu	2026-05-03	7000.00	7000.00	0.00	\N	\N	Cash	Agric man 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:04:37.116	2026-05-04 11:04:37.116	Agric man	Crack
+cmor3f92x001mmv08yivzftk0	2026-05-03	5300.00	5300.00	0.00	\N	\N	Cash	Mary	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:05:23.256	2026-05-04 11:05:23.256	Mary	Eggs
+cmor3g24b001nmv08l19kvonh	2026-05-03	2000.00	2000.00	0.00	\N	\N	Cash	Blessing 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:06:00.891	2026-05-04 11:06:00.891	Blessing 	Damage
+cmor3gjy6001omv08eobe836x	2026-05-03	416000.00	416000.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 11:06:23.335	2026-05-04 11:06:23.335	Mummy hope 	Eggs
+cmor3hz5h001pmv081ae58zws	2026-05-03	5300.00	5300.00	0.00	\N	\N	Cash	Christian	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:07:30.357	2026-05-04 11:07:30.357	Christian	Egg
+cmor3iwi0001qmv08v3xk3zwz	2026-05-03	2600000.00	2600000.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 11:08:13.576	2026-05-04 11:08:13.576	Mrs 	Eggs
+cmor3jni7001rmv08npol4lqz	2026-05-03	2000.00	2000.00	0.00	\N	\N	Cash	Stella 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:08:48.575	2026-05-04 11:08:48.575	Stella 	Damage
+cmor3kglb001smv08hq6nojqp	2026-05-03	21000.00	21000.00	0.00	\N	\N	Cash	Elizabeth 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:09:26.27	2026-05-04 11:09:26.27	Elizabeth 	Crack
+cmor3lmlm001tmv08nc45qjbp	2026-05-03	8000.00	8000.00	0.00	Monipoint 	8237048997	Transfer	Elizabeth 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:10:20.713	2026-05-04 11:10:20.713	Elizabeth 	Damage
+cmor3mual001umv08jexayur6	2026-05-03	127500.00	127500.00	0.00	\N	\N	Cash	Mama Uche 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:11:17.34	2026-05-04 11:11:17.34	Mama uche	Live birds
+cmor3o0qx001vmv08qcl7am12	2026-05-03	93500.00	93500.00	0.00	\N	\N	Cash	Patience	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:12:11.707	2026-05-04 11:12:11.707	Patience 	Live birds
+cmor3p0hj001wmv08a6eg8rz0	2026-05-03	11500.00	11500.00	0.00	Monipoint 	8237048997	Transfer	Martins 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:12:58.679	2026-05-04 11:12:58.679	Martins 	Live bird and withdrawal 
+cmor3po6n001xmv086p3tbgbj	2026-05-03	30000.00	30000.00	0.00	Monipoint 	8237048997	Transfer	Bright	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:13:29.391	2026-05-04 11:13:29.391	Bright	Frozen and withdrawal 
+cmor3qh2s001ymv08zfuldlh2	2026-05-03	34000.00	34000.00	0.00	\N	\N	Cash	Hapiness 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:14:06.836	2026-05-04 11:14:06.836	Hapiness 	Frozen
+cmor3rbcz001zmv080tsjdsi8	2026-05-03	17000.00	17000.00	0.00	\N	\N	Cash	Hapiness 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:14:46.082	2026-05-04 11:14:46.082	Hapiness 	Frozen
+cmor3t4a60020mv08hvh89m6r	2026-05-03	31000.00	31000.00	0.00	Monipoint 	8237048997	Transfer	Lucy	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:16:10.221	2026-05-04 11:16:10.221	Lucy	Cash left deposit 
+cmor3un7d0021mv08ii1uiusj	2026-05-03	312000.00	312000.00	0.00	Monipoint 	8237048997	Transfer	Mummy hope 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:17:20.744	2026-05-04 11:17:20.744	Mummy hope 	Debt payment 
+cmor3vfpg0022mv0879gbvxx9	2026-05-03	280000.00	280000.00	0.00	Monipoint 	8237048997	Transfer	Mrs Evelyn 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:17:58.34	2026-05-04 11:17:58.34	Mrs 	Debt payment 
+cmor3w2ef0023mv084mzz6oqb	2026-05-03	754100.00	754100.00	0.00	Monipoint 	8237048997	Transfer	Mr Chuks	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:18:27.75	2026-05-04 11:18:27.75	Mr Chuks	Debt payment 
+cmor3wtzg0024mv08v84klh1b	2026-05-03	80000.00	80000.00	0.00	Monipoint 	8237048997	Transfer	Hapiness 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:19:03.499	2026-05-04 11:19:03.499	Hapiness 	Debt payment 
+cmor4nhwz0025mv081olbt9u2	2026-05-04	360400.00	360400.00	0.00	Monipoint 	8237048997	Transfer	Uche	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:39:46.36	2026-05-04 11:39:46.36	Uche	Eggs
+cmor4o8jh0026mv085vllrm8d	2026-05-04	200000.00	200000.00	0.00	Monipoint 	8237048997	Transfer	Mama ogechi 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:40:22.075	2026-05-04 11:40:22.075	Mama ogechi 	Live birds
+cmor4ouxw0027mv08pybrc5mz	2026-05-04	424000.00	424000.00	0.00	Monipoint 	8237048997	Transfer	Rev	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:40:51.106	2026-05-04 11:40:51.106	Rev	Eggs
+cmor4pjf40028mv083z0ae6tm	2026-05-04	19000.00	19000.00	0.00	\N	\N	Cash	Jenifer	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:41:22.828	2026-05-04 11:41:22.828	Jenifer	Live birds
+cmor4q9nc0029mv08bvmj9wy0	2026-05-04	3500.00	3500.00	0.00	\N	\N	Cash	Chidimma 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:41:56.823	2026-05-04 11:41:56.823	Chidimma 	Crack
+cmor4r4fa002amv08w9k5185q	2026-05-04	9500.00	9500.00	0.00	Moniepoint	8237048997	Transfer	Uchenna	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:42:36.708	2026-05-04 11:42:36.708	Uchena	Live bird 
+cmor4rqcl002bmv085m3m24ev	2026-05-04	188500.00	188500.00	0.00	\N	\N	Cash	Igumbor 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:43:05.123	2026-05-04 11:43:05.123	Igumbor	Eggs
+cmor4sc6h002cmv08fxmasyqf	2026-05-04	100000.00	100000.00	0.00	Monipoint 	8237048997	Transfer	Igumbor 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:43:33.415	2026-05-04 11:43:33.415	Igumbor	Eggs
+cmor4t4zm002dmv08pwxxpgri	2026-05-04	3500.00	3500.00	0.00	\N	\N	Cash	Tina	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:44:10.752	2026-05-04 11:44:10.752	Tina	Droppings 
+cmor4tj4p002emv08ongt6f0x	2026-05-04	3500.00	3500.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 11:44:29.079	2026-05-04 11:44:29.079	Ejime	Crack
+cmor4u96p002fmv08tk67nage	2026-05-04	6500.00	6500.00	0.00	\N	8237048997	Transfer	Mr pee	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:45:02.181	2026-05-04 11:45:02.181	Mr pee	Eggs
+cmor4wekw002gmv08chu1tdci	2026-05-04	480000.00	480000.00	0.00	Monipoint 	8237048997	Transfer	Joy	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:46:43.149	2026-05-04 11:46:43.149	Joy 	Eggs
+cmor4x1ab002hmv08ob1qsrat	2026-05-04	38900.00	38900.00	0.00	Monipoint 	8237048997	Transfer	Joy	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:47:12.576	2026-05-04 11:47:12.576	Joy	Eggs
+cmor4yaoz002imv08ncf0rzsv	2026-05-04	16000.00	16000.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 11:48:11.424	2026-05-04 11:48:11.424	Rev	Eggs
+cmor4z44j002jmv08p5muoa1s	2026-05-04	190000.00	190000.00	0.00	Monipoint 	8237048997	Transfer	Onyeka 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:48:49.568	2026-05-04 11:48:49.568	Onyeka	Eggs
+cmor4zgs5002kmv08n95bcvqq	2026-05-04	114400.00	114400.00	0.00	\N	\N	\N	\N	\N	pending	\N	precious@gmail.com	\N	\N	2026-05-04 11:49:05.97	2026-05-04 11:49:05.97	Joy	Eggs
+cmor50d90002lmv08ndhu67hi	2026-05-04	4000.00	4000.00	0.00	\N	\N	Cash	Halima	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:49:48.049	2026-05-04 11:49:48.049	Halima	Damage
+cmor52sbz002mmv084219n7tv	2026-05-04	104000.00	104000.00	0.00	\N	\N	Cash	Chi amaka 	\N	verified	\N	precious@gmail.com	\N	\N	2026-05-04 11:51:40.257	2026-05-04 11:51:40.257	Chi amaka 	Eggs
+cmor53fvq002nmv08p43nrk2t	2026-05-04	312000.00	312000.00	0.00	Monipoint 	8237048997	Transfer	Chi amaka 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 11:52:11.431	2026-05-04 11:52:11.431	Chi amaka 	Eggs
+cmor6q6k5002smv087t5lu9r2	2026-05-04	9000.00	9000.00	0.00	Monipoint 	8237048997	Transfer	Anita	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 12:37:51.391	2026-05-04 12:37:51.391	Anita	Crack
+cmor6r2fx002tmv08jhqg7uab	2026-05-04	5000.00	5000.00	0.00	Monipoint 	8237048997	Transfer	Anita	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 12:38:33.371	2026-05-04 12:38:33.371	Anita	Crack
+cmor6sc89002umv08kj9elpbr	2026-05-04	12500.00	12500.00	0.00	Monipoint 	8237048997	Transfer	Anita 	\N	banked	\N	precious@gmail.com	\N	\N	2026-05-04 12:39:32.71	2026-05-04 12:39:32.71	Anita	Eggs
 \.
 
 
@@ -6415,6 +6522,26 @@ cmofl2ips000hjr04i7yj7nd0	2026-04-25	egg_sales	4000.00	2.00	2000.00	Mr Chuks 	\N
 cmofl3fwu000bhz04pmctd7yr	2026-04-25	egg_sales	2000.00	1.00	2000.00	Success	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-04-26 09:46:51.264	2026-04-26 09:46:51.264
 cmofl409c000jjr04p5e3qapc	2026-04-25	egg_sales	2000.00	1.00	2000.00	Madam Stella 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-04-26 09:47:17.635	2026-04-26 09:47:17.635
 cmofl4u5y000nl204c4usfo62	2026-04-25	egg_sales	312000.00	60.00	5200.00	Mrs Hycent 	\N	bank_transfer	pending	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-04-26 09:47:56.392	2026-04-26 09:47:56.392
+cmor6wuh8000blb04r76kkpu2	2026-05-04	egg_sales	62400.00	12.00	5200.00	Family eggs 	\N	cash	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:43:03.039	2026-05-04 12:43:03.039
+cmor6xiii000dlb041ngtj3ul	2026-05-04	egg_sales	416000.00	80.00	5200.00	Chi Amaka 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:43:34.188	2026-05-04 12:43:34.188
+cmor6xzin0007jx04vpexhkcj	2026-05-04	egg_sales	3500.00	1.00	3500.00	Chidinma 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:43:56.227	2026-05-04 12:43:56.227
+cmor6ynxl0009jx04591ctu5f	2026-05-04	egg_sales	265000.00	50.00	5300.00	Mrs Ogunbor 	\N	cash	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:44:27.87	2026-05-04 12:44:27.87
+cmor6z9cr000flb04b96xylp3	2026-05-04	egg_sales	23500.00	5.00	4700.00	Mrs Ogunbor 	\N	bank_transfer	received	\N	\N	\N	Pullet eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:44:55.629	2026-05-04 12:44:55.629
+cmor6zpgh0005l204zr2z1bep	2026-05-04	egg_sales	3500.00	1.00	3500.00	Mrs Ogunbor 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:45:16.5	2026-05-04 12:45:16.5
+cmor70doq0007l204c51e5bh1	2026-05-04	egg_sales	307400.00	58.00	5300.00	Mrs EJIme 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:45:47.505	2026-05-04 12:45:47.505
+cmor70xh3000hlb049cqgu4pl	2026-05-04	egg_sales	23500.00	5.00	4700.00	Mrs EJIme 	\N	cash	received	\N	\N	\N	Pullet eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:46:13.545	2026-05-04 12:46:13.545
+cmor71o4b000bjx04lbsgyodl	2026-05-04	egg_sales	651900.00	123.00	5300.00	Mrs joy 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:46:48.079	2026-05-04 12:46:48.079
+cmor7256j0009l204epmec4vq	2026-05-04	egg_sales	7000.00	2.00	3500.00	Mrs joy 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:47:10.188	2026-05-04 12:47:10.188
+cmor739iw000djx04j5vl2wgx	2026-05-04	egg_sales	3500.00	1.00	3500.00	Mrs EJIme 	\N	bank_transfer	pending	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:48:02.476	2026-05-04 12:48:02.476
+cmor755jq000jlb04es7nlil1	2026-05-04	egg_sales	6500.00	1.00	6500.00	Mr p	\N	bank_transfer	received	\N	\N	\N	Crate of egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:49:30.634	2026-05-04 12:49:30.634
+cmor75n5x000fjx04md9iitpm	2026-05-04	egg_sales	14000.00	4.00	3500.00	Rev	\N	bank_transfer	pending	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:49:53.465	2026-05-04 12:49:53.465
+cmor7671p000hjx047p0bh4le	2026-05-04	egg_sales	2000.00	1.00	2000.00	Rev	\N	bank_transfer	pending	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:50:19.233	2026-05-04 12:50:19.233
+cmor774aq000llb04g1zrw6sr	2026-05-04	egg_sales	280900.00	53.00	5300.00	Mr Onyeka 	\N	bank_transfer	received	\N	\N	\N	Crate of egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:51:02.325	2026-05-04 12:51:02.325
+cmor77nkc000jjx04pfq8vtj2	2026-05-04	egg_sales	23500.00	5.00	4700.00	Mr Onyeka 	\N	bank_transfer	pending	\N	\N	\N	Pullet egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:51:27.296	2026-05-04 12:51:27.296
+cmor78dkj000bl2041qv3l4oe	2026-05-04	egg_sales	3500.00	1.00	3500.00	Mrs joy 	\N	bank_transfer	pending	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:52:00.997	2026-05-04 12:52:00.997
+cmor78zfc000dl204jvkudmio	2026-05-04	egg_sales	4000.00	2.00	2000.00	Halima 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:52:29.323	2026-05-04 12:52:29.323
+cmor79fd7000nlb044ue08nen	2026-05-04	egg_sales	2000.00	1.00	2000.00	Chineye 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:52:49.982	2026-05-04 12:52:49.982
+cmor7a5d8000plb04izawc18q	2026-05-04	egg_sales	26500.00	5.00	5300.00	Anita 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:53:23.271	2026-05-04 12:53:23.271
 cmmt8jge5000nk104m2gkz5w1	2026-03-16	egg_sales	21000.00	6.00	3500.00	Madam Julie 	\N	bank_transfer	paid	\N	\N	\N	Crack eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-03-16 13:44:45.168	2026-03-16 13:44:45.168
 cmmt8kc5c000jl104rrsfh7z2	2026-03-16	egg_sales	10000.00	5.00	2000.00	Madam Julie 	\N	bank_transfer	paid	\N	\N	\N	Damage egg	\N	cmkwcjvm20005la047iij1s3g	2026-03-16 13:45:26.322	2026-03-16 13:45:26.322
 cmmt8kx7a000ll104pzeqfl1d	2026-03-16	egg_sales	4000.00	2.00	2000.00	Chineye 	\N	cash	paid	\N	\N	\N	Damage egg	\N	cmkwcjvm20005la047iij1s3g	2026-03-16 13:45:53.609	2026-03-16 13:45:53.609
@@ -7430,6 +7557,14 @@ cmoof8xv7000rjy04h37vw7e4	2026-05-02	egg_sales	37600.00	8.00	4700.00	Mr Chuks 	\
 cmoof9nsi0003jm04d29md822	2026-05-02	egg_sales	24500.00	7.00	3500.00	Mr Chuks 	\N	bank_transfer	pending	\N	\N	\N	 Crack eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:13:39.301	2026-05-02 14:13:39.301
 cmoofary2000tjy04sozzme9o	2026-05-02	egg_sales	2000.00	1.00	2000.00	Mr Chuks 	\N	bank_transfer	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:14:31.341	2026-05-02 14:14:31.341
 cmoofbfwm000vjy0467riljx5	2026-05-02	egg_sales	2000.00	1.00	2000.00	Mrs Blessing 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:15:02.394	2026-05-02 14:15:02.394
+cmoqvxho60001jg04ayficmw5	2026-05-03	bird_sales	127500.00	15.00	8500.00	Mama Uche 	\N	cash	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:35:37.32	2026-05-04 07:35:37.32
+cmoqvy89h0003jg04yzb91v82	2026-05-03	bird_sales	93500.00	11.00	8500.00	Patrick 	\N	cash	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:36:11.782	2026-05-04 07:36:11.782
+cmoqvyqvx0001kv04npbec6nc	2026-05-03	bird_sales	9500.00	1.00	9500.00	Nk	\N	bank_transfer	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:36:35.92	2026-05-04 07:36:35.92
+cmoqvz8kj0003kv04r7np9n2y	2026-05-03	bird_sales	9500.00	1.00	9500.00	Martin’s 	\N	bank_transfer	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:36:58.839	2026-05-04 07:36:58.839
+cmoqwf9d2000bjl04e011so2o	2026-05-03	egg_sales	185500.00	35.00	5300.00	Nk	\N	cash	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:49:26.359	2026-05-04 07:49:26.359
+cmoqwfu47000djl04fugmy3z7	2026-05-03	egg_sales	18800.00	4.00	4700.00	Nk	\N	cash	received	\N	\N	\N	Pullet eggs	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:49:53.255	2026-05-04 07:49:53.255
+cmoqwgoj2000fjl04rm6y7lue	2026-05-03	egg_sales	7000.00	2.00	3500.00	Nk	\N	bank_transfer	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:50:32.671	2026-05-04 07:50:32.671
+cmoqwh3yi000bkv046i1zup0y	2026-05-03	egg_sales	3500.00	1.00	3500.00	Mr Chuks 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:50:52.666	2026-05-04 07:50:52.666
 cmnq3nzls000fl1040na1bqkt	2026-04-08	egg_sales	499200.00	96.00	5200.00	Mrs Chioma 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-04-08 13:44:42.415	2026-04-08 13:44:42.415
 cmnq3omeg000hl104hoe1xo1f	2026-04-08	egg_sales	23500.00	5.00	4700.00	Mrs Chioma 	\N	cash	received	\N	\N	\N	Pullet eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-04-08 13:45:11.963	2026-04-08 13:45:11.963
 cmnq3p4j50007l804ob26f35v	2026-04-08	egg_sales	3500.00	1.00	3500.00	Mrs Chioma 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-04-08 13:45:35.457	2026-04-08 13:45:35.457
@@ -7509,6 +7644,16 @@ cmooez3wy000fjy04q7axza97	2026-05-02	egg_sales	2000.00	1.00	2000.00	Sucess	\N	ca
 cmooezvza0007jy04kx7g2oqa	2026-05-02	egg_sales	7000.00	2.00	3500.00	Mr Patrick 	\N	bank_transfer	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:06:03.354	2026-05-02 14:06:03.354
 cmoof0jf4000hjy04tpivup2g	2026-05-02	egg_sales	2000.00	1.00	2000.00	Mr Patrick 	\N	bank_transfer	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:06:33.732	2026-05-02 14:06:33.732
 cmoof1fzj000dla04p3ds8nng	2026-05-02	egg_sales	901000.00	170.00	5300.00	Mrs Judith 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:07:15.937	2026-05-02 14:07:15.937
+cmoqw79v60005jg04rlocj7mp	2026-05-03	bird_sales	27000.00	3.00	9000.00	Mrs Bright	\N	bank_transfer	received	\N	\N	\N	Frozen chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:43:13.764	2026-05-04 07:43:13.764
+cmoqw8a1q0005kv04w407uloy	2026-05-03	bird_sales	34000.00	4.00	8500.00	Happiness 	\N	cash	received	\N	\N	\N	Frozen chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:44:00.656	2026-05-04 07:44:00.656
+cmoqw8swc0007kv04vurjahkv	2026-05-03	bird_sales	17000.00	2.00	8500.00	Happiness 	\N	cash	received	\N	\N	\N	Frozen chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:44:25.086	2026-05-04 07:44:25.086
+cmoqw9n2w0007jg04elpy5j1f	2026-05-03	egg_sales	3120000.00	600.00	5200.00	Mr pascal	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:45:04.202	2026-05-04 07:45:04.202
+cmoqwa7to0001jl042pflyhim	2026-05-03	egg_sales	333900.00	63.00	5300.00	Mr Felix 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:45:31.088	2026-05-04 07:45:31.088
+cmoqwapd30009jg04erxzstto	2026-05-03	egg_sales	18800.00	4.00	4700.00	Mr Felix 	\N	bank_transfer	received	\N	\N	\N	Pullet eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:45:53.816	2026-05-04 07:45:53.816
+cmoqwbsam0003jl04xflikqmh	2026-05-03	egg_sales	397500.00	75.00	5300.00	Mrs martins 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:46:44.274	2026-05-04 07:46:44.274
+cmoqwcmqv0009kv045df9ewig	2026-05-03	egg_sales	265000.00	50.00	5300.00	Mrs Juliet 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:47:23.326	2026-05-04 07:47:23.326
+cmoqwd4q60005jl044hvcbu5l	2026-05-03	egg_sales	265000.00	50.00	5300.00	IG	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:47:47.039	2026-05-04 07:47:47.039
+cmoqwdmxe0007jl0439yxozs1	2026-05-03	egg_sales	18800.00	4.00	4700.00	IG	\N	bank_transfer	received	\N	\N	\N	Pullet eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:48:10.628	2026-05-04 07:48:10.628
 cmnt95npv0007kz048qu2rd3f	2026-04-10	egg_sales	410800.00	79.00	5200.00	Mama David 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-04-10 18:41:43.423	2026-04-10 18:41:43.423
 cmnt96tpm0009ib04c62tihzv	2026-04-10	egg_sales	9400.00	2.00	4700.00	Mama excel 	\N	cash	received	\N	\N	\N	Pullet eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-04-10 18:42:37.853	2026-04-10 18:42:37.853
 cmnt99p59000bib04ra96uxxt	2026-04-10	egg_sales	4500.00	1.00	4500.00	Mama excel 	\N	cash	received	\N	\N	\N	Pullet 	\N	cmkwcjvm20005la047iij1s3g	2026-04-10 18:44:51.903	2026-04-10 18:44:51.903
@@ -7623,6 +7768,15 @@ cmoofcsed0007jr047it7yamg	2026-05-02	egg_sales	10500.00	3.00	3500.00	Anita 	\N	b
 cmoofd62r0009jr04aklr0eth	2026-05-02	egg_sales	2000.00	1.00	2000.00	Anita 	\N	bank_transfer	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:16:22.966	2026-05-02 14:16:22.966
 cmoofdo02000xjy04bhk4i2a7	2026-05-02	egg_sales	3500.00	1.00	3500.00	Chineye 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:16:46.2	2026-05-02 14:16:46.2
 cmoofe43n000bjr04jnnnffus	2026-05-02	egg_sales	2000.00	1.00	2000.00	Chineye 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-02 14:17:07.062	2026-05-02 14:17:07.062
+cmoqwed5q0009jl04cks2n5dh	2026-05-03	egg_sales	10500.00	3.00	3500.00	Mama Gabriel 	\N	bank_transfer	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:48:44.623	2026-05-04 07:48:44.623
+cmoqwhle6000dkv04lo233oqi	2026-05-03	egg_sales	7000.00	2.00	3500.00	Nk	\N	bank_transfer	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:51:15.263	2026-05-04 07:51:15.263
+cmoqwi0ad000fkv04rk5h6yte	2026-05-03	egg_sales	2000.00	1.00	2000.00	Nk	\N	bank_transfer	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:51:34.562	2026-05-04 07:51:34.562
+cmoqwinrs000hjl04x0e4sx9k	2026-05-03	egg_sales	7000.00	2.00	3500.00	Agric man 	\N	cash	received	\N	\N	\N	Crack egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:52:05.001	2026-05-04 07:52:05.001
+cmoqwk08r000jjl04lnwel0xd	2026-05-03	egg_sales	5300.00	1.00	5300.00	Mary 	\N	cash	received	\N	\N	\N	Crate of egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:53:07.82	2026-05-04 07:53:07.82
+cmoqwkhgg000bjg04xclbh7nb	2026-05-03	egg_sales	14000.00	4.00	3500.00	Mr pascal	\N	bank_transfer	received	\N	\N	\N	Crack eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:53:30.13	2026-05-04 07:53:30.13
+cmoqwl0us000ljl04dre9zty7	2026-05-03	egg_sales	2000.00	1.00	2000.00	Blessing 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:53:55.271	2026-05-04 07:53:55.271
+cmoqwn9ff000hkv04w0eg0rll	2026-05-03	egg_sales	2600000.00	500.00	5200.00	Mrs Evelyn 	\N	bank_transfer	pending	\N	\N	\N	Crate of egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:55:39.695	2026-05-04 07:55:39.695
+cmoqwnyzv000jkv04oqfzxqem	2026-05-03	egg_sales	2000.00	1.00	2000.00	Stella 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:56:12.83	2026-05-04 07:56:12.83
 cmnykdgfe0009lb04a9aiam4z	2026-04-14	egg_sales	2091000.00	410.00	5100.00	Mrs Faith 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-04-14 11:54:33.885	2026-04-14 11:54:33.885
 cmnyke6ec000dju04vgtmrws9	2026-04-14	egg_sales	10500.00	3.00	3500.00	Mrs Faith 	\N	bank_transfer	received	\N	\N	\N	Crack egg 	\N	cmkwcjvm20005la047iij1s3g	2026-04-14 11:55:07.542	2026-04-14 11:55:07.542
 cmnykerr9000fju04j6r3pzqe	2026-04-14	egg_sales	7000.00	2.00	3500.00	Nkem 	\N	bank_transfer	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-04-14 11:55:35.222	2026-04-14 11:55:35.222
@@ -7939,6 +8093,22 @@ cmofkk16s0003l204qyh3grsj	2026-04-25	bird_sales	16000.00	2.00	8000.00	Precious 	
 cmofkko4t0005l204ooj1xa09	2026-04-25	bird_sales	9500.00	1.00	9500.00	Henry 	\N	cash	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-04-26 09:32:15.456	2026-04-26 09:32:15.456
 cmofklm5s0007l2048b78btzm	2026-04-25	bird_sales	80000.00	10.00	8000.00	Madam Happiness 	\N	bank_transfer	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-04-26 09:32:59.555	2026-04-26 09:32:59.555
 cmofkm4220003jr04t57seib6	2026-04-25	bird_sales	36000.00	4.00	9000.00	Happy 	\N	bank_transfer	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-04-26 09:33:22.742	2026-04-26 09:33:22.742
+cmoqwlr9c000njl04ycxajkff	2026-05-03	egg_sales	416000.00	80.00	5200.00	Mr Hycent 	\N	bank_transfer	pending	\N	\N	\N	Crate of egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:54:29.485	2026-05-04 07:54:29.485
+cmoqwm83m000pjl044okkx3uo	2026-05-03	egg_sales	5300.00	1.00	5300.00	Christian 	\N	cash	received	\N	\N	\N	Crate of egg	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:54:51.317	2026-05-04 07:54:51.317
+cmoqwokw9000lkv04dn3hby4a	2026-05-03	egg_sales	21000.00	6.00	3500.00	Mrs Elizabeth 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:56:41.212	2026-05-04 07:56:41.212
+cmoqwp4lr000djg04j1tdf8pc	2026-05-03	egg_sales	8000.00	4.00	2000.00	Mrs Elizabeth 	\N	bank_transfer	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 07:57:06.752	2026-05-04 07:57:06.752
+cmor6nohm0001lb0404dk7drw	2026-05-04	manure_sales	3000.00	2.00	1500.00	Tina 	\N	cash	received	\N	\N	\N	Chicken droppings	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:35:55.373	2026-05-04 12:35:55.373
+cmor6oi8a0001jx0496vs2wj8	2026-05-04	manure_sales	3000.00	2.00	1500.00	Mr Monday 	\N	cash	received	\N	\N	\N	Chicken droppings 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:36:33.917	2026-05-04 12:36:33.917
+cmor6p4390003lb04vk4ayb5v	2026-05-04	bird_sales	200000.00	25.00	8000.00	Mama ogechi 	\N	bank_transfer	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:37:02.249	2026-05-04 12:37:02.249
+cmor6pqv40001l204ypjlygzv	2026-05-04	bird_sales	19000.00	2.00	9500.00	Jennifer 	\N	cash	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:37:31.764	2026-05-04 12:37:31.764
+cmor6qdfo0005lb04yrtxiys2	2026-05-04	bird_sales	9500.00	1.00	9500.00	Uchenna 	\N	bank_transfer	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:38:01.016	2026-05-04 12:38:01.016
+cmor6qy0e0003jx040yl8v9a9	2026-05-04	bird_sales	85000.00	10.00	8500.00	Mr clement 	\N	cash	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:38:27.682	2026-05-04 12:38:27.682
+cmor6rfop0005jx04avlcehql	2026-05-04	bird_sales	9500.00	1.00	9500.00	Pastor 	\N	cash	received	\N	\N	\N	Live chicken 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:38:50.589	2026-05-04 12:38:50.589
+cmor6tnaq0003l2049fm9h5g3	2026-05-04	egg_sales	344500.00	65.00	5300.00	Mrs Uche 	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:40:33.348	2026-05-04 12:40:33.348
+cmor6uj910007lb0462norqjd	2026-05-04	egg_sales	424000.00	80.00	5300.00	Rev	\N	bank_transfer	received	\N	\N	\N	Crate of eggs 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:41:15.174	2026-05-04 12:41:15.174
+cmor6w0yp0009lb04ln6nfcn3	2026-05-04	egg_sales	15900.00	3.00	5300.00	Mrs Uche 	\N	bank_transfer	received	\N	\N	\N	Crate of egg 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 12:42:24.786	2026-05-04 12:42:24.786
+cmor9camz0001jm04g4syew12	2026-05-04	egg_sales	3500.00	1.00	3500.00	Chineye 	\N	cash	received	\N	\N	\N	Crack 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 13:51:03.055	2026-05-04 13:51:03.055
+cmor9cs0j0003jm04e0he2hd5	2026-05-04	egg_sales	2000.00	1.00	2000.00	Chineye 	\N	cash	received	\N	\N	\N	Damage 	\N	cmkwcjvm20005la047iij1s3g	2026-05-04 13:51:25.558	2026-05-04 13:51:25.558
 \.
 
 
@@ -8416,13 +8586,13 @@ COPY public.stock_movements (id, inventory_id, movement_date, movement_type, qua
 
 COPY public.users (id, email, password_hash, first_name, last_name, phone, role_id, is_active, last_login, created_at, updated_at) FROM stdin;
 cmkwaz4dt0001jq044yn82f1y	anthonyosaheni@gmail.com	$2a$10$rSjY29kfQ26nmJKm1tthbOYBYdjF3DmyrqEZ.s73ssGtGa4MMqGCa	Anthony	Osaheni	+2348108993676	cmkpcyw660001uvqbdyzqt9vv	t	2026-04-07 11:59:15.268	2026-01-27 07:56:49.265	2026-04-07 11:59:15.27
-cmkwch6060003la04h5rk1jab	precious@gmail.com	$2a$10$kjH/2HzgxYNmU24iBGz3vOHjm2Nfn4J1w7R6g2tht5WJE6XLFyQNm	Precious	Nwafor	+2347064286941	cmkpcyw660001uvqbdyzqt9vv	t	2026-05-01 14:18:37.895	2026-01-27 08:38:50.791	2026-05-01 14:18:37.896
 cmlgoqwoc0005ld04dfg8hvzh	tobe@gmail.com	$2a$10$ZrHUm4/9h11IvDWVDRy8euFpDBdiCpL/WdF4h2Dn2hc8nRcDwX5W6	Tobechukwu 	Mordi	+2349038427750	cmkpcyw660001uvqbdyzqt9vv	t	2026-02-12 09:11:46.62	2026-02-10 14:17:44.172	2026-02-12 09:11:46.621
-cmkwcjvm20005la047iij1s3g	divine@gmail.com	$2a$10$f0QQJqvWGJJ9u1C6GM.U6uQgHtb6k5BgqOYeiUIa6X05TH4V1R9IC	Divine	Uche	+2348167001244	cmkpcyw660001uvqbdyzqt9vv	t	2026-05-02 13:49:07.276	2026-01-27 08:40:57.291	2026-05-02 13:49:07.277
-cmkpl0sss0001y2vyt6ero1j2	admin@royalfarms.com	$2a$12$MDGBr0WDO6qTguHeIpUhE.aYHaE6JAw/urGy5u5Yc2QbcIByP7BCu	Farm	Administrator		cmkpcyvd30000uvqbex5bhwxc	t	2026-05-03 18:45:38.218	2026-01-22 15:03:40.492	2026-05-03 18:45:38.219
+cmkpl0sss0001y2vyt6ero1j2	admin@royalfarms.com	$2a$12$MDGBr0WDO6qTguHeIpUhE.aYHaE6JAw/urGy5u5Yc2QbcIByP7BCu	Farm	Administrator		cmkpcyvd30000uvqbex5bhwxc	t	2026-05-04 00:40:33.95	2026-01-22 15:03:40.492	2026-05-04 00:40:33.951
+cmkwch6060003la04h5rk1jab	precious@gmail.com	$2a$10$kjH/2HzgxYNmU24iBGz3vOHjm2Nfn4J1w7R6g2tht5WJE6XLFyQNm	Precious	Nwafor	+2347064286941	cmkpcyw660001uvqbdyzqt9vv	t	2026-05-04 06:20:36.589	2026-01-27 08:38:50.791	2026-05-04 06:20:36.59
 cmlgoobeh0003ld04d71qlimx	hassan@gmail.com	$2a$10$8MPBUMH23Dkd.6eDvr65H.n69WEkvRW2EQ82OYo55JV5BNQL7Q9MO	Hassan	Bature	+2349043081576	cmkpcyw660001uvqbdyzqt9vv	t	\N	2026-02-10 14:15:43.289	2026-02-10 14:15:43.289
 cmkwbf1dd0005jq04mzu6164a	joramboma@gmail.com	$2a$10$7BUysv.n6wyBwVtFrt84MeHCSfPv.Y0nmd5OOuRsy7ptmdPxzSLLG	Joram	Boram	+2348118365855	cmkpcywoc0002uvqbq09o9k7d	t	\N	2026-01-27 08:09:11.857	2026-01-27 08:09:11.857
 cmkwcefz70001la048wyix47e	yommie@gmail.com	$2a$10$fDr1TYEGpeyNhLHQGLUM2uu4BL0u2e4Tj5x3pJYCBDR2tF/q./3v.	Hope 	Mordi	+2349050310592	cmkpcyw660001uvqbdyzqt9vv	t	\N	2026-01-27 08:36:43.747	2026-01-27 08:36:43.747
+cmkwcjvm20005la047iij1s3g	divine@gmail.com	$2a$10$f0QQJqvWGJJ9u1C6GM.U6uQgHtb6k5BgqOYeiUIa6X05TH4V1R9IC	Divine	Uche	+2348167001244	cmkpcyw660001uvqbdyzqt9vv	t	2026-05-04 13:50:10.822	2026-01-27 08:40:57.291	2026-05-04 13:50:10.824
 cmkwbbs3r0003jq04sgbxlnix	iyke@gmail.com	$2a$10$3C0l19LEPoB7uDEJDHNkHemHR9Cq6n1.E6DUBNJUPGRlD5XOMdHla	Iyke	Nwali	+2348066187552	cmkpcywoc0002uvqbq09o9k7d	t	2026-04-15 14:01:41.132	2026-01-27 08:06:39.88	2026-04-15 14:01:41.133
 cmlgot3fb0007ld04lpidfgz2	sandra@gmail.com	$2a$10$8/WhbKWelwHhrvHd3qwQyeflgmK1fIR8v6RFJ8qqT5GScHLd1.uo6	Sandra	Mordi	08120620545	cmkpcyw660001uvqbdyzqt9vv	t	2026-02-11 12:06:11.483	2026-02-10 14:19:26.232	2026-02-11 12:06:11.484
 \.
@@ -9823,5 +9993,5 @@ ALTER TABLE ONLY public.weight_records
 -- PostgreSQL database dump complete
 --
 
-\unrestrict gKE1TxuFKl4f8Y8nqw1kUzUYmFX9RTqxNzydt2wdMT7LqVuc1qVawIDe3xXlF8B
+\unrestrict V9CY1caJSvxEhReaeOCUQOXmtZaWB3iTufuXbX2mFRq43nd6f6jhlzu1pbZkSA1
 
