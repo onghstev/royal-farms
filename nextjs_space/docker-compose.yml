@@ -4,8 +4,6 @@
 # For Hostinger VPS Deployment
 # ============================================
 
-version: '3.8'
-
 services:
   # ---- PostgreSQL Database ----
   db:
